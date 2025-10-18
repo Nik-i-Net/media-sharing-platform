@@ -1,0 +1,28 @@
+{
+  "name": "notes-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.3",
+  "type": "module",
+  "dependencies": {
+    "express": "^5.1.0",
+    "http-status-codes": "^2.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@jest/globals": "^30.2.0",
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.35.0",
+    "globals": "^16.4.0",
+    "jest": "^30.2.0",
+    "prettier": "^3.6.2"
+  }
+}
