@@ -1,8 +1,9 @@
-import { test, expect, describe } from '@jest/globals';
-import { usersRepository } from '../../../src/modules/users/users.repository.js';
+import { usersRepository } from '../../../src/modules/users/users.repository';
+import type { CreateUserDto } from '../../../src/modules/users/dto/create-user.dto';
+import type { UpdateUserInfoDto } from '../../../src/modules/users/dto/update-user-info.dto';
 
-const userInfo1 = { name: 'Alex', age: 25 };
-const userInfo2 = { name: 'Jane', age: 30 };
+const userInfo1: CreateUserDto = { name: 'Alex', age: 25 };
+const userInfo2: CreateUserDto = { name: 'Jane', age: 30 };
 
 describe('usersRepository.create', () => {
   test('should return a user object with expected fields', async () => {
@@ -11,6 +12,8 @@ describe('usersRepository.create', () => {
       id: expect.any(Number),
       name: userInfo1.name,
       age: userInfo1.age,
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
     });
   });
 
@@ -37,12 +40,12 @@ describe('usersRepository.findById', () => {
 describe('usersRepository.update', () => {
   test('should update the name of an existing user', async () => {
     const createdUser = await usersRepository.create(userInfo1);
-    const newName = 'not' + userInfo1.name;
-    await usersRepository.update(createdUser.id, { name: newName });
+    const updatedInfo: UpdateUserInfoDto = { name: 'not' + userInfo1.name };
+    await usersRepository.update(createdUser.id, updatedInfo);
     const updatedUser = await usersRepository.findById(createdUser.id);
     expect(updatedUser).toMatchObject({
       id: createdUser.id,
-      name: newName,
+      name: updatedInfo.name,
       age: createdUser.age,
     });
   });
