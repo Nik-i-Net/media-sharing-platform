@@ -1,6 +1,7 @@
-import { usersRepository } from '../../../src/modules/users/users.repository';
-import type { CreateUserDto } from '../../../src/modules/users/dto/create-user.dto';
-import type { UpdateUserInfoDto } from '../../../src/modules/users/dto/update-user-info.dto';
+import { describe, expect, test } from '@jest/globals';
+import { usersRepository } from '@src/modules/users/users.repository.js';
+import type { CreateUserDto } from '@src/modules/users/dto/create-user.dto.js';
+import type { UpdateUserInfoDto } from '@src/modules/users/dto/update-user-info.dto.js';
 
 const userInfo1: CreateUserDto = { name: 'Alex', age: 25 };
 const userInfo2: CreateUserDto = { name: 'Jane', age: 30 };
