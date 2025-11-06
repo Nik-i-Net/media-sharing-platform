@@ -1,9 +1,16 @@
-import express from 'express';
-import { router } from './router.js';
+import express, { Router } from 'express';
+import { UsersModule } from './modules/users/users.module.js';
 
 const app = express();
+const router = Router();
+
+const modules = [
+  new UsersModule('/users'), //
+];
+
+modules.forEach((module) => module.register(router));
 
 app.use(express.json());
-app.use('/api', router);
+app.use('/api/v1', router);
 
 export { app };

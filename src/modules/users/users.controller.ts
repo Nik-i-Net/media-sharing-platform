@@ -1,53 +1,55 @@
 import { StatusCodes } from 'http-status-codes';
-import { usersService } from './users.service.js';
 import type { CreateUserDto } from './dto/create-user.dto.js';
 import type { UpdateUserInfoDto } from './dto/update-user-info.dto.js';
 import type { User } from './entities/user.entity.js';
 import type { Req, Res, ReqWithBody, IdParams } from '../../shared/types/request.types.js';
+import type { UsersService } from './users.service.js';
 
 class UsersController {
-  async createUser(req: ReqWithBody<CreateUserDto>, res: Res<User>): Promise<void> {
+  constructor(private usersService: UsersService) {}
+
+  createUser = async (req: ReqWithBody<CreateUserDto>, res: Res<User>): Promise<void> => {
     try {
-      const user = await usersService.createUser(req.body);
+      const user = await this.usersService.createUser(req.body);
       res.status(StatusCodes.CREATED).json(user);
     } catch (error) {
       console.log(error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
     }
-  }
+  };
 
-  async getUserById(req: Req<IdParams>, res: Res<User>): Promise<void> {
+  getUserById = async (req: Req<IdParams>, res: Res<User>): Promise<void> => {
     try {
       const id = Number(req.params.id);
-      const user = await usersService.getUserById(id);
+      const user = await this.usersService.getUserById(id);
       res.json(user);
     } catch (error) {
       console.log(error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
     }
-  }
+  };
 
-  async updateUserInfo(req: Req<IdParams, UpdateUserInfoDto>, res: Res<User>): Promise<void> {
+  updateUserInfo = async (req: Req<IdParams, UpdateUserInfoDto>, res: Res<User>): Promise<void> => {
     try {
       const id = Number(req.params.id);
-      const updatedUser = await usersService.updateUserInfo(id, req.body);
+      const updatedUser = await this.usersService.updateUserInfo(id, req.body);
       res.json(updatedUser);
     } catch (error) {
       console.log(error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
     }
-  }
+  };
 
-  async deleteUser(req: Req<IdParams>, res: Res<void>): Promise<void> {
+  deleteUser = async (req: Req<IdParams>, res: Res<void>): Promise<void> => {
     try {
       const id = Number(req.params.id);
-      await usersService.deleteUser(id);
+      await this.usersService.deleteUser(id);
       res.sendStatus(StatusCodes.NO_CONTENT);
     } catch (error) {
       console.log(error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
     }
-  }
+  };
 }
 
-export const usersController = new UsersController();
+export { UsersController };

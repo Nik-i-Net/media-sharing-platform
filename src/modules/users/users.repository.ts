@@ -6,6 +6,8 @@ type UpdateUserInput = Partial<CreateUserInput>;
 class UsersRepository {
   private mockUsers: User[] = [];
 
+  constructor() {}
+
   async create(userInfo: CreateUserInput): Promise<User> {
     const id = (this.mockUsers.at(-1)?.id || 0) + 1;
     const now = new Date();
@@ -37,4 +39,4 @@ class UsersRepository {
   }
 }
 
-export const usersRepository = new UsersRepository();
+export { UsersRepository, type CreateUserInput, type UpdateUserInput };
