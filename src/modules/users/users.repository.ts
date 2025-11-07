@@ -3,21 +3,21 @@ import type { User } from './entities/user.entity.js';
 type CreateUserInput = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
 type UpdateUserInput = Partial<CreateUserInput>;
 
-class UsersRepository {
-  private mockUsers: User[] = [];
+let mockUsers: User[] = [];
 
+class UsersRepository {
   constructor() {}
 
   async create(userInfo: CreateUserInput): Promise<User> {
-    const id = (this.mockUsers.at(-1)?.id || 0) + 1;
+    const id = (mockUsers.at(-1)?.id || 0) + 1;
     const now = new Date();
     const user: User = { id, ...userInfo, createdAt: now, updatedAt: now };
-    this.mockUsers.push(user);
+    mockUsers.push(user);
     return user;
   }
 
   async findById(id: number): Promise<User | null> {
-    const user = this.mockUsers.find((u) => u.id === id);
+    const user = mockUsers.find((u) => u.id === id);
     if (!user) {
       return null;
     }
@@ -33,9 +33,9 @@ class UsersRepository {
   }
 
   async delete(id: number): Promise<number> {
-    const count = this.mockUsers.length;
-    this.mockUsers = this.mockUsers.filter((user) => user.id !== id);
-    return count - this.mockUsers.length;
+    const count = mockUsers.length;
+    mockUsers = mockUsers.filter((user) => user.id !== id);
+    return count - mockUsers.length;
   }
 }
 
