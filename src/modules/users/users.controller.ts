@@ -4,9 +4,10 @@ import type { UpdateUserInfoDto } from './dto/update-user-info.dto.js';
 import type { User } from './entities/user.entity.js';
 import type { Req, Res, ReqWithBody, IdParams } from '../../shared/types/request.types.js';
 import type { UsersService } from './users.service.js';
+import { USER_NOT_FOUND } from '@src/shared/errors/users.errors.js';
 
 class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   createUser = async (req: ReqWithBody<CreateUserDto>, res: Res<User>): Promise<void> => {
     try {
@@ -14,7 +15,7 @@ class UsersController {
       res.status(StatusCodes.CREATED).json(user);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+      res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -25,7 +26,13 @@ class UsersController {
       res.json(user);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+
+      if (error instanceof Error && error.message === USER_NOT_FOUND) {
+        res.sendStatus(StatusCodes.NOT_FOUND);
+        return;
+      }
+
+      res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -36,7 +43,13 @@ class UsersController {
       res.json(updatedUser);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+
+      if (error instanceof Error && error.message === USER_NOT_FOUND) {
+        res.sendStatus(StatusCodes.NOT_FOUND);
+        return;
+      }
+
+      res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -47,7 +60,13 @@ class UsersController {
       res.sendStatus(StatusCodes.NO_CONTENT);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+
+      if (error instanceof Error && error.message === USER_NOT_FOUND) {
+        res.sendStatus(StatusCodes.NOT_FOUND);
+        return;
+      }
+
+      res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 }
