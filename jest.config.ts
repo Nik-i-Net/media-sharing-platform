@@ -13,7 +13,7 @@ const config: Config = {
   transform: {
     '^.+\\.ts$': ['ts-jest', { tsconfig: './tsconfig.test.json' }],
   },
-  testMatch: ['**/__tests__/**/*.ts', '**/*.test.ts'],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/*.test.ts'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
 };
 
