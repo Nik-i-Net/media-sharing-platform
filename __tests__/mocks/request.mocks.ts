@@ -17,8 +17,9 @@ function mockRes<Body>() {
 
   const res: jest.Mocked<Partial<Res<Body>>> = {
     status: jest.fn<Status>().mockReturnThis(),
-    json: jest.fn<Json>(),
     sendStatus: jest.fn<Status>(),
+    json: jest.fn<Json>(),
+    send: jest.fn<Json>(),
   };
 
   return res as jest.Mocked<Res<Body>>;
