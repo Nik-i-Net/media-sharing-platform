@@ -14,7 +14,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.21.0",
   "dependencies": {
     "express": "^5.1.0",
     "http-status-codes": "^2.3.0"
