@@ -5,7 +5,7 @@ import globals from 'globals';
 
 export default defineConfig([
   {
-    files: ['**/*.ts'],
+    files: ['src/**/*.ts', '__tests__/**/*.ts'],
     languageOptions: {
       globals: globals.node,
     },
