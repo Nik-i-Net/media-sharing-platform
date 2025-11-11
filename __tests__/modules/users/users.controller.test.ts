@@ -3,14 +3,13 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { UsersService } from '@src/modules/users/users.service.js';
 import { UsersController } from '@src/modules/users/users.controller.js';
 import { toCreateUserDto, fakeUser } from './fakes/users.fakes.js';
-import type { UsersRepository } from '@src/modules/users/users.repository.js';
-import type { CreateUserDto } from '@src/modules/users/dto/create-user.dto.js';
-import type { User } from '@src/modules/users/entities/user.entity.js';
 import { mockReq, mockRes } from '../../mocks/request.mocks.js';
 import { StatusCodes } from 'http-status-codes';
-import type { IdParams, Req, ReqWithBody, Res } from '@src/shared/types/request.types.js';
-import { USER_NOT_FOUND } from '@src/shared/errors/users.errors.js';
+import type { UsersRepository } from '@src/modules/users/users.repository.js';
+import type { User } from '@src/modules/users/entities/user.entity.js';
+import type { CreateUserDto } from '@src/modules/users/dto/create-user.dto.js';
 import type { UpdateUserInfoDto } from '@src/modules/users/dto/update-user-info.dto.js';
+import type { IdParams, Req, ReqWithBody, Res } from '@src/shared/types/request.types.js';
 
 jest.mock('@src/modules/users/users.service.js');
 
@@ -33,25 +32,22 @@ describe('usersController.createUser', () => {
     res = mockRes<User>();
   });
 
-  test('should call usersService.createUser with provided `req.body`', async () => {
-    await usersController.createUser(req, res);
-
-    expect(mockUsersService.createUser).toHaveBeenCalledWith(req.body);
-  });
-
-  test(`should return the created user with status ${StatusCodes.CREATED}`, async () => {
+  test('should call usersService.createUser and respond with the created user', async () => {
     mockUsersService.createUser.mockResolvedValueOnce(user);
     await usersController.createUser(req, res);
 
+    expect(mockUsersService.createUser).toHaveBeenCalledWith(req.body);
     expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
     expect(res.json).toHaveBeenCalledWith(user);
   });
 
-  test(`should return status ${StatusCodes.INTERNAL_SERVER_ERROR} if an unknown error occurred`, async () => {
-    mockUsersService.createUser.mockRejectedValueOnce(new Error());
-    await usersController.createUser(req, res);
+  test('should propagate the service error', async () => {
+    const error = new Error('usersService.createUser fails');
 
-    expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.INTERNAL_SERVER_ERROR);
+    mockUsersService.createUser.mockRejectedValueOnce(error);
+    const promise = usersController.createUser(req, res);
+
+    await expect(promise).rejects.toThrow(error);
   });
 });
 
@@ -66,31 +62,21 @@ describe('usersController.getUserById', () => {
     res = mockRes<User>();
   });
 
-  test('should call usersService.getUserById with provided `req.params.id`', async () => {
-    await usersController.getUserById(req, res);
-
-    expect(mockUsersService.getUserById).toHaveBeenCalledWith(Number(req.params.id));
-  });
-
-  test(`should return the found user`, async () => {
+  test('should call usersService.getUserById and respond with the found user`', async () => {
     mockUsersService.getUserById.mockResolvedValueOnce(user);
     await usersController.getUserById(req, res);
 
+    expect(mockUsersService.getUserById).toHaveBeenCalledWith(Number(req.params.id));
     expect(res.json).toHaveBeenCalledWith(user);
   });
 
-  test(`should return status ${StatusCodes.NOT_FOUND} if the user not found`, async () => {
-    mockUsersService.getUserById.mockRejectedValueOnce(new Error(USER_NOT_FOUND));
-    await usersController.getUserById(req, res);
+  test('should propagate the service error', async () => {
+    const error = new Error('usersService.getUserById fails');
 
-    expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.NOT_FOUND);
-  });
+    mockUsersService.getUserById.mockRejectedValueOnce(error);
+    const promise = usersController.getUserById(req, res);
 
-  test(`should return status ${StatusCodes.INTERNAL_SERVER_ERROR} if an unknown error occurred`, async () => {
-    mockUsersService.getUserById.mockRejectedValueOnce(new Error());
-    await usersController.getUserById(req, res);
-
-    expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.INTERNAL_SERVER_ERROR);
+    await expect(promise).rejects.toThrow(error);
   });
 });
 
@@ -105,31 +91,21 @@ describe('usersController.updateUserInfo', () => {
     res = mockRes<User>();
   });
 
-  test('should call usersService.updateUserInfo with provided `req.params.id` and `req.body`', async () => {
-    await usersController.updateUserInfo(req, res);
-
-    expect(mockUsersService.updateUserInfo).toHaveBeenCalledWith(Number(req.params.id), req.body);
-  });
-
-  test(`should return the updated user`, async () => {
+  test(`should call usersService.updateUserInfo and respond with the updated used`, async () => {
     mockUsersService.updateUserInfo.mockResolvedValueOnce(user);
     await usersController.updateUserInfo(req, res);
 
+    expect(mockUsersService.updateUserInfo).toHaveBeenCalledWith(Number(req.params.id), req.body);
     expect(res.json).toHaveBeenCalledWith(user);
   });
 
-  test(`should return status ${StatusCodes.NOT_FOUND} if the user not found`, async () => {
-    mockUsersService.updateUserInfo.mockRejectedValueOnce(new Error(USER_NOT_FOUND));
-    await usersController.updateUserInfo(req, res);
+  test('should propagate the service error', async () => {
+    const error = new Error('usersService.updateUserInfo fails');
 
-    expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.NOT_FOUND);
-  });
+    mockUsersService.updateUserInfo.mockRejectedValueOnce(error);
+    const promise = usersController.updateUserInfo(req, res);
 
-  test(`should return status ${StatusCodes.INTERNAL_SERVER_ERROR} if an unknown error occurred`, async () => {
-    mockUsersService.updateUserInfo.mockRejectedValueOnce(new Error());
-    await usersController.updateUserInfo(req, res);
-
-    expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.INTERNAL_SERVER_ERROR);
+    await expect(promise).rejects.toThrow(error);
   });
 });
 
@@ -144,29 +120,19 @@ describe('usersController.deleteUser', () => {
     res = mockRes();
   });
 
-  test('should call usersService.deleteUser with provided `req.params.id`', async () => {
+  test(`should call usersService and respond with ${StatusCodes.NO_CONTENT}`, async () => {
     await usersController.deleteUser(req, res);
 
     expect(mockUsersService.deleteUser).toHaveBeenCalledWith(Number(req.params.id));
-  });
-
-  test(`should return status ${StatusCodes.NO_CONTENT}`, async () => {
-    await usersController.deleteUser(req, res);
-
     expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.NO_CONTENT);
   });
 
-  test(`should return status ${StatusCodes.NOT_FOUND} if the user not found`, async () => {
-    mockUsersService.deleteUser.mockRejectedValueOnce(new Error(USER_NOT_FOUND));
-    await usersController.deleteUser(req, res);
+  test('should propagate the service error', async () => {
+    const error = new Error('usersService.deleteUser fails');
 
-    expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.NOT_FOUND);
-  });
+    mockUsersService.deleteUser.mockRejectedValueOnce(error);
+    const promise = usersController.deleteUser(req, res);
 
-  test(`should return status ${StatusCodes.INTERNAL_SERVER_ERROR} if an unknown error occurred`, async () => {
-    mockUsersService.deleteUser.mockRejectedValueOnce(new Error());
-    await usersController.deleteUser(req, res);
-
-    expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.INTERNAL_SERVER_ERROR);
+    await expect(promise).rejects.toThrow(error);
   });
 });
