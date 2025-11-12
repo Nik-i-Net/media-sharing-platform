@@ -2,11 +2,13 @@ import { jest } from '@jest/globals';
 import type { Req, Res } from '@src/shared/types/request.types.js';
 
 // TODO: make props required if the corresponding generic was provided
-function mockReq<Params, Body, Query>(data?: {
-  params?: Params;
-  body?: Body;
-  query?: Query;
-}): Req<Params, Body, Query> {
+function mockReq<Params, Body, Query>(
+  data: {
+    params?: Params;
+    body?: Body;
+    query?: Query;
+  } = {},
+): Req<Params, Body, Query> {
   return data as Req<Params, Body, Query>;
 }
 
