@@ -8,8 +8,13 @@
     "lint": "eslint 'src/**/*.ts' '__tests__/**/*.ts'",
     "build": "tsc --project tsconfig.build.json && tsc-alias --project tsconfig.build.json",
     "clean": "rm -rf dist",
-    "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "start": "node --env-file=.env dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "knex:migrate:make": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:make",
+    "knex:migrate:up": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:up",
+    "knex:migrate:down": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:down",
+    "knex:migrate:latest": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:latest",
+    "knex:migrate:rollback": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:rollback"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +22,10 @@
   "packageManager": "pnpm@10.21.0",
   "dependencies": {
     "express": "^5.1.0",
-    "http-status-codes": "^2.3.0"
+    "http-status-codes": "^2.3.0",
+    "knex": "^3.1.0",
+    "pg": "^8.16.3",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
