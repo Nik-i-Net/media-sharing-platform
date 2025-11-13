@@ -16,7 +16,6 @@ class UsersModule implements Module {
 
     usersRouter
       .route('/') //
-      .get((req, res) => res.send('users'))
       .post(usersController.createUser);
 
     usersRouter
