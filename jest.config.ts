@@ -1,7 +1,7 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  verbose: true,
+  verbose: false,
   preset: 'ts-jest',
   testEnvironment: 'node',
 
