@@ -31,7 +31,7 @@ function signAsync(
   return new Promise((resolve, reject) => {
     jwt.sign(payload, privateKey, options, (err, token) => {
       if (err) return reject(err);
-      if (!token) return reject('Failed to sign JWT: token is undefined');
+      if (!token) return reject(new Error('Failed to sign JWT: token is undefined'));
       resolve(token);
     });
   });
@@ -46,7 +46,7 @@ function verifyAsync(
     jwt.verify(token, publicKey, options, (err, payload) => {
       if (err) return reject(err);
       if (!payload || typeof payload === 'string') {
-        return reject('Invalid payload');
+        return reject(new Error('Invalid payload'));
       }
       resolve(payload);
     });
