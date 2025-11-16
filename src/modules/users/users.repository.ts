@@ -1,42 +1,38 @@
+import type { Knex } from 'knex';
 import type { User } from './entities/user.entity.js';
-
-type CreateUserInput = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
-type UpdateUserInput = Partial<CreateUserInput>;
-
-let mockUsers: User[] = [];
+import type { InsertUser, UpdateUser } from '@src/shared/database/types/users.table.js';
 
 class UsersRepository {
-  constructor() {}
+  constructor(private readonly db: Knex) {}
 
-  async create(userInfo: CreateUserInput): Promise<User> {
-    const id = (mockUsers.at(-1)?.id || 0) + 1;
-    const now = new Date();
-    const user: User = { id, ...userInfo, createdAt: now, updatedAt: now };
-    mockUsers.push(user);
-    return user;
+  private get users() {
+    return this.db('users');
   }
 
-  async findById(id: number): Promise<User | null> {
-    const user = mockUsers.find((u) => u.id === id);
-    if (!user) {
-      return null;
-    }
-    return user;
+  async create(userData: InsertUser): Promise<User | null> {
+    const [user] = await this.users.insert(userData).returning('*');
+    return user ?? null;
   }
 
-  async update(id: number, userInfo: UpdateUserInput): Promise<User | null> {
-    const user = await this.findById(id);
-    if (!user) return null;
-
-    Object.assign(user, userInfo, { updatedAt: new Date() });
-    return user;
+  async findById(id: string): Promise<User | null> {
+    const [user] = await this.users.where({ id });
+    return user ?? null;
   }
 
-  async delete(id: number): Promise<number> {
-    const count = mockUsers.length;
-    mockUsers = mockUsers.filter((user) => user.id !== id);
-    return count - mockUsers.length;
+  async findByEmail(email: string): Promise<User | null> {
+    const [user] = await this.users.where({ email });
+    return user ?? null;
+  }
+
+  async update(id: string, updates: UpdateUser): Promise<User | null> {
+    const [user] = await this.users.where({ id }).update(updates).returning('*');
+    return user ?? null;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const count = await this.users.where({ id }).del();
+    return count > 0;
   }
 }
 
-export { UsersRepository, type CreateUserInput, type UpdateUserInput };
+export { UsersRepository };
