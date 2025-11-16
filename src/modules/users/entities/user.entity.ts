@@ -1,7 +1,9 @@
 export interface User {
-  id: number;
-  name: string;
-  age: number;
+  id: string;
+  username: string;
+  email: string;
+  emailVerified: boolean;
+  passwordHash: string;
   createdAt: Date;
   updatedAt: Date;
 }
