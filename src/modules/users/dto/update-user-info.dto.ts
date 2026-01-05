@@ -1,4 +1,5 @@
-export interface UpdateUserInfoDto {
-  readonly name?: string;
-  readonly age?: number;
+export interface UpdateUserDto {
+  readonly username?: string;
+  readonly email?: string;
+  readonly password?: string;
 }
