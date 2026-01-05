@@ -1,10 +1,17 @@
 import type { User } from '@src/modules/users/entities/user.entity.js';
+import type { CamelToSnake } from '@src/shared/utils/convertBetweenCamelAndSnakeCases.js';
 import type { Knex } from 'knex';
 
+
 type UserDefaults = 'emailVerified' | 'createdAt' | 'updatedAt';
-type InsertUser = Omit<User, UserDefaults>;
-type UpdateUser = Partial<Omit<InsertUser, 'id'>>;
+type UserInsert = Omit<User, UserDefaults>;
+type UserUpdate = Partial<Omit<UserInsert, 'id'>>;
 
-type UsersTable = Knex.CompositeTableType<User, InsertUser, UpdateUser>;
+type UsersTable = Knex.CompositeTableType<
+  CamelToSnake<User>,
+  CamelToSnake<UserInsert>,
+  CamelToSnake<UserUpdate>
+>;
 
-export type { UsersTable, InsertUser, UpdateUser };
+export type { UsersTable, UserInsert, UserUpdate }
+
