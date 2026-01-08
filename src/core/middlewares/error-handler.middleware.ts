@@ -1,9 +1,14 @@
 import { StatusCodes } from 'http-status-codes';
-import { HttpError } from '../errors/http.error.js';
-import type { Req, Res, Next } from '../types/request.types.js';
+import type { Req, Res, Next } from '@common/types/express.types.js';
+import { HttpError } from '@common/errors/http.errors.js';
+import { isPgError, mapPgError } from '@core/db/pg-error-handler.js';
+import { AppError } from '@common/errors/app.error.js';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function errorHandler(err: unknown, req: Req, res: Res, next: Next) {
+function errorHandler(err: unknown, req: Req, res: Res, _next: Next) {
+  if (!(err instanceof AppError) && isPgError(err)) {
+    err = mapPgError(err);
+  }
+
   if (err instanceof HttpError) {
     const { message, statusCode } = err;
     res.status(statusCode).send(message);

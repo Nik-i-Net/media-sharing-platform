@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import type { JwtPayload, PrivateKey, PublicKey, SignOptions, VerifyOptions } from 'jsonwebtoken';
-import type { JwtConfig, JwtToken, TokenType } from '../types/jwt.types.js';
+import type { JwtConfig, JwtToken, TokenType } from './jwt.types.js';
 
 class JwtService {
   constructor(private readonly config: JwtConfig) {}
