@@ -1,3 +1,4 @@
+import { wrapIdentifier, postProcessResponse } from './knex-utils.js';
 import type { Knex } from 'knex';
 
 if (!process.env.DB_URL) {
@@ -13,6 +14,8 @@ const config: Knex.Config = {
     directory: '../../../migrations/',
     extension: 'ts',
   },
+  wrapIdentifier,
+  postProcessResponse,
 };
 
 export default config;
