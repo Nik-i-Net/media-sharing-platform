@@ -5,10 +5,13 @@ import globals from 'globals';
 
 export default defineConfig([
   {
-    files: ['src/**/*.ts', '__tests__/**/*.ts'],
+    files: ['**/*.ts'],
     languageOptions: {
       globals: globals.node,
     },
     extends: [js.configs.recommended, ts.configs.recommended],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
   },
 ]);
