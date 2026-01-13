@@ -4,18 +4,14 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env dist/server.js",
+    "start": "node --env-file=.env dist/main.js",
     "test": "jest",
     "lint": "eslint 'src/**/*.ts' '__tests__/**/*.ts'",
     "typecheck": "tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "build": "tsc --project tsconfig.build.json && tsc-alias --project tsconfig.build.json",
     "clean": "rm -rf dist",
-    "knex:migrate:make": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:make",
-    "knex:migrate:up": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:up",
-    "knex:migrate:down": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:down",
-    "knex:migrate:latest": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:latest",
-    "knex:migrate:rollback": "node --env-file=.env ./node_modules/knex/bin/cli.js --knexfile src/shared/database/knexfile.ts migrate:rollback"
+    "knex": "node --env-file=.env --import tsx ./node_modules/knex/bin/cli.js --knexfile ./src/core/db/knexfile.ts"
   },
   "keywords": [],
   "author": "",
@@ -28,7 +24,6 @@
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "pg": "^8.16.3",
-    "ts-node": "^10.9.2",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -45,6 +40,7 @@
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.5",
     "tsc-alias": "^1.8.16",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2"
   }

@@ -8,8 +8,11 @@
     "lib": ["esnext"],
     "types": ["node"],
 
+    "baseUrl": ".",
     "paths": {
-      "@src/*": ["./src/*"]
+      "@core/*": ["src/core/*"],
+      "@common/*": ["src/common/*"],
+      "@modules/*": ["src/modules/*"],
     },
 
     // Other Outputs
@@ -29,5 +32,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "__tests__/**/*"]
+  // "include": ["src/**/*", "__tests__/**/*"]
+  "include": ["src/**/*"]
 }
