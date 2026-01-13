@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import type { Req, Res, Next } from '@common/types/express.types.js';
 import { HttpError } from '@common/errors/http.errors.js';
-import { isPgError, mapPgError } from '@core/db/pg-error-handler.js';
+import { isPgError, mapPgError } from '@core/database/pg-error-handler.js';
 import { AppError } from '@common/errors/app.error.js';
 
 function errorHandler(err: unknown, req: Req, res: Res, _next: Next) {
