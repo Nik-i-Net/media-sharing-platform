@@ -1,4 +1,4 @@
-import { ConflictError } from '@common/errors/http.errors.js';
+import { BaseError, AlreadyExistsException } from '@shared/domain/errors/index.js';
 
 const POSTGRES_ERROR_CODES = {
   // NOT_NULL_VIOLATION: '23502',
@@ -6,21 +6,19 @@ const POSTGRES_ERROR_CODES = {
   UNIQUE_VIOLATION: '23505',
 };
 
-function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
 function formatFieldName(name: string) {
+  const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
   return name.toLowerCase().split('_').map(capitalize).join(' ');
 }
 
-type PgError = Error & {
+type PostgresError = Error & {
   code: string;
   detail: string;
 };
 
-function isPgError(err: unknown): err is PgError {
+function isDatabaseError(err: unknown): err is PostgresError {
   return (
+    !(err instanceof BaseError) &&
     err instanceof Error &&
     'code' in err &&
     typeof err.code === 'string' &&
@@ -29,14 +27,14 @@ function isPgError(err: unknown): err is PgError {
   );
 }
 
-function mapPgError(err: PgError) {
+function mapDatabaseError(err: PostgresError) {
   if (err.code === POSTGRES_ERROR_CODES.UNIQUE_VIOLATION) {
     const field = (err.detail.match(/^Key \((\w+)\)=/) || [])[1];
     if (!field) return err;
-    return new ConflictError(`${formatFieldName(field)} already taken`);
+    return new AlreadyExistsException(formatFieldName(field));
   }
 
   return err;
 }
 
-export { isPgError, mapPgError };
+export { isDatabaseError, mapDatabaseError };
