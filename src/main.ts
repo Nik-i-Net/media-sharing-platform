@@ -1,18 +1,4 @@
-import express, { Router } from 'express';
-import { usersRouter } from '@modules/users/users.module.js';
-import { errorHandler } from '@core/middlewares/error-handler.middleware.js';
-import { notFoundHandler } from '@core/middlewares/not-found.middleware.js';
-import { authRouter } from '@modules/auth/auth.module.js';
-
-const router = Router();
-router.use('/users', usersRouter);
-router.use('/auth', authRouter);
-
-const app = express();
-app.use(express.json());
-app.use('/api/v1', router);
-app.use(notFoundHandler);
-app.use(errorHandler);
+import { app } from 'src/@shared/infrastructure/web/express.app.js';
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
