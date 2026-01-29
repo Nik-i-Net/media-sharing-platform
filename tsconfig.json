@@ -10,9 +10,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@core/*": ["src/core/*"],
-      "@common/*": ["src/common/*"],
-      "@modules/*": ["src/modules/*"],
+      "@config/*": ["src/@config/*"],
+      "@shared/*": ["src/@shared/*"],
     },
 
     // Other Outputs
