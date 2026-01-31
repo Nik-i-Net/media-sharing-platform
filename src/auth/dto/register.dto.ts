@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { username, email, password } from '@shared/application/primitives.dto.js';
+import { Username, Email, Password } from '@shared/application/primitives.dto.js';
 
 export const RegisterDto = z
-  .object({ username, email, password, passwordConfirm: password })
+  .object({ username: Username, email: Email, password: Password, passwordConfirm: Password })
   .refine((data) => data.password === data.passwordConfirm, {
     error: "Passwords don't match",
     path: ['passwordConfirm'],

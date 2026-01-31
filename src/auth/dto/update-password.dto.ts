@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { password } from '@shared/application/primitives.dto.js';
+import { Password } from '@shared/application/primitives.dto.js';
 
 export const UpdatePasswordDto = z
-  .object({ oldPassword: password, newPassword: password, newPasswordConfirm: password })
+  .object({ oldPassword: Password, newPassword: Password, newPasswordConfirm: Password })
   .superRefine((data, ctx) => {
     if (data.oldPassword === data.newPassword) {
       ctx.addIssue({

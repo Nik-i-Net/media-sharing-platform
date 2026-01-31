@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { username, email, password } from '@shared/application/primitives.dto.js';
+import { Username, Email, Password } from '@shared/application/primitives.dto.js';
 
-const identifier = z.union([username, email]);
+const identifier = z.union([Username, Email]);
 
-export const LoginDto = z.object({ identifier, password }).brand<'LoginDto'>();
+export const LoginDto = z.object({ identifier, password: Password }).brand<'LoginDto'>();
 export type LoginDto = z.infer<typeof LoginDto>;
