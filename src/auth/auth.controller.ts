@@ -15,8 +15,13 @@ class AuthController {
     res.send();
   };
 
-  login = async (req: ReqWithBody<LoginDto>, res: Res<AuthResponseDto>) => {
+  test = async (req: ReqWithBody<{ id: number; age: number }>, res: Res) => {
+    console.log(req.body.id);
     res.send();
+  };
+
+  login = async (req: ReqWithBody<LoginDto>, res: Res<AuthResponseDto>) => {
+    res.json(await this.authService.login());
   };
 
   refresh = async (req: ReqWithBody<RefreshTokenDto>, res: Res<AccessTokenDto>) => {

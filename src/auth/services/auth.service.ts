@@ -2,6 +2,9 @@ import type { RegisterDto } from '../dto/register.dto.js';
 import type { UserRepository } from 'src/users/user.repository.js';
 import type { TokenService } from './token.service.ts';
 import type { HashService } from './hash.service.js';
+import { User } from 'src/users/domain/user.js';
+import { UserDto } from 'src/users/dto/user.dto.js';
+import { AuthResponseDto } from '../dto/auth-response.dto.js';
 
 export interface AuthPolicy {
   accessTokenExpiresIn: string | number;
@@ -26,18 +29,21 @@ class AuthService {
     // const existingUser = await this.userService;
   }
 
-  async login(body: object): Promise<unknown> {
-    console.log(body);
-    return 'login';
+  async login(): Promise<AuthResponseDto> {
+    const user = User.register(crypto.randomUUID(), 'Alex', 'alex@mail.com', '');
+    const userDto = UserDto.parse(user);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.tokenService.sign(userDto, this.policy.accessTokenExpiresIn),
+      this.tokenService.sign(userDto, this.policy.refreshTokenExpiresIn),
+    ]);
+    return AuthResponseDto.parse({ user, accessToken, refreshToken });
   }
 
-  async logout(body: object): Promise<unknown> {
-    console.log(body);
+  async logout(): Promise<unknown> {
     return 'logout';
   }
 
-  async refresh(body: object): Promise<unknown> {
-    console.log(body);
+  async refresh(): Promise<unknown> {
     return 'refresh';
   }
 }
