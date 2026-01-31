@@ -11,9 +11,6 @@ importers:
       argon2:
         specifier: ^0.44.0
         version: 0.44.0
-      bcrypt:
-        specifier: ^6.0.0
-        version: 6.0.0
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -29,9 +26,6 @@ importers:
       pg:
         specifier: ^8.16.3
         version: 8.16.3
-      uuid:
-        specifier: ^13.0.0
-        version: 13.0.0
       zod:
         specifier: ^4.3.5
         version: 4.3.5
@@ -983,10 +977,6 @@ packages:
   baseline-browser-mapping@2.8.17:
     resolution: {integrity: sha512-j5zJcx6golJYTG6c05LUZ3Z8Gi+M62zRT/ycz4Xq4iCOdpcxwg7ngEYD4KA0eWZC7U17qh/Smq8bYbACJ0ipBA==}
     hasBin: true
-
-  bcrypt@6.0.0:
-    resolution: {integrity: sha512-cU8v/EGSrnH+HnxV2z0J7/blxH8gq7Xh2JFT6Aroax7UohdmiJJlxApMxtKfuI7z68NvvVcmR78k2LbT6efhRg==}
-    engines: {node: '>= 18'}
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -2480,10 +2470,6 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  uuid@13.0.0:
-    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
-    hasBin: true
-
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
@@ -3559,11 +3545,6 @@ snapshots:
   balanced-match@1.0.2: {}
 
   baseline-browser-mapping@2.8.17: {}
-
-  bcrypt@6.0.0:
-    dependencies:
-      node-addon-api: 8.5.0
-      node-gyp-build: 4.8.4
 
   binary-extensions@2.3.0: {}
 
@@ -5223,8 +5204,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  uuid@13.0.0: {}
 
   v8-compile-cache-lib@3.0.1:
     optional: true
