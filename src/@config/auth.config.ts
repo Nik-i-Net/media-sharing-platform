@@ -1,9 +1,11 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import type { AuthPolicy } from 'src/auth/services/auth.service.js';
 import type { JwtConfig } from 'src/auth/services/token.service.js';
 
-if (!process.env.JWT_PRIVATE_KEY_PATH || !process.env.JWT_PUBLIC_KEY_PATH) {
-  throw new Error('[env] JWT key paths are missing');
+const secretsPath = process.env.SECRETS_PATH;
+if (!secretsPath) {
+  throw new Error('[env] SECRETS_PATH is missing');
 }
 
 export const authPolicy: AuthPolicy = {
@@ -13,6 +15,6 @@ export const authPolicy: AuthPolicy = {
 
 export const jwtConfig: JwtConfig = {
   algorithm: 'RS256',
-  privateKey: fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH, 'utf-8'),
-  publicKey: fs.readFileSync(process.env.JWT_PUBLIC_KEY_PATH, 'utf-8'),
+  privateKey: fs.readFileSync(path.join(secretsPath, 'jwt-private.pem'), 'utf-8'),
+  publicKey: fs.readFileSync(path.join(secretsPath, 'jwt-private.pem'), 'utf-8'),
 };

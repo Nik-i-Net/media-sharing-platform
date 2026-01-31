@@ -4,13 +4,12 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env dist/server.js",
+    "start": "node --env-file=.env dist/main.js",
     "test": "jest",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "typecheck": "tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
-    "build": "tsc --project tsconfig.build.json && tsc-alias --project tsconfig.build.json",
-    "clean": "rm -rf dist",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json && tsc-alias --project tsconfig.build.json",
     "knex": "node --env-file=.env --import tsx ./node_modules/knex/bin/cli.js --knexfile ./src/infra/database/knexfile.ts"
   },
   "keywords": [],
