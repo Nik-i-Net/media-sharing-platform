@@ -1,7 +1,7 @@
-import { UserDto } from './dto/user.dto.js';
-import type { UserRepository } from '../domain/repositories/user.repository.js';
-import type { Email, UpdateUserDto, UserId, Username } from './dto/index.js';
-import { UserNotFoundException } from './exceptions/index.js';
+import type { UserRepository } from '../domain/repositories/user.repository';
+import type { UserId, Username, Email } from './dto';
+import { UserDto } from './dto';
+import { UserNotFoundException } from './exceptions';
 
 class UserService {
   constructor(private readonly userRepository: UserRepository) {}

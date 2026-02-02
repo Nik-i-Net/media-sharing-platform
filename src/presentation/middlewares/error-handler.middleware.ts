@@ -1,8 +1,8 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import type { Req, Res, Next } from '../express.types.ts';
-import { isDatabaseError, mapDatabaseError } from 'src/infrastructure/persistence/postgres-error-mapper.js';
-import { BaseError } from '@core/base.error.js';
-import { UserNotFoundException, ValidationException } from 'src/application/exceptions/index.js';
+import { BaseError } from '@core/base.error';
+import { isDatabaseError, mapDatabaseError } from '../../infrastructure/persistence/postgres-error-mapper';
+import { UserNotFoundException, ValidationException } from '../../application/exceptions';
 
 function errorHandler(err: unknown, req: Req, res: Res, _next: Next) {
   if (isDatabaseError(err)) err = mapDatabaseError(err);

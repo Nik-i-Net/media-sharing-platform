@@ -1,5 +1,5 @@
-import { Token } from './primitives.dto.js';
-import { UserDto } from './user.dto.js';
+import { Token } from './primitives.dto';
+import { UserDto } from './user.dto';
 import z from 'zod';
 
 export const AuthResponseDto = z

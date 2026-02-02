@@ -1,5 +1,5 @@
 import * as argon2 from 'argon2';
-import type { HashService } from '../../application/ports/hash.service.js';
+import type { HashService } from '../../application/ports/hash.service';
 
 export class Argon2HashService implements HashService {
   async hash(rawPassword: string): Promise<string> {

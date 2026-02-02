@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Token } from './primitives.dto.js';
+import { Token } from './primitives.dto';
 
 export const RefreshTokenDto = z.object({ refreshToken: Token }).brand<'RefreshTokenDto'>();
 export type RefreshTokenDto = z.infer<typeof RefreshTokenDto>;

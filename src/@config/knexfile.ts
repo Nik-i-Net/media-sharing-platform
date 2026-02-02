@@ -1,5 +1,5 @@
 import type { Knex } from 'knex';
-import { postProcessResponse, wrapIdentifier } from 'src/infrastructure/persistence/knex-utils.js';
+import { postProcessResponse, wrapIdentifier } from '../infrastructure/persistence/knex-utils';
 
 if (!process.env.DB_URL) {
   throw new Error('[env] DB_URL is missing');
@@ -11,7 +11,7 @@ const knexConfig: Knex.Config = {
     connectionString: process.env.DB_URL,
   },
   migrations: {
-    directory: '../../../migrations/',
+    directory: '../../migrations/',
     extension: 'ts',
   },
   wrapIdentifier,

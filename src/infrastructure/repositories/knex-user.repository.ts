@@ -1,8 +1,8 @@
 import type { Knex } from 'knex';
-import type { UserRepository } from 'src/domain/repositories/user.repository.js';
-import type { User } from 'src/domain/user.js';
-import { UserMapper } from '../persistence/records/user.mapper.js';
-import type { UserRecord } from '../persistence/records/user.record.js';
+import { UserMapper } from '../persistence/records/user.mapper';
+import type { UserRecord } from '../persistence/records/user.record';
+import type { UserRepository } from '../../domain/repositories/user.repository';
+import type { User } from '../../domain/user';
 
 export class KnexUserRepository implements UserRepository {
   constructor(private readonly db: Knex) {}

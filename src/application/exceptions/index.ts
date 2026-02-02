@@ -1,4 +1,4 @@
-import { BaseError } from '@core/base.error.js';
+import { BaseError } from '@core/base.error';
 
 export class UserNotFoundException extends BaseError {
   constructor(message?: string) {

@@ -1,5 +1,5 @@
-import type { ReqWithBody, Res } from '../express.types.js';
-import type { AuthService } from '../../application/auth.service.js';
+import type { ReqWithBody, Res } from '../express.types';
+import type { AuthService } from '../../application/auth.service';
 import { StatusCodes } from 'http-status-codes';
 import {
   type RegisterDto,
@@ -9,7 +9,7 @@ import {
   type UpdateEmailDto,
   AuthResponseDto,
   AccessTokenDto,
-} from '../../application/dto/index.js';
+} from '../../application/dto';
 
 class AuthController {
   constructor(private readonly authService: AuthService) {}

@@ -1,10 +1,10 @@
 import knex, { type Knex } from 'knex';
-import knexConfig from 'src/@config/knexfile.js';
-import type { UserRecord, InsertUserRecord, UpdateUserRecord } from './records/user.record.js';
+import knexConfig from '@config/knexfile';
+import type { UserRecord, InsertUserRecord, UpdateUserRecord } from './records/user.record';
 
 const db = knex(knexConfig);
 
-declare module 'knex/types/tables.js' {
+declare module 'knex/types/tables' {
   interface Tables {
     users: Knex.CompositeTableType<UserRecord, InsertUserRecord, UpdateUserRecord>;
   }

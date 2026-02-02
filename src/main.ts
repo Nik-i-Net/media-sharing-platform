@@ -1,4 +1,4 @@
-import { app } from './presentation/express.app.js';
+import { app } from './presentation/express.app';
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

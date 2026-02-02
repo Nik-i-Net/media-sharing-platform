@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import type { ZodType } from 'zod';
-import type { Next, Req } from '../express.types.js';
-import { ValidationException } from 'src/application/exceptions/index.js';
+import type { Next, Req } from '../express.types';
+import { ValidationException } from '../../application/exceptions';
 
 type ValidateRequestSchemas<Params, Body, Query> = {
   params?: ZodType<Params>;

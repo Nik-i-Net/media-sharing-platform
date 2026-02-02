@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { authController, userController } from 'src/composition-root.js';
-import { validateRequest } from './middlewares/validate-request.middleware.js';
-import { LoginDto, RegisterDto, RefreshTokenDto, UpdatePasswordDto } from 'src/application/dto/index.js';
+import { validateRequest } from './middlewares/validate-request.middleware';
+import { authController, userController } from '../composition-root';
+import { LoginDto, RefreshTokenDto, RegisterDto, UpdatePasswordDto } from '../application/dto';
 
 const userRouter = Router();
 userRouter

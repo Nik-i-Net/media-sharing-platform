@@ -1,5 +1,5 @@
-import { User } from 'src/domain/user.js';
-import type { UserRecord } from './user.record.js';
+import { User } from '../../../domain/user';
+import type { UserRecord } from './user.record';
 
 export class UserMapper {
   public static toPersistence(user: User): UserRecord {

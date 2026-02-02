@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
-import type { UserService } from 'src/application/user.service.js';
-import type { Req, Res } from '../express.types.js';
-import type { UserDto } from 'src/application/dto/user.dto.js';
+import type { Req, Res } from '../express.types';
+import type { UserService } from '../../application/user.service';
+import type { UserDto } from '../../application/dto';
 
 class UserController {
   constructor(private readonly userService: UserService) {}

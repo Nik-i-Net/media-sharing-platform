@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Username, Email, Password } from './primitives.dto.js';
+import { Username, Email, Password } from './primitives.dto';
 
 const identifier = z.union([Username, Email], "Invalid identifier, should be either 'username' or 'email'");
 

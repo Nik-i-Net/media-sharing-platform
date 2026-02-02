@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserId, Username, Email, EmailVerified } from './primitives.dto.js';
+import { UserId, Username, Email, EmailVerified } from './primitives.dto';
 
 export const UserDto = z
   .object({ id: UserId, username: Username, email: Email, emailVerified: EmailVerified })

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import type { Algorithm, PrivateKey, PublicKey, JwtPayload, SignOptions, VerifyOptions } from 'jsonwebtoken';
-import type { TokenService } from '../../application/ports/token.service.js';
+import type { TokenService } from '../../application/ports/token.service';
 
 export type JwtConfig = {
   algorithm: Algorithm;

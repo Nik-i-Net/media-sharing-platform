@@ -1,8 +1,8 @@
-import type { UserRepository } from '../domain/repositories/user.repository.js';
-import type { HashService } from './ports/hash.service.js';
+import type { UserRepository } from '../domain/repositories/user.repository';
+import type { HashService } from './ports/hash.service';
 import type { TokenService } from './ports/token.service.ts';
-import { AuthResponseDto, Email, UserDto, type LoginDto, type RegisterDto } from './dto/index.js';
-import { UserNotFoundException } from './exceptions/index.js';
+import { AuthResponseDto, Email, UserDto, type LoginDto, type RegisterDto } from './dto';
+import { UserNotFoundException } from './exceptions';
 
 export interface AuthPolicy {
   accessTokenExpiresIn: string | number;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Password } from './primitives.dto.js';
+import { Password } from './primitives.dto';
 
 export const UpdatePasswordDto = z
   .object({ oldPassword: Password, newPassword: Password, newPasswordConfirm: Password })
