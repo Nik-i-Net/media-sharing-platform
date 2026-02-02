@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { AuthPolicy } from 'src/auth/services/auth.service.js';
-import type { JwtConfig } from 'src/auth/services/token.service.js';
+import type { AuthPolicy } from 'src/application/auth.service.js';
+import type { JwtConfig } from 'src/infrastructure/adapters/jwt-token.service.js';
 
 const secretsPath = process.env.SECRETS_PATH;
 if (!secretsPath) {

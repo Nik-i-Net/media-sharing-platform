@@ -1,4 +1,4 @@
-import { app } from 'src/@shared/infrastructure/web/express.app.js';
+import { app } from './presentation/express.app.js';
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

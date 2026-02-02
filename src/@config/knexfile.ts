@@ -1,5 +1,5 @@
-import { wrapIdentifier, postProcessResponse } from '@shared/infrastructure/persistence/knex-utils.js';
 import type { Knex } from 'knex';
+import { postProcessResponse, wrapIdentifier } from 'src/infrastructure/persistence/knex-utils.js';
 
 if (!process.env.DB_URL) {
   throw new Error('[env] DB_URL is missing');
