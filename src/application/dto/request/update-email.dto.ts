@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Email, Password } from './primitives.dto';
+import { Email, Password } from '../primitives.dto';
 
 export const UpdateEmailDto = z.object({ newEmail: Email, password: Password }).brand<'UpdateEmailDto'>();
 

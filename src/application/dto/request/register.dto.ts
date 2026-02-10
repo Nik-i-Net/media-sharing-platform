@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Username, Email, Password } from './primitives.dto';
+import { Username, Email, Password } from '../primitives.dto';
 
 export const RegisterDto = z
   .object({ username: Username, email: Email, password: Password, passwordConfirm: Password })
