@@ -3,6 +3,7 @@ export const codes = {
   userNotFound: 'USER_NOT_FOUND',
   validationFailed: 'VALIDATION_FAILED',
   invalidToken: 'INVALID_TOKEN',
+  invalidCredentials: 'INVALID_CREDENTIALS',
 } as const;
 
 export const reasons = {
