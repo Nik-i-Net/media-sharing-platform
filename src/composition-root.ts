@@ -6,6 +6,7 @@ import { Argon2HashService } from './infrastructure/adapters/argon2-hash.service
 import { authPolicy, jwtConfig } from './@config/auth.config';
 import { AuthService } from './application/auth.service';
 import { AuthController } from './presentation/controllers/auth.controller';
+import { createJwtAuthMiddleware } from './presentation/middlewares/jwt-auth.middleware';
 import { JoseTokenService } from './infrastructure/adapters/jose-token.service';
 
 const userRepository = new KnexUserRepository(db);
@@ -17,4 +18,6 @@ const tokenService = new JoseTokenService(jwtConfig);
 const authService = new AuthService(userRepository, hashService, tokenService, authPolicy);
 const authController = new AuthController(authService);
 
-export { userController, authController };
+const jwtAuth = createJwtAuthMiddleware(tokenService);
+
+export { userController, authController, jwtAuth };
