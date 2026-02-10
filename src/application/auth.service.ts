@@ -1,12 +1,27 @@
+import { InvalidCredentialsException, UserAlreadyExistsException, UserNotFoundException } from '@core/errors';
+import { User } from '../domain/user';
+import { Email, Token } from './dto/primitives.dto';
 import type { UserRepository } from '../domain/repositories/user.repository';
 import type { HashService } from './ports/hash.service';
 import type { TokenService } from './ports/token.service.ts';
-import { AuthResponseDto, Email, UserDto, type LoginDto, type RegisterDto } from './dto';
-import { UserNotFoundException } from './exceptions';
+import type { Duration } from '@core/types';
+import { AuthResponseDto, type RegisterDto, type LoginDto, RefreshTokenPayload } from './dto';
 
 export interface AuthPolicy {
-  accessTokenExpiresIn: string | number;
-  refreshTokenExpiresIn: string | number;
+  accessTokenExpiresIn: Duration;
+  refreshTokenExpiresIn: Duration;
+}
+
+interface AuthResult {
+  dto: AuthResponseDto;
+  refreshToken: Token;
+  refreshTtl: Duration;
+}
+
+interface RefreshResult {
+  accessToken: Token;
+  refreshToken: Token;
+  refreshTtl: Duration;
 }
 
 class AuthService {
@@ -17,43 +32,69 @@ class AuthService {
     private readonly policy: AuthPolicy,
   ) {}
 
-  async register(dto: RegisterDto): Promise<AuthResponseDto> {
-    const errors = [];
+  async register(dto: RegisterDto): Promise<AuthResult> {
     const [emailTaken, usernameTaken] = await Promise.all([
       this.userRepository.existsByEmail(dto.email),
       this.userRepository.existsByUsername(dto.username),
     ]);
 
-    if (emailTaken) errors.push({ message: 'Email already taken', code: 'EMAIL_ALREADY_TAKEN' });
-    if (usernameTaken) errors.push({ message: 'Username already taken', code: 'USERNAME_ALREADY_TAKEN' });
+    const conflicts = [];
+    if (emailTaken) conflicts.push('email');
+    if (usernameTaken) conflicts.push('username');
+    if (conflicts.length) throw new UserAlreadyExistsException(conflicts);
 
-    // if (errors.length) throw new Con
-    return {} as AuthResponseDto;
+    const passwordHash = await this.hashService.hash(dto.password);
+    const user = User.register(dto.username, dto.email, passwordHash);
+    await this.userRepository.save(user);
+
+    return this.generateAuthResult(user);
   }
 
-  async login(dto: LoginDto): Promise<AuthResponseDto> {
+  async login(dto: LoginDto): Promise<AuthResult> {
     const isEmail = Email.safeParse(dto.identifier).success;
     const user = isEmail
       ? await this.userRepository.findByEmail(dto.identifier)
       : await this.userRepository.findByUsername(dto.identifier);
 
+    if (!user) throw new InvalidCredentialsException();
+
+    const validPassword = await this.hashService.verify(dto.password, user.password);
+    if (!validPassword) throw new InvalidCredentialsException();
+
+    return this.generateAuthResult(user);
+  }
+
+  async refresh(refreshToken: Token): Promise<RefreshResult> {
+    const rawPayload = await this.tokenService.verify(refreshToken);
+    const payload = RefreshTokenPayload.parse(rawPayload);
+    const userId = payload.sub;
+    const user = await this.userRepository.findById(userId);
     if (!user) throw new UserNotFoundException();
 
-    const userDto = UserDto.parse(user);
+    const tokens = await this.generateTokenPair(user.id);
+    return { ...tokens, refreshTtl: this.policy.refreshTokenExpiresIn };
+  }
+
+  private async generateTokenPair(userId: string) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.tokenService.sign(userDto, this.policy.accessTokenExpiresIn),
-      this.tokenService.sign(userDto, this.policy.refreshTokenExpiresIn),
+      this.tokenService.sign({ sub: userId }, this.policy.accessTokenExpiresIn),
+      this.tokenService.sign({ sub: userId }, this.policy.refreshTokenExpiresIn),
     ]);
 
-    return AuthResponseDto.parse({ user, accessToken, refreshToken });
+    return {
+      accessToken: Token.parse(accessToken),
+      refreshToken: Token.parse(refreshToken),
+    };
   }
 
-  async logout(): Promise<unknown> {
-    return 'logout';
-  }
+  private async generateAuthResult(user: User): Promise<AuthResult> {
+    const { accessToken, refreshToken } = await this.generateTokenPair(user.id);
 
-  async refresh(): Promise<unknown> {
-    return 'refresh';
+    return {
+      dto: AuthResponseDto.parse({ user, accessToken }),
+      refreshToken,
+      refreshTtl: this.policy.refreshTokenExpiresIn,
+    };
   }
 }
 
