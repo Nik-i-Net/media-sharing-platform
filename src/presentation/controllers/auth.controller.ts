@@ -1,39 +1,50 @@
-import type { ReqWithBody, Res } from '../express.types';
-import type { AuthService } from '../../application/auth.service';
 import { StatusCodes } from 'http-status-codes';
-import {
-  type RegisterDto,
-  type LoginDto,
-  type RefreshTokenDto,
-  type UpdatePasswordDto,
-  type UpdateEmailDto,
-  AuthResponseDto,
-  AccessTokenDto,
-} from '../../application/dto';
+import { ms } from '@core/utils/ms';
+import { Token } from '../../application/dto';
+import type { Duration } from '@core/types';
+import type { AuthService } from '../../application/auth.service';
+import type { ReqWithBody, Res, Req } from '../types';
+import type { RegisterDto, AuthResponseDto, LoginDto, UpdatePasswordDto, UpdateEmailDto } from '../../application/dto';
 
-class AuthController {
+export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   register = async (req: ReqWithBody<RegisterDto>, res: Res<AuthResponseDto>) => {
-    res.send();
+    const { dto, refreshToken, refreshTtl } = await this.authService.register(req.body);
+    this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
+    res.status(StatusCodes.CREATED).json(dto);
   };
 
   login = async (req: ReqWithBody<LoginDto>, res: Res<AuthResponseDto>) => {
-    const response = await this.authService.login(req.body);
-    res.json(response);
+    const { dto, refreshToken, refreshTtl } = await this.authService.login(req.body);
+    this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
+    res.json(dto);
   };
 
-  refresh = async (req: ReqWithBody<RefreshTokenDto>, res: Res<AccessTokenDto>) => {
-    res.send();
+  refresh = async (req: Req, res: Res) => {
+    const token = Token.parse(req.cookies.refreshToken);
+    const { accessToken, refreshToken, refreshTtl } = await this.authService.refresh(token);
+    this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
+    res.json({ accessToken });
   };
 
-  updatePassword = async (req: ReqWithBody<UpdatePasswordDto>, res: Res<void>) => {
-    res.sendStatus(StatusCodes.NO_CONTENT);
+  updatePassword = async (req: ReqWithBody<UpdatePasswordDto>, res: Res) => {
+    console.log(req.body);
+    res.send('todo');
   };
 
-  updateEmail = async (req: ReqWithBody<UpdateEmailDto>, res: Res<void>) => {
-    res.sendStatus(StatusCodes.NO_CONTENT);
+  updateEmail = async (req: ReqWithBody<UpdateEmailDto>, res: Res) => {
+    console.log(req.body);
+    res.send('todo');
   };
+
+  private setRefreshTokenCookie(req: Req, res: Res, token: Token, ttl: Duration) {
+    res.cookie('refreshToken', token, {
+      httpOnly: true,
+      // secure: true, // NOTE: requires https
+      sameSite: 'strict',
+      path: req.baseUrl + '/refresh',
+      maxAge: ms(ttl),
+    });
+  }
 }
-
-export { AuthController };
