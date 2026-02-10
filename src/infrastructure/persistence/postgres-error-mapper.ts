@@ -1,4 +1,4 @@
-import { BaseError } from '@core/base.error';
+import { BaseError } from '@core/errors/base.error';
 
 const POSTGRES_ERROR_CODES = {
   // NOT_NULL_VIOLATION: '23502',

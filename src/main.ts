@@ -1,5 +1,5 @@
-import { app } from './presentation/express.app';
 import { env } from '@config/env.loader';
+import { app } from './presentation/app';
 
 const port = Number(env.PORT);
 app.listen(port, () => {

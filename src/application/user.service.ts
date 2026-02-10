@@ -1,7 +1,6 @@
+import { UserNotFoundException } from '@core/errors';
 import type { UserRepository } from '../domain/repositories/user.repository';
-import type { UserId, Username, Email } from './dto';
-import { UserDto } from './dto';
-import { UserNotFoundException } from './exceptions';
+import { UserDto, type UserId, type Username, type Email } from './dto';
 
 class UserService {
   constructor(private readonly userRepository: UserRepository) {}

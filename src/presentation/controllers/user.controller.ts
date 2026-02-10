@@ -1,12 +1,12 @@
 import { StatusCodes } from 'http-status-codes';
-import type { Req, Res } from '../express.types';
+import type { Req, Res } from '../types';
 import type { UserService } from '../../application/user.service';
-import type { UserDto } from '../../application/dto';
 
 class UserController {
   constructor(private readonly userService: UserService) {}
 
-  getMe = async (req: Req, res: Res<UserDto>) => {
+  getMe = async (req: Req, res: Res) => {
+    console.log(req.get('Authorization'));
     res.end();
   };
 

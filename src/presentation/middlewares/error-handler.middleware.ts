@@ -1,8 +1,13 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import type { Req, Res, Next } from '../express.types.ts';
-import { BaseError } from '@core/base.error';
+import type { Req, Res, Next } from '../types.js';
 import { isDatabaseError, mapDatabaseError } from '../../infrastructure/persistence/postgres-error-mapper';
-import { UserNotFoundException, ValidationException } from '../../application/exceptions';
+import {
+  InvalidCredentialsException,
+  UserAlreadyExistsException,
+  UserNotFoundException,
+  ValidationException,
+} from '@core/errors';
+import { BaseError } from '@core/errors/base.error';
 
 function errorHandler(err: unknown, req: Req, res: Res, _next: Next) {
   if (isDatabaseError(err)) err = mapDatabaseError(err);
@@ -17,10 +22,15 @@ function errorHandler(err: unknown, req: Req, res: Res, _next: Next) {
 
   let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
   const details: { errors?: unknown[] } = {};
-  // Domain
 
-  // Application
+  if (err instanceof UserAlreadyExistsException) {
+    statusCode = StatusCodes.CONFLICT;
+    details.errors = err.errors;
+  }
+
   if (err instanceof UserNotFoundException) statusCode = StatusCodes.NOT_FOUND;
+  if (err instanceof InvalidCredentialsException) statusCode = StatusCodes.UNAUTHORIZED;
+
   if (err instanceof ValidationException) {
     statusCode = StatusCodes.BAD_REQUEST;
     details.errors = err.errors;
