@@ -6,6 +6,7 @@ import globals from 'globals';
 export default defineConfig([
   {
     files: ['**/*.ts'],
+    ignores: ['microservices/**'],
     languageOptions: {
       globals: globals.node,
     },
