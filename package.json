@@ -10,10 +10,13 @@
     "typecheck": "tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "build": "esbuild src/main.ts --bundle --format=esm --platform=node --packages=external --outfile=dist/main.js --sourcemap",
-    "knex": "node --env-file=.env --import tsx ./node_modules/knex/bin/cli.js --knexfile ./src/@config/knexfile.ts"
+    "knex": "node --env-file=.env --import tsx ./node_modules/knex/bin/cli.js --knexfile ./src/@config/knexfile.ts",
+    "db:up": "docker compose up -d",
+    "db:stop": "docker compose stop",
+    "db:connect": "node --env-file=.env scripts/db-connect.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "nikinet",
   "license": "ISC",
   "packageManager": "pnpm@10.21.0",
   "dependencies": {
