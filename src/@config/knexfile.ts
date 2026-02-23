@@ -5,7 +5,11 @@ import { env } from './env.loader';
 const knexConfig: Knex.Config = {
   client: 'pg',
   connection: {
-    connectionString: env.DB_URL,
+    user: env.POSTGRES_USER,
+    password: env.POSTGRES_PASSWORD,
+    host: env.POSTGRES_HOST,
+    port: Number(env.POSTGRES_PORT),
+    database: env.POSTGRES_DB,
   },
   migrations: {
     directory: '../../migrations/',

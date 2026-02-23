@@ -1,7 +1,14 @@
 const vars = [
-  'PORT', //
-  'DB_URL',
+  'PORT',
+
+  'POSTGRES_USER',
+  'POSTGRES_PASSWORD',
+  'POSTGRES_HOST',
+  'POSTGRES_PORT',
+  'POSTGRES_DB',
+
   'SECRETS_PATH',
+
   'JWT_ISSUER',
   'JWT_AUDIENCE',
 ] as const;
