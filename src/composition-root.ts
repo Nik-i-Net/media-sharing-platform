@@ -8,6 +8,7 @@ import { AuthService } from './application/auth.service';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { createJwtAuthMiddleware } from './presentation/middlewares/jwt-auth.middleware';
 import { JoseTokenService } from './infrastructure/adapters/jose-token.service';
+import { MediaController } from './presentation/controllers/media.controller';
 
 const userRepository = new KnexUserRepository(db);
 const userService = new UserService(userRepository);
@@ -18,6 +19,8 @@ const tokenService = new JoseTokenService(jwtConfig);
 const authService = new AuthService(userRepository, hashService, tokenService, authPolicy);
 const authController = new AuthController(authService);
 
+const mediaController = new MediaController();
+
 const jwtAuth = createJwtAuthMiddleware(tokenService);
 
-export { userController, authController, jwtAuth };
+export { userController, authController, mediaController, jwtAuth };
