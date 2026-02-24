@@ -1,5 +1,6 @@
 interface Env {
 	MEDIA_BUCKET: R2Bucket;
+	MEDIA_UPLOADS_QUEUE: Queue;
 }
 
 export default {
@@ -12,6 +13,16 @@ export default {
 		}
 
 		const url = new URL(request.url);
+
+		// test queue
+		if (url.pathname === '/queue-test') {
+			await env.MEDIA_UPLOADS_QUEUE.send({
+				id: crypto.randomUUID(),
+			});
+
+			return new Response('queued');
+		}
+
 		const key = url.pathname.slice(1);
 		const object = await env.MEDIA_BUCKET.get(key);
 
@@ -27,5 +38,24 @@ export default {
 		return new Response(object.body, {
 			headers,
 		});
+	},
+
+	async queue(batch, env, ctx): Promise<void> {
+		const response = await fetch('http://localhost:5000/api/v1/media/webhook', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				event: 'upload.confirmed',
+				data: batch.messages.map((message) => message.body),
+			}),
+		});
+
+		if (!response.ok) {
+			throw new Error(`RETRY_BATCH: Backend responded with ${response.status}`);
+		}
+
+		batch.ackAll();
 	},
 } satisfies ExportedHandler<Env>;

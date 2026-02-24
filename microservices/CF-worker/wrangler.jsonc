@@ -8,11 +8,9 @@
 	"main": "src/index.ts",
 	"compatibility_date": "2025-09-27",
 	"observability": {
-		"enabled": true
+		"enabled": true,
 	},
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
+	"compatibility_flags": ["nodejs_compat"],
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
@@ -46,7 +44,25 @@
 		{
 			"binding": "MEDIA_BUCKET",
 			"bucket_name": "media-sharing-platform",
-			"remote": true
-		}
-	]
+			"remote": true,
+		},
+	],
+
+	"queues": {
+		// for tests
+		"producers": [
+			{
+				"queue": "media-uploads",
+				"binding": "MEDIA_UPLOADS_QUEUE",
+			},
+		],
+
+		"consumers": [
+			{
+				"queue": "media-uploads",
+				"max_batch_size": 10,
+				"max_batch_timeout": 5,
+			},
+		],
+	},
 }
