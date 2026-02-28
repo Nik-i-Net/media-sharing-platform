@@ -1,7 +1,7 @@
 import type { Knex } from 'knex';
 
 export async function up(knex: Knex) {
-  return knex.schema.createTable('users', (table) => {
+  await knex.schema.createTable('users', (table) => {
     table.uuid('id').primary();
 
     table.string('username', 20).notNullable().unique();
@@ -9,11 +9,11 @@ export async function up(knex: Knex) {
     table.boolean('email_verified').notNullable();
     table.string('password_hash', 255).notNullable();
 
-    table.timestamp('created_at', { useTz: true }).notNullable();
-    table.timestamp('updated_at', { useTz: true }).notNullable();
+    table.timestamp('created_at', { useTz: true }).notNullable().defaultTo(knex.fn.now());
+    table.timestamp('updated_at', { useTz: true }).notNullable().defaultTo(knex.fn.now());
   });
 }
 
 export async function down(knex: Knex) {
-  return knex.schema.dropTable('users');
+  await knex.schema.dropTable('users');
 }
