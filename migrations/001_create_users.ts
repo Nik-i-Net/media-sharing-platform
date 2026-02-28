@@ -1,11 +1,13 @@
 import type { Knex } from 'knex';
 
 export async function up(knex: Knex) {
+  await knex.raw('CREATE EXTENSION IF NOT EXISTS citext'); // Case-insensitive text
+
   await knex.schema.createTable('users', (table) => {
     table.uuid('id').primary();
 
-    table.string('username', 20).notNullable().unique();
-    table.string('email', 254).notNullable().unique();
+    table.specificType('username', 'citext').notNullable().unique();
+    table.specificType('email', 'citext').notNullable().unique();
     table.boolean('email_verified').notNullable();
     table.string('password_hash', 255).notNullable();
 
