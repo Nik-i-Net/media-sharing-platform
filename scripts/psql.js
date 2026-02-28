@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 
 const { POSTGRES_USER, POSTGRES_DB } = process.env;
-const CONTAINER_NAME = 'pgsql';
+const CONTAINER_NAME = 'postgres';
 
 if (!POSTGRES_USER || !POSTGRES_DB) {
   console.error('Error: POSTGRES_USER or POSTGRES_DB not found in .env');

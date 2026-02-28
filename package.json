@@ -4,16 +4,16 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "start": "node --enable-source-maps --env-file=.env dist/main.js",
+    "dev": "node --env-file=.env --enable-source-maps dist/main.js",
     "test": "vitest",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "typecheck": "tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "build": "esbuild src/main.ts --bundle --format=esm --platform=node --packages=external --outfile=dist/main.js --sourcemap",
     "knex": "node --env-file=.env --import tsx ./node_modules/knex/bin/cli.js --knexfile ./src/@config/knexfile.ts",
-    "db:up": "docker compose up -d",
-    "db:stop": "docker compose stop",
-    "db:connect": "node --env-file=.env scripts/db-connect.js"
+    "services:start": "docker compose up -d",
+    "services:stop": "docker compose down",
+    "psql": "node --env-file=.env scripts/psql.js"
   },
   "keywords": [],
   "author": "nikinet",
