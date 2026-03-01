@@ -11,16 +11,20 @@ const vars = [
 
   'JWT_ISSUER',
   'JWT_AUDIENCE',
+
+  'CLOUDFLARE_ACCOUNT_ID',
+  'CLOUDFLARE_ACCESS_KEY_ID',
+  'CLOUDFLARE_SECRET_ACCESS_KEY',
 ] as const;
 
-const env = {} as Record<(typeof vars)[number], string>;
+const ENV = {} as Record<(typeof vars)[number], string>;
 
 for (const name of vars) {
   const value = process.env[name];
   if (!value) {
     throw new Error(`[env] ${name} is missing`);
   }
-  env[name] = value;
+  ENV[name] = value;
 }
 
-export { env };
+export { ENV };

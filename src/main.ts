@@ -1,7 +1,7 @@
-import { env } from '@config/env.loader';
+import { ENV } from '@config/env.loader';
 import { app } from './presentation/app';
 
-const port = Number(env.PORT);
+const port = Number(ENV.PORT);
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
