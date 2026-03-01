@@ -15,6 +15,7 @@ const vars = [
   'CLOUDFLARE_ACCOUNT_ID',
   'CLOUDFLARE_ACCESS_KEY_ID',
   'CLOUDFLARE_SECRET_ACCESS_KEY',
+  'CLOUDFLARE_BUCKET',
 ] as const;
 
 const ENV = {} as Record<(typeof vars)[number], string>;
