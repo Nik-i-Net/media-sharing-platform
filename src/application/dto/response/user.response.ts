@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { UserId, Username, Email, EmailVerified } from '../primitives.dto';
 import { strictParser } from '../strict-parser';
 
-export const UserSchema = z
+export const UserResponseSchema = z
   .object({ id: UserId, username: Username, email: Email, emailVerified: EmailVerified })
-  .brand<'UserDto'>();
+  .brand<'UserResponse'>();
 
-export const UserDto = { parse: strictParser(UserSchema) };
-export type UserDto = z.infer<typeof UserSchema>;
+export const UserResponse = { parse: strictParser(UserResponseSchema) };
+export type UserResponse = z.infer<typeof UserResponseSchema>;

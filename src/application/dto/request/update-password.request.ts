@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Password } from '../primitives.dto';
 
-export const UpdatePasswordDto = z
+export const UpdatePasswordRequest = z
   .object({ oldPassword: Password, newPassword: Password, newPasswordConfirm: Password })
   .superRefine((data, ctx) => {
     if (data.oldPassword === data.newPassword) {
@@ -21,6 +21,6 @@ export const UpdatePasswordDto = z
       });
     }
   })
-  .brand<'UpdatePasswordDto'>();
+  .brand<'UpdatePasswordRequest'>();
 
-export type UpdatePasswordDto = z.infer<typeof UpdatePasswordDto>;
+export type UpdatePasswordRequest = z.infer<typeof UpdatePasswordRequest>;

@@ -1,13 +1,13 @@
 // Request
-export * from './request/login.dto';
-export * from './request/register.dto';
-export * from './request/update-email.dto';
-export * from './request/update-password.dto';
-export * from './request/update-user.dto';
+export * from './request/login.request';
+export * from './request/register.request';
+export * from './request/update-email.request';
+export * from './request/update-password.request';
+export * from './request/update-user.request';
 
 // Response
-export * from './response/auth-response.dto';
-export * from './response/user.dto';
+export * from './response/auth.response';
+export * from './response/user.response';
 
 // Internal
 export * from './internal/access-token-payload.dto';

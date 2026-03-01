@@ -4,18 +4,24 @@ import { Token } from '../../application/dto';
 import type { Duration } from '@core/types';
 import type { AuthService } from '../../application/auth.service';
 import type { ReqWithBody, Res, Req } from '../types';
-import type { RegisterDto, AuthResponseDto, LoginDto, UpdatePasswordDto, UpdateEmailDto } from '../../application/dto';
+import type {
+  RegisterRequest,
+  AuthResponse,
+  LoginRequest,
+  UpdatePasswordRequest,
+  UpdateEmailRequest,
+} from '../../application/dto';
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  register = async (req: ReqWithBody<RegisterDto>, res: Res<AuthResponseDto>) => {
+  register = async (req: ReqWithBody<RegisterRequest>, res: Res<AuthResponse>) => {
     const { dto, refreshToken, refreshTtl } = await this.authService.register(req.body);
     this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
     res.status(StatusCodes.CREATED).json(dto);
   };
 
-  login = async (req: ReqWithBody<LoginDto>, res: Res<AuthResponseDto>) => {
+  login = async (req: ReqWithBody<LoginRequest>, res: Res<AuthResponse>) => {
     const { dto, refreshToken, refreshTtl } = await this.authService.login(req.body);
     this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
     res.json(dto);
@@ -28,12 +34,12 @@ export class AuthController {
     res.json({ accessToken });
   };
 
-  updatePassword = async (req: ReqWithBody<UpdatePasswordDto>, res: Res) => {
+  updatePassword = async (req: ReqWithBody<UpdatePasswordRequest>, res: Res) => {
     console.log(req.body);
     res.send('todo');
   };
 
-  updateEmail = async (req: ReqWithBody<UpdateEmailDto>, res: Res) => {
+  updateEmail = async (req: ReqWithBody<UpdateEmailRequest>, res: Res) => {
     console.log(req.body);
     res.send('todo');
   };

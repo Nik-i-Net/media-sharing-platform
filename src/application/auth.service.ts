@@ -5,7 +5,7 @@ import type { UserRepository } from '../domain/repositories/user.repository';
 import type { HashService } from './ports/hash.service';
 import type { TokenService } from './ports/token.service.ts';
 import type { Duration } from '@core/types';
-import { AuthResponseDto, type RegisterDto, type LoginDto, RefreshTokenPayload } from './dto';
+import { AuthResponse, type RegisterRequest, type LoginRequest, RefreshTokenPayload } from './dto';
 
 export interface AuthPolicy {
   accessTokenExpiresIn: Duration;
@@ -13,7 +13,7 @@ export interface AuthPolicy {
 }
 
 interface AuthResult {
-  dto: AuthResponseDto;
+  dto: AuthResponse;
   refreshToken: Token;
   refreshTtl: Duration;
 }
@@ -32,7 +32,7 @@ class AuthService {
     private readonly policy: AuthPolicy,
   ) {}
 
-  async register(dto: RegisterDto): Promise<AuthResult> {
+  async register(dto: RegisterRequest): Promise<AuthResult> {
     const [emailTaken, usernameTaken] = await Promise.all([
       this.userRepository.existsByEmail(dto.email),
       this.userRepository.existsByUsername(dto.username),
@@ -50,7 +50,7 @@ class AuthService {
     return this.generateAuthResult(user);
   }
 
-  async login(dto: LoginDto): Promise<AuthResult> {
+  async login(dto: LoginRequest): Promise<AuthResult> {
     const isEmail = Email.safeParse(dto.identifier).success;
     const user = isEmail
       ? await this.userRepository.findByEmail(dto.identifier)
@@ -91,7 +91,7 @@ class AuthService {
     const { accessToken, refreshToken } = await this.generateTokenPair(user.id);
 
     return {
-      dto: AuthResponseDto.parse({ user, accessToken }),
+      dto: AuthResponse.parse({ user, accessToken }),
       refreshToken,
       refreshTtl: this.policy.refreshTokenExpiresIn,
     };

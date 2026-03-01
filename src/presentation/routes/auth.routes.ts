@@ -1,19 +1,19 @@
 import { Router } from 'express';
 import { validateRequest } from '../middlewares/validate-request.middleware';
 import { authController } from '../../composition-root';
-import { RegisterDto, LoginDto, UpdatePasswordDto } from '../../application/dto';
+import { RegisterRequest, LoginRequest, UpdatePasswordRequest } from '../../application/dto';
 
 const authRouter = Router();
 
 authRouter.post(
   '/register', //
-  validateRequest({ body: RegisterDto }),
+  validateRequest({ body: RegisterRequest }),
   authController.register,
 );
 
 authRouter.post(
   '/login', //
-  validateRequest({ body: LoginDto }),
+  validateRequest({ body: LoginRequest }),
   authController.login,
 );
 
@@ -24,7 +24,7 @@ authRouter.post(
 
 authRouter.patch(
   '/password', //
-  validateRequest({ body: UpdatePasswordDto }),
+  validateRequest({ body: UpdatePasswordRequest }),
   authController.updatePassword,
 );
 

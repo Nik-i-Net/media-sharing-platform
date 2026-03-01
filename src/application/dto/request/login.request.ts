@@ -3,5 +3,5 @@ import { Username, Email, Password } from '../primitives.dto';
 
 const identifier = z.union([Username, Email], "Invalid identifier, should be either 'username' or 'email'");
 
-export const LoginDto = z.object({ identifier, password: Password }).brand<'LoginDto'>();
-export type LoginDto = z.infer<typeof LoginDto>;
+export const LoginRequest = z.object({ identifier, password: Password }).brand<'LoginRequest'>();
+export type LoginRequest = z.infer<typeof LoginRequest>;
