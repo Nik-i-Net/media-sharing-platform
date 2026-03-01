@@ -1,3 +1,4 @@
+import { mediaPolicy } from '@config/media-policy';
 import { z } from 'zod';
 
 // Users + Auth
@@ -26,22 +27,23 @@ export const Token = z.jwt('Invalid JWT').brand<'Token'>();
 export type Token = z.infer<typeof Token>;
 
 // Media
-export const MediaId = z.uuidv4('Invalid UUID');
+export const MediaId = z.nanoid({
+  pattern: /^[a-zA-Z0-9]{12}$/,
+  error: 'Invalid media id, should be a 12 character long nanoid',
+});
 
-export const MediaTitle = z
-  .string()
-  .min(4, 'Media title length must be between 4 and 20 characters')
-  .max(20, 'Media title length must be between 4 and 20 characters');
+export const MediaHash = z.hash('sha256', {
+  enc: 'hex',
+  error: 'Invalid hash, should be sha256 hex string',
+});
+
+export const MimeType = z.enum(
+  mediaPolicy.allowedMimeTypes,
+  `Invalid mime type, should be one of: ${mediaPolicy.allowedMimeTypes.join(', ')}`,
+);
 
 // Collections
-export const CollectionId = z.uuidv4('Invalid UUID');
-
-export const CollectionName = z
-  .string()
-  .min(4, 'Collection name length must be between 4 and 20 characters')
-  .max(20, 'Collection name length must be between 4 and 20 characters');
-
-export const CollectionTTL = z.enum(
-  ['3h', '1d', '7d', '30d'],
-  'Invalid period, should be one of: 1h, 1d, 7d, 30d or never',
-);
+export const CollectionId = z.nanoid({
+  pattern: /^[a-zA-Z0-9]{12}$/,
+  error: 'Invalid collection id, should be a 12 character long nanoid',
+});
