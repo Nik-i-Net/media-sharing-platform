@@ -1,0 +1,31 @@
+meta {
+  name: initiateUploads
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/media/uploads
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    const url = res.body.url
+    if (!url) return
+  
+    bru.setVar('R2uploadUrl', url)
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

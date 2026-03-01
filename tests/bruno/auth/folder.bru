@@ -11,6 +11,6 @@ script:post-response {
     const token = res.body.accessToken
     if (!token) return
   
-    bru.setEnvVar('accessToken', res.body.accessToken, {persist: true})
+    bru.setEnvVar('accessToken', token, {persist: true})
   }
 }

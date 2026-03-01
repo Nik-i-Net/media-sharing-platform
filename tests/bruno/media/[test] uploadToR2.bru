@@ -1,0 +1,28 @@
+meta {
+  name: [test] uploadToR2
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{R2uploadUrl}}
+  body: file
+  auth: none
+}
+
+body:json {
+  {
+    
+  }
+}
+
+body:file {
+  file: @file(assets/black.png) @contentType(image/png)
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+}
