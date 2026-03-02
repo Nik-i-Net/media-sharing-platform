@@ -1,4 +1,4 @@
-import { MiB, MIME_TYPES } from '@core/constants';
+import { MEMORY_UNITS, MIME_TYPES } from '@core/constants';
 
 export const mediaPolicy = {
   allowedMimeTypes: [
@@ -22,8 +22,8 @@ export const mediaPolicy = {
   ],
 
   maxFileSizes: {
-    guest: 1 * MiB,
-    user: 5 * MiB,
-    // premium: 20 * MiB,
+    guest: 1 * MEMORY_UNITS.MiB,
+    user: 5 * MEMORY_UNITS.MiB,
+    // premium: 20 * MEMORY_UNITS.MiB,
   },
 };
