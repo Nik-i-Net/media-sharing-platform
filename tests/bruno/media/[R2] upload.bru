@@ -1,5 +1,5 @@
 meta {
-  name: [test] uploadToR2
+  name: [R2] upload
   type: http
   seq: 3
 }
@@ -17,7 +17,7 @@ body:json {
 }
 
 body:file {
-  file: @file(assets/black.png) @contentType(image/png)
+  file: @file(assets/images/image.png) @contentType(image/png)
 }
 
 settings {
