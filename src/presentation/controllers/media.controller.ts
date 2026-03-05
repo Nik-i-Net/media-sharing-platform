@@ -1,17 +1,18 @@
 import { StatusCodes } from 'http-status-codes';
-import type { Req, Res } from '../types';
+import type { Req, ReqWithBody, Res } from '../types';
 import type { MediaService } from '../../application/media.service';
+import type { InitiateUploadsRequest } from '../../application/dto/request/initiate-uploads.request';
 
 class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
   getDownloadUrl = async (req: Req, res: Res) => {
-    const url = await this.mediaService.getDownloadUrl();
+    const url = await this.mediaService.getDownloadUrl([]);
     res.status(StatusCodes.OK).json({ url });
   };
 
-  initiateUploads = async (req: Req, res: Res) => {
-    const url = await this.mediaService.initiateUploads();
+  initiateUploads = async (req: ReqWithBody<InitiateUploadsRequest>, res: Res) => {
+    const url = await this.mediaService.initiateUploads(req.body);
     res.status(StatusCodes.OK).json({ url });
   };
 

@@ -1,52 +1,58 @@
-import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { ENV } from '@config/env.loader';
+import type { MediaRepository } from '../domain/repositories/media.repository';
+import type { InitiateUploadsRequest } from './dto/request/initiate-uploads.request';
+import type { StorageService } from './ports/storage.service';
 
-const S3 = new S3Client({
-  region: 'auto',
-  endpoint: `https://${ENV.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: ENV.CLOUDFLARE_ACCESS_KEY_ID,
-    secretAccessKey: ENV.CLOUDFLARE_SECRET_ACCESS_KEY,
-  },
-});
+export interface MediaPolicy {
+  allowedMimeTypes: string[];
+  fileSizeLimits: {
+    guest: number;
+    user: number;
+    // premium: number;
+  };
+}
 
-const key = 'first-image.png';
-// const hash = crypto.createHash('sha256').update(fileBuffer).digest('base64');
+export class MediaService {
+  constructor(
+    private readonly mediaRepository: MediaRepository,
+    private readonly storageService: StorageService,
+    private readonly policy: MediaPolicy,
+  ) {}
 
-class MediaService {
-  constructor() {}
-
-  async getDownloadUrl() {
-    const getUrl = await getSignedUrl(
-      S3, //
-      new GetObjectCommand({ Bucket: ENV.CLOUDFLARE_BUCKET, Key: key }),
-      { expiresIn: 30 },
+  async getDownloadUrl(keys: string[]) {
+    const urls = await Promise.all(
+      keys.map((key) => {
+        return this.storageService.signDownloadUrl(key);
+      }),
     );
-
-    return getUrl;
+    return urls;
   }
 
-  async initiateUploads() {
-    const putUrl = await getSignedUrl(
-      S3,
-      new PutObjectCommand({
-        Bucket: ENV.CLOUDFLARE_BUCKET,
-        Key: 'image.png',
-        ContentType: 'image/png',
+  async initiateUploads(dto: InitiateUploadsRequest) {
+    const { files, collectionId } = dto;
+    console.log('TODO:', collectionId);
+
+    const payload = await Promise.all(
+      files.map(async (file) => {
+        const { filename, contentType, contentLength, sha256base64 } = file;
+
+        if (contentLength > this.policy.fileSizeLimits.guest) {
+          throw new Error('File size is too large');
+        }
+
+        const sha256hex = Buffer.from(sha256base64, 'base64').toString('hex');
+        const key = `${sha256hex.slice(0, 2)}/${sha256hex.slice(2)}`;
+        const url = await this.storageService.signUploadUrl(key, contentType, contentLength, sha256base64);
+        console.log(filename, url);
+        throw new Error('TODO');
       }),
-      {
-        expiresIn: 300,
-        signableHeaders: new Set(['content-type']),
-      },
     );
 
-    return putUrl;
+    return payload;
+
+    // { files: [{id, url, method, headers}] }
   }
 
   async confirmUploads() {
     return 'Confirm uploads';
   }
 }
-
-export { MediaService };
