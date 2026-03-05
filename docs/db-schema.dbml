@@ -19,9 +19,12 @@ Table users {
 }
 
 Table blobs {
-  id varchar(64) [pk, note: 'sha256']
+  id uuid [pk]
   storage_key varchar(255) [not null, unique]
-  mime_type varchar(255) [not null]
+  content_type varchar(255) [not null]
+  content_length integer [not null]
+  hash varchar(255) [not null, unique]
+  hash_algorithm varchar(255) [not null]
   status blob_status [not null, default: 'pending']
   created_at timestamp [not null, default: `now()`]
 }
