@@ -24,7 +24,7 @@ interface RefreshResult {
   refreshTtl: Duration;
 }
 
-class AuthService {
+export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hashService: HashService,
@@ -97,5 +97,3 @@ class AuthService {
     };
   }
 }
-
-export { AuthService };
