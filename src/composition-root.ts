@@ -3,13 +3,15 @@ import { UserService } from './application/user.service';
 import { KnexUserRepository } from './infrastructure/repositories/knex-user.repository';
 import { UserController } from './presentation/controllers/user.controller';
 import { Argon2HashService } from './infrastructure/adapters/argon2-hash.service';
-import { authPolicy, jwtConfig } from './@config/auth.config';
+import { jwtConfig } from './@config/jwt.config';
 import { AuthService } from './application/auth.service';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { createJwtAuthMiddleware } from './presentation/middlewares/jwt-auth.middleware';
 import { JoseTokenService } from './infrastructure/adapters/jose-token.service';
 import { MediaController } from './presentation/controllers/media.controller';
 import { MediaService } from './application/media.service';
+import { authPolicy } from '@config/auth.policy';
+import { KnexMediaRepository } from './infrastructure/repositories/knex-media.repository';
 
 const userRepository = new KnexUserRepository(db);
 const userService = new UserService(userRepository);
