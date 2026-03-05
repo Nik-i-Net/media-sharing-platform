@@ -1,4 +1,4 @@
-import { mediaPolicy } from '@config/media-policy';
+import { mediaPolicy } from '@config/media.policy';
 import { z } from 'zod';
 
 // Users + Auth
@@ -32,15 +32,18 @@ export const MediaId = z.nanoid({
   error: 'Invalid media id, should be a 12 character long nanoid',
 });
 
-export const MediaHash = z.hash('sha256', {
-  enc: 'hex',
-  error: 'Invalid hash, should be sha256 hex string',
-});
-
 export const MimeType = z.enum(
   mediaPolicy.allowedMimeTypes,
   `Invalid mime type, should be one of: ${mediaPolicy.allowedMimeTypes.join(', ')}`,
 );
+
+export const Sha256Base64 = z
+  .hash('sha256', {
+    enc: 'base64',
+    error: 'Invalid hash, should be sha256 base64 string',
+  })
+  .brand<'Sha256Base64'>();
+export type Sha256Base64 = z.infer<typeof Sha256Base64>;
 
 // Collections
 export const CollectionId = z.nanoid({
