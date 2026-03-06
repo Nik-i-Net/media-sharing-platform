@@ -43,8 +43,9 @@ export class AuthService {
     if (usernameTaken) conflicts.push('username');
     if (conflicts.length) throw new UserAlreadyExistsException(conflicts);
 
+    const id = crypto.randomUUID();
     const passwordHash = await this.hashService.hash(dto.password);
-    const user = User.register(dto.username, dto.email, passwordHash);
+    const user = User.register(id, dto.username, dto.email, passwordHash);
     await this.userRepository.save(user);
 
     return this.generateAuthResult(user);
@@ -58,7 +59,7 @@ export class AuthService {
 
     if (!user) throw new InvalidCredentialsException();
 
-    const validPassword = await this.hashService.verify(dto.password, user.password);
+    const validPassword = await this.hashService.verify(dto.password, user.passwordHash);
     if (!validPassword) throw new InvalidCredentialsException();
 
     return this.generateAuthResult(user);

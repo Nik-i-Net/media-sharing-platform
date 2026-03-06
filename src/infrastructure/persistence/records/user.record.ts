@@ -22,7 +22,7 @@ export class UserMapper {
       username: user.username,
       email: user.email,
       email_verified: user.emailVerified,
-      password_hash: user.password,
+      password_hash: user.passwordHash,
       created_at: user.createdAt,
       updated_at: user.updatedAt,
     };
