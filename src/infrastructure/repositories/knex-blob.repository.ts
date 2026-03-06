@@ -16,6 +16,12 @@ export class KnexBlobRepository implements BlobRepository {
     }
   }
 
+  async findById(id: number): Promise<BlobEntity | null> {
+    const record = await this.blobs.where({ id }).first();
+    if (!record) return null;
+    return BlobMapper.toDomain(record);
+  }
+
   async findByHash(hash: string, hashAlgorithm: string = 'sha256base64'): Promise<BlobEntity | null> {
     const record = await this.blobs.where({ hash, hash_algorithm: hashAlgorithm }).first();
     if (!record) return null;
