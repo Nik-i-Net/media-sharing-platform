@@ -12,7 +12,7 @@ export interface BlobRecord {
 }
 
 export type InsertBlobRecord = Omit<BlobRecord, 'id'>;
-export type UpdateBlobRecord = Partial<Pick<BlobRecord, 'storage_key' | 'hash' | 'hash_algorithm'>>;
+export type UpdateBlobRecord = Partial<Pick<BlobRecord, 'storage_key' | 'hash' | 'hash_algorithm' | 'updated_at'>>;
 
 export class BlobMapper {
   public static toNewRecord(blob: BlobEntity): InsertBlobRecord {

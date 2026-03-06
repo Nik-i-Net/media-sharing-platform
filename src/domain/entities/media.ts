@@ -16,7 +16,7 @@ export class Media {
 
   #filename: string;
   #expiresAt: Date | null;
-  #updatedAt: Date | null;
+  #updatedAt: Date;
 
   constructor(
     readonly id: string,

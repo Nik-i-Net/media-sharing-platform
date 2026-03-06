@@ -14,11 +14,6 @@ export class KnexUserRepository implements UserRepository {
       .merge(['username', 'email', 'email_verified', 'password_hash', 'updated_at']);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const affectedRows = await this.users.where({ id }).del();
-    return affectedRows > 0;
-  }
-
   async findById(id: string): Promise<User | null> {
     const record = await this.users.where({ id }).first();
     if (!record) return null;
@@ -50,6 +45,11 @@ export class KnexUserRepository implements UserRepository {
   async existsByUsername(username: string): Promise<boolean> {
     const found = await this.users.where({ username }).first('id');
     return Boolean(found);
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const affectedRows = await this.users.where({ id }).del();
+    return affectedRows > 0;
   }
 
   private get users() {

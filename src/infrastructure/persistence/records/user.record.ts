@@ -12,7 +12,7 @@ export interface UserRecord {
 
 export type InsertUserRecord = UserRecord;
 export type UpdateUserRecord = Partial<
-  Pick<InsertUserRecord, 'username' | 'email' | 'email_verified' | 'password_hash' | 'updated_at'>
+  Pick<UserRecord, 'username' | 'email' | 'email_verified' | 'password_hash' | 'updated_at'>
 >;
 
 export class UserMapper {
