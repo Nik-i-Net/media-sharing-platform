@@ -1,6 +1,5 @@
 import type { Knex } from 'knex';
 import { UserMapper } from '../persistence/records/user.record';
-import type { UserRecord } from '../persistence/records/user.record';
 import type { UserRepository } from '../../domain/repositories/user.repository';
 import type { User } from '../../domain/entities/user';
 
@@ -8,9 +7,9 @@ export class KnexUserRepository implements UserRepository {
   constructor(private readonly db: Knex) {}
 
   async save(user: User): Promise<void> {
-    const persistenceUser = UserMapper.toPersistence(user);
+    const data = UserMapper.toPersistence(user);
     await this.users
-      .insert(persistenceUser)
+      .insert(data)
       .onConflict('id')
       .merge(['username', 'email', 'email_verified', 'password_hash', 'updated_at']);
   }
@@ -21,44 +20,39 @@ export class KnexUserRepository implements UserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.findBy('id', id);
+    const record = await this.users.where({ id }).first();
+    if (!record) return null;
+    return UserMapper.toDomain(record);
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.findBy('email', email);
+    const record = await this.users.where({ email }).first();
+    if (!record) return null;
+    return UserMapper.toDomain(record);
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return this.findBy('username', username);
+    const record = await this.users.where({ username }).first();
+    if (!record) return null;
+    return UserMapper.toDomain(record);
   }
 
   async existsById(id: string): Promise<boolean> {
-    return this.existsBy('id', id);
+    const found = await this.users.where({ id }).first('id');
+    return Boolean(found);
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    return this.existsBy('email', email);
+    const found = await this.users.where({ email }).first('id');
+    return Boolean(found);
   }
 
   async existsByUsername(username: string): Promise<boolean> {
-    return this.existsBy('username', username);
+    const found = await this.users.where({ username }).first('id');
+    return Boolean(found);
   }
 
   private get users() {
     return this.db('users');
-  }
-
-  private async findBy<Column extends keyof UserRecord>(
-    column: Column,
-    value: UserRecord[Column],
-  ): Promise<User | null> {
-    const row = await this.users.where(column, value).first();
-    if (!row) return null;
-    return UserMapper.toDomain(row);
-  }
-
-  private async existsBy<Column extends keyof UserRecord>(column: Column, value: UserRecord[Column]): Promise<boolean> {
-    const found = await this.users.where(column, value).first('id');
-    return Boolean(found);
   }
 }
