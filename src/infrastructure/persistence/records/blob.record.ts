@@ -8,6 +8,7 @@ export interface BlobRecord {
   mime_type: string;
   size_bytes: number;
   created_at: Date;
+  updated_at: Date;
 }
 
 export type InsertBlobRecord = Omit<BlobRecord, 'id'>;
@@ -22,6 +23,7 @@ export class BlobMapper {
       mime_type: blob.mimeType,
       size_bytes: blob.size,
       created_at: blob.createdAt,
+      updated_at: blob.updatedAt,
     };
   }
 
@@ -42,6 +44,7 @@ export class BlobMapper {
       record.mime_type,
       record.size_bytes,
       record.created_at,
+      record.updated_at,
     );
   }
 }

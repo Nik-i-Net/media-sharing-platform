@@ -7,13 +7,14 @@ export class BlobEntity {
     readonly mimeType: string,
     readonly size: number,
     readonly createdAt: Date,
+    readonly updatedAt: Date,
   ) {}
 
   public static create(storageKey: string, hash: string, mimeType: string, size: number) {
     const id = null;
     const hashAlgorithm = 'sha256base64';
-    const createdAt = new Date();
-    const blob = new BlobEntity(id, storageKey, hash, hashAlgorithm, mimeType, size, createdAt);
+    const now = new Date();
+    const blob = new BlobEntity(id, storageKey, hash, hashAlgorithm, mimeType, size, now, now);
     return blob;
   }
 }
