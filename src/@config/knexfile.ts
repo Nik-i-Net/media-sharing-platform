@@ -1,5 +1,4 @@
 import type { Knex } from 'knex';
-import { postProcessResponse, wrapIdentifier } from '../infrastructure/persistence/knex-utils';
 import { ENV } from './env.loader';
 
 const knexConfig: Knex.Config = {
@@ -15,8 +14,6 @@ const knexConfig: Knex.Config = {
     directory: '../../migrations/',
     extension: 'ts',
   },
-  wrapIdentifier,
-  postProcessResponse,
 };
 
 export default knexConfig;

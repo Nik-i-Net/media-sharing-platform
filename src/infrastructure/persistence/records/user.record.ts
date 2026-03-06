@@ -1,18 +1,18 @@
-import { User } from '../../../domain/user';
+import { User } from '../../../domain/entities/user';
 
 export interface UserRecord {
   id: string;
   username: string;
   email: string;
-  emailVerified: boolean;
-  passwordHash: string;
-  createdAt: Date;
-  updatedAt: Date;
+  email_verified: boolean;
+  password_hash: string;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export type InsertUserRecord = UserRecord;
 export type UpdateUserRecord = Partial<
-  Pick<InsertUserRecord, 'username' | 'email' | 'emailVerified' | 'passwordHash' | 'updatedAt'>
+  Pick<InsertUserRecord, 'username' | 'email' | 'email_verified' | 'password_hash' | 'updated_at'>
 >;
 
 export class UserMapper {
@@ -21,10 +21,10 @@ export class UserMapper {
       id: user.id,
       username: user.username,
       email: user.email,
-      emailVerified: user.emailVerified,
-      passwordHash: user.password,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      email_verified: user.emailVerified,
+      password_hash: user.password,
+      created_at: user.createdAt,
+      updated_at: user.updatedAt,
     };
   }
 
@@ -33,10 +33,10 @@ export class UserMapper {
       record.id,
       record.username,
       record.email,
-      record.emailVerified,
-      record.passwordHash,
-      record.createdAt,
-      record.updatedAt,
+      record.email_verified,
+      record.password_hash,
+      record.created_at,
+      record.updated_at,
     );
   }
 }

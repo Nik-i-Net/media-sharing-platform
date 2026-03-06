@@ -1,5 +1,5 @@
 import { InvalidCredentialsException, UserAlreadyExistsException, UserNotFoundException } from '@core/errors';
-import { User } from '../domain/user';
+import { User } from '../domain/entities/user';
 import { Email, Token } from './dto/primitives.dto';
 import type { UserRepository } from '../domain/repositories/user.repository';
 import type { HashService } from './ports/hash.service';

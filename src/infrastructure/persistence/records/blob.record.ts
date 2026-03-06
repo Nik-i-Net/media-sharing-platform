@@ -1,47 +1,47 @@
-import { BlobEntity } from '../../../domain/blob';
+import { BlobEntity } from '../../../domain/entities/blob';
 
 export interface BlobRecord {
   id: number;
-  storageKey: string;
+  storage_key: string;
   hash: string;
-  hashAlgorithm: string;
-  mimeType: string;
-  size: number;
-  createdAt: Date;
+  hash_algorithm: string;
+  mime_type: string;
+  size_bytes: number;
+  created_at: Date;
 }
 
 export type InsertBlobRecord = Omit<BlobRecord, 'id'>;
-export type UpdateBlobRecord = Partial<Pick<BlobRecord, 'storageKey' | 'hash' | 'hashAlgorithm'>>;
+export type UpdateBlobRecord = Partial<Pick<BlobRecord, 'storage_key' | 'hash' | 'hash_algorithm'>>;
 
 export class BlobMapper {
   public static toNewRecord(blob: BlobEntity): InsertBlobRecord {
     return {
-      storageKey: blob.storageKey,
+      storage_key: blob.storageKey,
       hash: blob.hash,
-      hashAlgorithm: blob.hashAlgorithm,
-      mimeType: blob.mimeType,
-      size: blob.size,
-      createdAt: blob.createdAt,
+      hash_algorithm: blob.hashAlgorithm,
+      mime_type: blob.mimeType,
+      size_bytes: blob.size,
+      created_at: blob.createdAt,
     };
   }
 
   public static toUpdateRecord(blob: BlobEntity): UpdateBlobRecord {
     return {
-      storageKey: blob.storageKey,
+      storage_key: blob.storageKey,
       hash: blob.hash,
-      hashAlgorithm: blob.hashAlgorithm,
+      hash_algorithm: blob.hashAlgorithm,
     };
   }
 
   public static toDomain(record: BlobRecord): BlobEntity {
     return new BlobEntity(
       record.id,
-      record.storageKey,
+      record.storage_key,
       record.hash,
-      record.hashAlgorithm,
-      record.mimeType,
-      record.size,
-      record.createdAt,
+      record.hash_algorithm,
+      record.mime_type,
+      record.size_bytes,
+      record.created_at,
     );
   }
 }

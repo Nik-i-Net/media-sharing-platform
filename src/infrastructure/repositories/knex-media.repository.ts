@@ -1,6 +1,6 @@
 import type { Knex } from 'knex';
 import type { MediaRepository } from '../../domain/repositories/media.repository';
-import type { Media } from '../../domain/media';
+import type { Media } from '../../domain/entities/media';
 
 export class KnexMediaRepository implements MediaRepository {
   constructor(private readonly db: Knex) {}

@@ -2,7 +2,7 @@ import type { Knex } from 'knex';
 import { UserMapper } from '../persistence/records/user.record';
 import type { UserRecord } from '../persistence/records/user.record';
 import type { UserRepository } from '../../domain/repositories/user.repository';
-import type { User } from '../../domain/user';
+import type { User } from '../../domain/entities/user';
 
 export class KnexUserRepository implements UserRepository {
   constructor(private readonly db: Knex) {}
@@ -12,7 +12,7 @@ export class KnexUserRepository implements UserRepository {
     await this.users
       .insert(persistenceUser)
       .onConflict('id')
-      .merge(['username', 'email', 'emailVerified', 'passwordHash', 'updatedAt']);
+      .merge(['username', 'email', 'email_verified', 'password_hash', 'updated_at']);
   }
 
   async delete(id: string): Promise<boolean> {

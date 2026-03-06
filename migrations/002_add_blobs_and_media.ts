@@ -8,7 +8,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('hash', 255).notNullable();
     table.string('hash_algorithm', 255).notNullable();
     table.string('mime_type', 255).notNullable();
-    table.integer('size').notNullable();
+    table.integer('size_bytes').notNullable();
     table.enum('status', ['pending', 'ready'], { useNative: true, enumName: 'blob_status' }).defaultTo('pending');
 
     table.timestamp('created_at', { useTz: true }).notNullable().defaultTo(knex.fn.now());

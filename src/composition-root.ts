@@ -15,6 +15,7 @@ import { ENV } from '@config/env.loader';
 import { authPolicy } from '@config/auth.policy';
 import { mediaPolicy } from '@config/media.policy';
 import { KnexMediaRepository } from './infrastructure/repositories/knex-media.repository';
+import { KnexBlobRepository } from './infrastructure/repositories/knex-blob.repository';
 
 const userRepository = new KnexUserRepository(db);
 const userService = new UserService(userRepository);
@@ -26,13 +27,14 @@ const authService = new AuthService(userRepository, hashService, tokenService, a
 const authController = new AuthController(authService);
 
 const mediaRepository = new KnexMediaRepository(db);
+const blobRepository = new KnexBlobRepository(db);
 const storageService = new R2StorageService(
   ENV.CLOUDFLARE_ACCOUNT_ID,
   ENV.CLOUDFLARE_ACCESS_KEY_ID,
   ENV.CLOUDFLARE_SECRET_ACCESS_KEY,
   ENV.CLOUDFLARE_BUCKET,
 );
-const mediaService = new MediaService(mediaRepository, storageService, mediaPolicy);
+const mediaService = new MediaService(mediaRepository, blobRepository, storageService, mediaPolicy);
 const mediaController = new MediaController(mediaService);
 
 const jwtAuth = createJwtAuthMiddleware(tokenService);

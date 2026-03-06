@@ -1,8 +1,9 @@
 import type { Knex } from 'knex';
-import type { BlobEntity } from '../../domain/blob';
+import type { BlobEntity } from '../../domain/entities/blob';
 import { BlobMapper } from '../persistence/records/blob.record';
+import type { BlobRepository } from '../../domain/repositories/blob.repository';
 
-export class KnexBlobRepository {
+export class KnexBlobRepository implements BlobRepository {
   constructor(private readonly db: Knex) {}
 
   async save(blob: BlobEntity): Promise<void> {
@@ -16,7 +17,7 @@ export class KnexBlobRepository {
   }
 
   async findByHash(hash: string, hashAlgorithm: string = 'sha256base64'): Promise<BlobEntity | null> {
-    const record = await this.blobs.where({ hash, hashAlgorithm }).first();
+    const record = await this.blobs.where({ hash, hash_algorithm: hashAlgorithm }).first();
     if (!record) return null;
     return BlobMapper.toDomain(record);
   }

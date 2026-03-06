@@ -1,4 +1,6 @@
+import type { BlobEntity } from '../entities/blob';
+
 export interface BlobRepository {
-  save(blob: Blob): Promise<void>;
-  findByHash(hash: string): Promise<Blob | null>;
+  save(blob: BlobEntity): Promise<void>;
+  findByHash(hash: string): Promise<BlobEntity | null>;
 }
