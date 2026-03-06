@@ -1,5 +1,5 @@
 import type { Knex } from 'knex';
-import { UserMapper } from '../persistence/records/user.mapper';
+import { UserMapper } from '../persistence/records/user.record';
 import type { UserRecord } from '../persistence/records/user.record';
 import type { UserRepository } from '../../domain/repositories/user.repository';
 import type { User } from '../../domain/user';
