@@ -35,7 +35,7 @@ export class MediaService {
 
     const payload = await Promise.all(
       files.map(async (file) => {
-        const { filename, mimeType, size, sha256base64 } = file;
+        const { title, mimeType, size, sha256base64 } = file;
 
         if (size > this.policy.fileSizeLimits.guest) {
           throw new Error('File size is too large');
@@ -44,7 +44,7 @@ export class MediaService {
         const sha256hex = Buffer.from(sha256base64, 'base64').toString('hex');
         const key = `${sha256hex.slice(0, 2)}/${sha256hex.slice(2)}`;
         const url = await this.storageService.signUploadUrl(key, mimeType, size, sha256base64);
-        console.log(filename, url);
+        console.log(title, url);
         throw new Error('TODO');
       }),
     );

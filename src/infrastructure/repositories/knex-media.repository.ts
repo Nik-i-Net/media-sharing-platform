@@ -11,7 +11,7 @@ export class KnexMediaRepository implements MediaRepository {
     await this.media //
       .insert(data)
       .onConflict('id')
-      .merge(['filename', 'expires_at', 'updated_at']);
+      .merge(['title', 'expires_at', 'updated_at']);
   }
 
   async findById(id: string): Promise<Media | null> {

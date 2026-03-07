@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { CollectionId, MimeType, Sha256Base64 } from '../primitives.dto';
+import { CollectionId, AllowedMimeType, Sha256Base64 } from '../primitives.dto';
 
 const FileMetadata = z.object({
-  filename: z.string().nonempty(),
-  mimeType: MimeType,
+  title: z.string().nonempty(),
+  mimeType: AllowedMimeType,
   size: z.int().min(1),
   sha256base64: Sha256Base64,
 });

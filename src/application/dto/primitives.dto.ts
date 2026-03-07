@@ -32,7 +32,7 @@ export const MediaId = z.nanoid({
   error: 'Invalid media id, should be a 12 character long nanoid',
 });
 
-export const MimeType = z.enum(
+export const AllowedMimeType = z.enum(
   mediaPolicy.allowedMimeTypes,
   `Invalid mime type, should be one of: ${mediaPolicy.allowedMimeTypes.join(', ')}`,
 );

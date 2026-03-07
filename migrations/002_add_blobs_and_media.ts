@@ -22,7 +22,7 @@ export async function up(knex: Knex): Promise<void> {
     table.uuid('user_id').nullable();
     table.integer('blob_id').unsigned().notNullable();
 
-    table.string('filename', 50).notNullable();
+    table.string('title', 50).notNullable();
 
     table.timestamp('expires_at', { useTz: true }).nullable();
     table.timestamp('created_at', { useTz: true }).notNullable().defaultTo(knex.fn.now());
