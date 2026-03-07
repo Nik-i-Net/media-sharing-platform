@@ -30,6 +30,7 @@ export class R2StorageService implements StorageService {
       signableHeaders: new Set(['content-type', 'content-length']),
       unhoistableHeaders: new Set(['x-amz-checksum-sha256']),
     });
+
     return url;
   }
 
