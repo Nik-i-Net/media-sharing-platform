@@ -1,5 +1,5 @@
-import { MEMORY_UNITS } from '@core/constants';
-import type { MediaPolicy } from '../application/media.service';
+import { MEMORY_UNITS } from '@common/constants';
+import type { MediaPolicy } from '@features/media/media.service';
 
 export const mediaPolicy: MediaPolicy = {
   allowedMimeTypes: [

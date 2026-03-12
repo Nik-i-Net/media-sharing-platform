@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { ENV } from './env.loader';
 import { importPKCS8, importSPKI } from 'jose';
-import type { JwtConfig } from '../infrastructure/adapters/jose-token.service';
+import type { JwtConfig } from '@core/services/jose-token.service';
 
 const algorithm = 'RS256';
 

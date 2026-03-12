@@ -1,4 +1,4 @@
-import type { AuthPolicy } from '../application/auth.service';
+import type { AuthPolicy } from '@features/auth/auth.service';
 
 export const authPolicy: AuthPolicy = {
   accessTokenExpiresIn: '15m',
