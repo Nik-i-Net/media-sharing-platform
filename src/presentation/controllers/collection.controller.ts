@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import type { CollectionService } from '../../application/collection.service';
 import type { JwtAuthMiddleware } from '../middlewares/jwt-auth.middleware';
-import { assertDefined } from '@core/utils';
+import { assertDefined } from '../../core/utils';
 import { validateRequest } from '../middlewares/validate-request.middleware';
 import { CreateCollectionDtoSchema } from '../../application/dto';
 

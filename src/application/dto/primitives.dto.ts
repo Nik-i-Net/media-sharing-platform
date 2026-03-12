@@ -1,4 +1,4 @@
-import { mediaPolicy } from '@config/media.policy';
+import { mediaPolicy } from '../../config/media.policy';
 import { z } from 'zod';
 
 // Users + Auth

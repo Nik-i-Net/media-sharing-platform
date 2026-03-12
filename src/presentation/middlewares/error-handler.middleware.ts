@@ -6,8 +6,8 @@ import {
   UserAlreadyExistsException,
   UserNotFoundException,
   ValidationException,
-} from '@core/errors';
-import { BaseError } from '@core/errors/base.error';
+} from '../../core/errors/index.js';
+import { BaseError } from '../../core/errors/base.error.js';
 
 function errorHandler(err: unknown, req: Req, res: Res, _next: Next) {
   if (isDatabaseError(err)) err = mapDatabaseError(err);

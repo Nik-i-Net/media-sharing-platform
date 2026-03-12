@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify, errors } from 'jose';
 import type { TokenService, Payload } from '../../application/ports/token.service';
-import type { Duration } from '@core/types';
-import { InvalidTokenException } from '@core/errors/invalid-token.exception';
+import type { Duration } from '../../core/types';
+import { InvalidTokenException } from '../../core/errors/invalid-token.exception';
 
 export type JwtConfig = {
   algorithm: `RS${256 | 384 | 512}`; // NOTE: check Ed25519/ES/PS

@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { AccessTokenPayload, Token } from '../../application/dto';
 import { ZodError } from 'zod';
-import { InvalidTokenException } from '@core/errors/invalid-token.exception';
+import { InvalidTokenException } from '../../core/errors/invalid-token.exception';
 import type { TokenService } from '../../application/ports/token.service';
 import type { RequestHandler } from 'express';
 

@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
-import { ms } from '@core/utils';
+import { ms } from '../../core/utils';
 import { Token } from '../../application/dto';
-import type { Duration } from '@core/types';
+import type { Duration } from '../../core/types';
 import type { AuthService } from '../../application/auth.service';
 import type { ReqWithBody, Res, Req } from '../express.types';
 import type {

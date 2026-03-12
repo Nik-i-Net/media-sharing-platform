@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { Algorithm, JwtPayload, PrivateKey, PublicKey, SignOptions, VerifyOptions } from 'jsonwebtoken';
 import type { TokenService, Payload } from '../../application/ports/token.service';
-import type { Duration } from '@core/types';
+import type { Duration } from '../../core/types';
 
 export type JwtConfig = {
   algorithm: Algorithm;

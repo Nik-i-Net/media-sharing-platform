@@ -6,8 +6,8 @@
     "noEmit": true,
 
     "paths": {
-      "@core/*": ["./src/@core/*"],
-      "@config/*": ["./src/@config/*"]
+      "@core/*": ["./src/core/*"],
+      "@config/*": ["./src/config/*"]
     },
 
     // Stricter Typechecking Options

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { UserId } from '../primitives.dto';
-import { InvalidTokenException } from '@core/errors/invalid-token.exception';
+import { InvalidTokenException } from '../../../core/errors/invalid-token.exception';
 
 const RefreshTokenPayloadSchema = z.object({
   sub: UserId,

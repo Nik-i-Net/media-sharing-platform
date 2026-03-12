@@ -1,10 +1,10 @@
-import { InvalidCredentialsException, UserAlreadyExistsException, UserNotFoundException } from '@core/errors';
+import { InvalidCredentialsException, UserAlreadyExistsException, UserNotFoundException } from '../core/errors';
 import { User } from '../domain/entities/user';
 import { Email, Token } from './dto/primitives.dto';
 import type { UserRepository } from '../domain/repositories/user.repository';
 import type { HashService } from './ports/hash.service';
 import type { TokenService } from './ports/token.service.ts';
-import type { Duration } from '@core/types';
+import type { Duration } from '../core/types';
 import { AuthResponse, type RegisterRequest, type LoginRequest, RefreshTokenPayload } from './dto';
 
 export interface AuthPolicy {

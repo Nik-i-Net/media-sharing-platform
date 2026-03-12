@@ -1,4 +1,4 @@
-import { ValidationException } from '@core/errors';
+import { ValidationException } from '../../core/errors';
 import type { Request, RequestHandler } from 'express';
 import type { ZodType } from 'zod';
 import type { ParamsDictionary, Query } from 'express-serve-static-core';

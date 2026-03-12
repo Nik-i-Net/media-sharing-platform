@@ -1,4 +1,4 @@
-import type { Duration } from '@core/types';
+import type { Duration } from '../../core/types';
 
 export type Payload = Record<string, unknown>;
 

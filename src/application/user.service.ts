@@ -1,4 +1,4 @@
-import { UserNotFoundException } from '@core/errors';
+import { UserNotFoundException } from '../core/errors';
 import type { UserRepository } from '../domain/repositories/user.repository';
 import { UserResponse, type UserId, type Username, type Email } from './dto';
 
