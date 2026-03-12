@@ -3,20 +3,22 @@ import { Collection } from '../../../domain/entities/collection';
 export interface CollectionRecord {
   id: string;
   user_id: string;
-  name: string;
+  title: string;
+  is_public: boolean;
   created_at: Date;
   updated_at: Date;
 }
 
 export type InsertCollectionRecord = CollectionRecord;
-export type UpdateCollectionRecord = Partial<Pick<CollectionRecord, 'name' | 'updated_at'>>;
+export type UpdateCollectionRecord = Partial<Pick<CollectionRecord, 'title' | 'is_public' | 'updated_at'>>;
 
 export class CollectionMapper {
   public static toPersistence(collection: Collection): CollectionRecord {
     return {
       id: collection.id,
       user_id: collection.userId,
-      name: collection.name,
+      title: collection.title,
+      is_public: collection.isPublic,
       created_at: collection.createdAt,
       updated_at: collection.updatedAt,
     };
@@ -26,7 +28,8 @@ export class CollectionMapper {
     return new Collection(
       record.id, //
       record.user_id,
-      record.name,
+      record.title,
+      record.is_public,
       record.created_at,
       record.updated_at,
     );

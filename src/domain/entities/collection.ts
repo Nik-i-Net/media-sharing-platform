@@ -1,33 +1,45 @@
 export class Collection {
-  public static create(id: string, userId: string, name: string) {
+  public static create(id: string, userId: string, title: string) {
+    const isPublic = false;
     const now = new Date();
-    const collection = new Collection(id, userId, name, now, now);
+    const collection = new Collection(id, userId, title, isPublic, now, now);
     return collection;
   }
 
-  #name: string;
+  #title: string;
+  #isPublic: boolean;
   #updatedAt: Date;
 
   constructor(
     readonly id: string,
     readonly userId: string,
-    name: string,
+    title: string,
+    isPublic: boolean,
     readonly createdAt: Date,
     updatedAt: Date,
   ) {
-    this.#name = name;
+    this.#title = title;
+    this.#isPublic = isPublic;
     this.#updatedAt = updatedAt;
   }
 
-  get name() {
-    return this.#name;
+  get title() {
+    return this.#title;
+  }
+  get isPublic() {
+    return this.#isPublic;
   }
   get updatedAt() {
     return this.#updatedAt;
   }
 
-  changeName(newName: string) {
-    this.#name = newName;
+  changeTitle(newTitle: string) {
+    this.#title = newTitle;
+    this.#touch();
+  }
+
+  setPublic(isPublic: boolean = true) {
+    this.#isPublic = isPublic;
     this.#touch();
   }
 

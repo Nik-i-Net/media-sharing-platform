@@ -11,7 +11,7 @@ export class KnexCollectionRepository implements CollectionRepository {
     await this.collections //
       .insert(data)
       .onConflict('id')
-      .merge(['name', 'updated_at']);
+      .merge(['title', 'updated_at']);
   }
 
   async findById(id: string): Promise<Collection | null> {
@@ -20,8 +20,11 @@ export class KnexCollectionRepository implements CollectionRepository {
     return CollectionMapper.toDomain(record);
   }
 
-  async findAllByUserId(userId: string): Promise<Collection[]> {
-    const records = await this.collections.where({ user_id: userId });
+  async findAllByUserId(userId: string, limit?: number, offset?: number): Promise<Collection[]> {
+    const query = this.collections.where({ user_id: userId });
+    if (limit) query.limit(limit);
+    if (offset) query.offset(offset);
+    const records = await query;
     return records.map((record) => CollectionMapper.toDomain(record));
   }
 
