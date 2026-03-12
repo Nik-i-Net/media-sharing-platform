@@ -1,4 +1,4 @@
-import { ValidationException } from '@common/errors';
+import { ValidationException, type ValidationIssue } from '@common/errors';
 import type { ZodType } from 'zod';
 import type { Request, RequestHandler } from 'express';
 import type { ParamsDictionary, Query } from 'express-serve-static-core';
@@ -13,23 +13,29 @@ export function validateRequest<TParams extends ParamsDictionary, TBody, TQuery 
   schemas: ValidateRequestSchemas<TParams, TBody, TQuery>,
 ): RequestHandler<TParams, unknown, TBody, TQuery> {
   return (req: Request, _res, next) => {
-    const errors: { message: string; path: string[] }[] = [];
+    const issues: ValidationIssue[] = [];
 
     for (const key of ['params', 'body', 'query'] as const) {
       if (schemas[key] === undefined) continue;
 
-      const parseResult = schemas[key].safeParse(req[key]);
+      const parseResult = schemas[key].safeParse(req[key], { reportInput: true });
       if (parseResult.success) {
         req[key] = parseResult.data;
       } else {
         parseResult.error.issues.forEach((err) => {
-          errors.push({ message: err.message, path: [key, ...err.path.map(String)] });
+          issues.push({
+            value: err.input,
+            message: err.message,
+            code: err.code,
+            location: key,
+            path: err.path.map(String),
+          });
         });
       }
     }
 
-    if (errors.length) {
-      throw new ValidationException(errors);
+    if (issues.length) {
+      throw new ValidationException(issues);
     }
 
     next();

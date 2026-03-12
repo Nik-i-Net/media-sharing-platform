@@ -1,17 +1,18 @@
 import { StatusCodes } from 'http-status-codes';
 import { BaseError } from './base.error';
 
-type ValidationError = {
-  path: string[];
-  location: string;
-  message: string;
+export type ValidationIssue = {
   value: unknown;
+  message: string;
+  code: string;
+  location: string;
+  path: string[];
 };
 
 export class ValidationException extends BaseError {
   readonly httpStatusCode = StatusCodes.UNPROCESSABLE_ENTITY;
 
-  constructor(readonly errors: ValidationError[]) {
+  constructor(readonly issues: ValidationIssue[]) {
     super('Validation failed', 'VALIDATION_ERROR');
   }
 }
