@@ -1,10 +1,15 @@
 import { z } from 'zod';
-import { UserId, Username, Email, EmailVerified } from '../primitives.dto';
-import { strictParser } from '../strict-parser';
+import { strictParser } from '../utils';
+import { UserIdSchema, UsernameSchema, EmailSchema } from '../primitives.dto';
 
-export const UserResponseSchema = z
-  .object({ id: UserId, username: Username, email: Email, emailVerified: EmailVerified })
-  .brand<'UserResponse'>();
+export const UserDtoSchema = z
+  .object({
+    id: UserIdSchema,
+    username: UsernameSchema,
+    email: EmailSchema,
+    emailVerified: z.boolean(),
+  })
+  .brand<'UserDto'>();
 
 export const UserResponse = { parse: strictParser(UserResponseSchema) };
 export type UserResponse = z.infer<typeof UserResponseSchema>;

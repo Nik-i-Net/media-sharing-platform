@@ -1,5 +1,5 @@
 import { Token } from '../primitives.dto';
-import { strictParser } from '../strict-parser';
+import { strictParser } from '../utils';
 import { UserResponseSchema } from './user.response';
 import z from 'zod';
 

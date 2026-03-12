@@ -1,4 +1,6 @@
 // Request
+// export * from './request/confirm-uploads.request';
+// export * from './request/initiate-uploads.request';
 export * from './request/login.request';
 export * from './request/register.request';
 export * from './request/update-email.request';
@@ -15,4 +17,7 @@ export * from './internal/refresh-token-payload.dto';
 
 // Other
 export * from './primitives.dto';
-export * from './strict-parser';
+export * from './utils';
+
+// TODO: Refactor
+export * from './collections/create-collection.dto';
