@@ -7,7 +7,9 @@
 
     "paths": {
       "@core/*": ["./src/core/*"],
-      "@config/*": ["./src/config/*"]
+      "@common/*": ["./src/common/*"],
+      "@config/*": ["./src/config/*"],
+      "@features/*": ["./src/features/*"]
     },
 
     // Stricter Typechecking Options
