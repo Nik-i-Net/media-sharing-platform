@@ -1,5 +1,5 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import type { Req, Res, Next } from '../types.js';
+import type { Req, Res, Next } from '../express.types.js';
 import { isDatabaseError, mapDatabaseError } from '../../infrastructure/persistence/postgres-error-mapper';
 import {
   InvalidCredentialsException,

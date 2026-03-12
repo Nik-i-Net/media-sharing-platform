@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
-import { ms } from '@core/utils/ms';
+import { ms } from '@core/utils';
 import { Token } from '../../application/dto';
 import type { Duration } from '@core/types';
 import type { AuthService } from '../../application/auth.service';
-import type { ReqWithBody, Res, Req } from '../types';
+import type { ReqWithBody, Res, Req } from '../express.types';
 import type {
   RegisterRequest,
   AuthResponse,
@@ -18,30 +18,31 @@ export class AuthController {
   register = async (req: ReqWithBody<RegisterRequest>, res: Res<AuthResponse>) => {
     const { dto, refreshToken, refreshTtl } = await this.authService.register(req.body);
     this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
-    res.status(StatusCodes.CREATED).json(dto);
+    res.status(StatusCodes.CREATED).json({ data: dto });
   };
 
   login = async (req: ReqWithBody<LoginRequest>, res: Res<AuthResponse>) => {
     const { dto, refreshToken, refreshTtl } = await this.authService.login(req.body);
     this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
-    res.json(dto);
+    res.json({ data: dto });
   };
 
+  // TODO: add dto
   refresh = async (req: Req, res: Res) => {
     const token = Token.parse(req.cookies.refreshToken);
     const { accessToken, refreshToken, refreshTtl } = await this.authService.refresh(token);
     this.setRefreshTokenCookie(req, res, refreshToken, refreshTtl);
-    res.json({ accessToken });
+    res.json({ data: { accessToken } });
   };
 
   updatePassword = async (req: ReqWithBody<UpdatePasswordRequest>, res: Res) => {
     console.log(req.body);
-    res.send('todo');
+    res.send({ data: 'todo' });
   };
 
   updateEmail = async (req: ReqWithBody<UpdateEmailRequest>, res: Res) => {
     console.log(req.body);
-    res.send('todo');
+    res.send({ data: 'todo' });
   };
 
   private setRefreshTokenCookie(req: Req, res: Res, token: Token, ttl: Duration) {

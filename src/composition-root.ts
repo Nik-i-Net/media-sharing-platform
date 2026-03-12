@@ -17,26 +17,32 @@ import { mediaPolicy } from '@config/media.policy';
 import { KnexMediaRepository } from './infrastructure/repositories/knex-media.repository';
 import { KnexBlobRepository } from './infrastructure/repositories/knex-blob.repository';
 
+// Repositories
 const userRepository = new KnexUserRepository(db);
-const userService = new UserService(userRepository);
-const userController = new UserController(userService);
+const blobRepository = new KnexBlobRepository(db);
+const mediaRepository = new KnexMediaRepository(db);
 
+// Application services
 const hashService = new Argon2HashService();
 const tokenService = new JoseTokenService(jwtConfig);
-const authService = new AuthService(userRepository, hashService, tokenService, authPolicy);
-const authController = new AuthController(authService);
+const storageService = new R2StorageService({
+  accountId: ENV.CLOUDFLARE_ACCOUNT_ID,
+  accessKeyId: ENV.CLOUDFLARE_ACCESS_KEY_ID,
+  secretAccessKey: ENV.CLOUDFLARE_SECRET_ACCESS_KEY,
+  bucket: ENV.CLOUDFLARE_BUCKET,
+});
 
-const mediaRepository = new KnexMediaRepository(db);
-const blobRepository = new KnexBlobRepository(db);
-const storageService = new R2StorageService(
-  ENV.CLOUDFLARE_ACCOUNT_ID,
-  ENV.CLOUDFLARE_ACCESS_KEY_ID,
-  ENV.CLOUDFLARE_SECRET_ACCESS_KEY,
-  ENV.CLOUDFLARE_BUCKET,
-);
+// Use cases
+const userService = new UserService(userRepository);
+const authService = new AuthService(userRepository, hashService, tokenService, authPolicy);
 const mediaService = new MediaService(mediaRepository, blobRepository, storageService, mediaPolicy);
+
+// Controllers
+const userController = new UserController(userService);
+const authController = new AuthController(authService);
 const mediaController = new MediaController(mediaService);
 
+// Middlewares
 const jwtAuth = createJwtAuthMiddleware(tokenService);
 
 export { userController, authController, mediaController, jwtAuth };

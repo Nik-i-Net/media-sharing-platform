@@ -4,11 +4,18 @@ import { unknownRouteHandler } from './middlewares/unknown-route-handler.middlew
 import { errorHandler } from './middlewares/error-handler.middleware';
 import cookieParser from 'cookie-parser';
 
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);
 app.use(unknownRouteHandler);
 app.use(errorHandler);
 
-export { app };
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: {
+      id: string;
+      roles: string[];
+    };
+  }
+}

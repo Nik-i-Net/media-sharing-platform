@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import type { Req, Res } from '../types';
+import type { Req, Res } from '../express.types';
 import type { UserService } from '../../application/user.service';
 
 class UserController {

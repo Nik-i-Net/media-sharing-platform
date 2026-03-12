@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import type { Req, ReqWithBody, Res } from '../types';
+import type { Req, ReqWithBody, Res } from '../express.types';
 import type { MediaService } from '../../application/media.service';
 import type { InitiateUploadsRequest } from '../../application/dto/request/initiate-uploads.request';
 
