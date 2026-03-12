@@ -1,29 +1,29 @@
-import type { RequestHandler } from 'express';
-import type { ZodType } from 'zod';
-import type { Next, Req } from '../types';
 import { ValidationException } from '@core/errors';
+import type { Request, RequestHandler } from 'express';
+import type { ZodType } from 'zod';
+import type { ParamsDictionary, Query } from 'express-serve-static-core';
 
-type ValidateRequestSchemas<Params, Body, Query> = {
-  params?: ZodType<Params>;
-  body?: ZodType<Body>;
-  query?: ZodType<Query>;
+type ValidateRequestSchemas<TParams, TBody, TQuery> = {
+  params?: ZodType<TParams>;
+  body?: ZodType<TBody>;
+  query?: ZodType<TQuery>;
 };
 
-export function validateRequest<Params, Body, Query>(
-  schemas: ValidateRequestSchemas<Params, Body, Query>,
-): RequestHandler<Params, unknown, Body, Query> {
-  return (req: Req, _res, next: Next) => {
-    const errors: { message: string; path: string }[] = [];
+export function validateRequest<TParams extends ParamsDictionary, TBody, TQuery extends Query>(
+  schemas: ValidateRequestSchemas<TParams, TBody, TQuery>,
+): RequestHandler<TParams, unknown, TBody, TQuery> {
+  return (req: Request, _res, next) => {
+    const errors: { message: string; path: string[] }[] = [];
 
-    for (const prop of ['params', 'body', 'query'] as const) {
-      if (schemas[prop] === undefined) continue;
+    for (const key of ['params', 'body', 'query'] as const) {
+      if (schemas[key] === undefined) continue;
 
-      const parseResult = schemas[prop].safeParse(req[prop]);
+      const parseResult = schemas[key].safeParse(req[key]);
       if (parseResult.success) {
-        req[prop] = parseResult.data;
+        req[key] = parseResult.data;
       } else {
         parseResult.error.issues.forEach((err) => {
-          errors.push({ message: err.message, path: [prop, ...err.path].join('.') });
+          errors.push({ message: err.message, path: [key, ...err.path.map(String)] });
         });
       }
     }
