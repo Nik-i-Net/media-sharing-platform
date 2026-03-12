@@ -1,5 +1,6 @@
 const vars = [
   'PORT',
+  'HOST',
 
   'POSTGRES_USER',
   'POSTGRES_PASSWORD',
@@ -7,8 +8,8 @@ const vars = [
   'POSTGRES_PORT',
   'POSTGRES_DB',
 
-  'SECRETS_PATH',
-
+  'JWT_PRIVATE_KEY_PATH',
+  'JWT_PUBLIC_KEY_PATH',
   'JWT_ISSUER',
   'JWT_AUDIENCE',
 
@@ -16,6 +17,8 @@ const vars = [
   'CLOUDFLARE_ACCESS_KEY_ID',
   'CLOUDFLARE_SECRET_ACCESS_KEY',
   'CLOUDFLARE_BUCKET',
+
+  'MEDIA_BASE_URL',
 ] as const;
 
 const ENV = {} as Record<(typeof vars)[number], string>;
