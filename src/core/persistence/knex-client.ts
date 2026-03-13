@@ -1,6 +1,6 @@
 import knex, { type Knex } from 'knex';
 import knexConfig from '@config/knexfile';
-import type { UserRecord, InsertUserRecord, UpdateUserRecord } from '@features/users/user.record';
+import type { UserRecord, InsertUserRecord, UpdateUserRecord } from '@features/users/user.repository';
 import type { BlobRecord, InsertBlobRecord, UpdateBlobRecord } from '@features/media/blob.record';
 import type { MediaRecord, InsertMediaRecord, UpdateMediaRecord } from '@features/media/media.record';
 import type {

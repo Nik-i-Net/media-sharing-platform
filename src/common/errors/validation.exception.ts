@@ -1,5 +1,5 @@
-import { StatusCodes } from 'http-status-codes';
 import { BaseError } from './base.error';
+import { StatusCodes } from 'http-status-codes';
 
 export type ValidationIssue = {
   value: unknown;
