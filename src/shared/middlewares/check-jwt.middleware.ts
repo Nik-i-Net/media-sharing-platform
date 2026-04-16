@@ -1,8 +1,8 @@
 import { ENV } from '@config/env.loader';
 import { TodoException } from '@shared/errors';
-import { StatusCodes } from 'http-status-codes';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import type { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from '@shared/constants';
 
 const JWKS = createRemoteJWKSet(new URL(`${ENV.JWT_ISSUER}/.well-known/jwks.json`), {
   cooldownDuration: 60 * 60 * 1000, // 1 hour
@@ -33,5 +33,13 @@ export async function checkJwt(req: Request, res: Response, next: NextFunction) 
   } catch (error) {
     console.error('JWT Validation Error:', error);
     return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Token is invalid or expired' });
+  }
+}
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: {
+      id: string;
+    };
   }
 }

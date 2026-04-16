@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { StatusCodes } from '@shared/constants';
 import type { RequestHandler } from 'express-serve-static-core';
 
 export function checkApiKey(apiKey: string): RequestHandler {
