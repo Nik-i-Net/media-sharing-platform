@@ -2,10 +2,10 @@ import type { IdentitiesRepository } from '@features/users/repositories/identiti
 import type { UsersRepository } from '@features/users/repositories/users.repository';
 
 export interface UnitOfWork {
-  begin(): Promise<void>;
-  commit(): Promise<void>;
-  rollback(): Promise<void>;
+  execute<T>(callback: (repos: Repositories) => Promise<T>): Promise<T>;
+}
 
-  get usersRepository(): UsersRepository;
-  get identitiesRepository(): IdentitiesRepository;
+export interface Repositories {
+  get users(): UsersRepository;
+  get identities(): IdentitiesRepository;
 }
