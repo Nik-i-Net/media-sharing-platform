@@ -1,37 +1,52 @@
-interface RegisterUserProps {
+interface RegisterIdentityProps {
   id: string;
+  userId: string;
+  provider: string;
+  providerUserId: string;
   email?: string | undefined;
   emailVerified?: boolean | undefined;
 }
 
-interface NewUserProps {
+interface NewIdentityProps {
   id: string;
+  userId: string;
+  provider: string;
+  providerUserId: string;
   email: string | null;
   emailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export class User {
-  static register(props: RegisterUserProps) {
-    const user = new User({
+export class Identity {
+  static register(props: RegisterIdentityProps) {
+    const identity = new Identity({
       id: props.id,
+      userId: props.userId,
+      provider: props.provider,
+      providerUserId: props.providerUserId,
       email: props.email ?? null,
       emailVerified: props.emailVerified ?? false,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    return user;
+    return identity;
   }
 
   readonly id: string;
+  readonly userId: string;
+  readonly provider: string;
+  readonly providerUserId: string;
   private _email: string | null;
   private _emailVerified: boolean;
   readonly createdAt: Date;
   private _updatedAt: Date;
 
-  constructor(props: NewUserProps) {
+  constructor(props: NewIdentityProps) {
     this.id = props.id;
+    this.userId = props.userId;
+    this.provider = props.provider;
+    this.providerUserId = props.providerUserId;
     this._email = props.email;
     this._emailVerified = props.emailVerified;
     this.createdAt = props.createdAt;
