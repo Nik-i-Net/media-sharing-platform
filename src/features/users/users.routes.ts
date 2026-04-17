@@ -1,26 +1,19 @@
 import { Router } from 'express';
 import { checkApiKey, validateRequest } from '@shared/middlewares';
 import { ENV } from '@config/env.loader';
-import { AuthRequestSchema } from './dto/auth.request';
+import { Auth0RequestSchema } from './dto/auth0.request';
 import { AuthCommand } from './use-cases/auth.command';
 import { authCommandHandler } from '../../di';
-import { ensureDefined } from '@shared/utils';
 
 export const usersRouter = Router();
 
 usersRouter.post(
   '/auth0',
   checkApiKey(ENV.AUTH0_API_KEY),
-  validateRequest({ body: AuthRequestSchema }),
+  validateRequest({ body: Auth0RequestSchema }),
   async (req, res) => {
-    const [provider, providerUserId] = req.body.sub.split('|');
-    const cmd = new AuthCommand(
-      ensureDefined(provider),
-      ensureDefined(providerUserId),
-      req.body.email?.value,
-      req.body.email?.verified,
-    );
-
+    const { provider, providerUserId, email, emailVerified } = req.body;
+    const cmd = new AuthCommand(provider, providerUserId, email, emailVerified);
     const userId = await authCommandHandler.execute(cmd);
     res.json({ userId });
   },

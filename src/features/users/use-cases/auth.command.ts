@@ -15,8 +15,8 @@ export class AuthCommand {
 export class AuthCommandHandler {
   constructor(private readonly uow: UnitOfWork) {}
 
-  async execute({ provider, providerUserId, email, emailVerified }: AuthCommand) {
-    this.uow.execute(async (repos) => {
+  async execute({ provider, providerUserId, email, emailVerified }: AuthCommand): Promise<string> {
+    const userId = await this.uow.execute(async (repos) => {
       const foundIdentity = await repos.identities.findByProviderIdentity(provider, providerUserId);
       if (foundIdentity) return foundIdentity.userId;
 
@@ -40,5 +40,7 @@ export class AuthCommandHandler {
 
       return user.id;
     });
+
+    return userId;
   }
 }
