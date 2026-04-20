@@ -6,9 +6,7 @@
     "noEmit": true,
 
     "paths": {
-      "@config/*": ["./src/config/*"],
-      "@features/*": ["./src/features/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@/*": ["./src/*"]
     },
 
     // Stricter Typechecking Options
