@@ -1,4 +1,4 @@
-import type { Duration, DurationUnit } from '@shared/types';
+import type { Duration, DurationUnit } from '../types';
 
 export function ms(duration: Duration): number {
   const value = parseFloat(duration);

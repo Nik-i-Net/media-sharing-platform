@@ -1,4 +1,4 @@
-import { StatusCodes } from '@shared/constants';
+import { StatusCodes } from '../constants';
 import { BaseError } from './base.error';
 
 export type ValidationIssue = {

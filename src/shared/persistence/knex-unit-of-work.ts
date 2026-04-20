@@ -1,7 +1,7 @@
-import { IdentitiesRepository } from '@features/users/repositories/identities.repository';
-import { UsersRepository } from '@features/users/repositories/users.repository';
-import type { Repositories, UnitOfWork } from '@shared/ports/unit-of-work';
+import { IdentitiesRepository } from '@/features/users/repositories/identities.repository';
+import { UsersRepository } from '@/features/users/repositories/users.repository';
 import type { Knex } from 'knex';
+import type { UnitOfWork, Repositories } from '../ports/unit-of-work';
 
 export class KnexUnitOfWork implements UnitOfWork {
   constructor(private readonly db: Knex | Knex.Transaction) {}

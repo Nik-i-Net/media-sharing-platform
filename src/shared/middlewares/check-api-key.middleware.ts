@@ -1,5 +1,5 @@
-import { StatusCodes } from '@shared/constants';
 import type { RequestHandler } from 'express-serve-static-core';
+import { StatusCodes } from '../constants';
 
 export function checkApiKey(apiKey: string): RequestHandler {
   return (req, res, next) => {

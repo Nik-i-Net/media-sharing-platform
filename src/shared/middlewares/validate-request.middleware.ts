@@ -1,7 +1,7 @@
 import type { ZodType } from 'zod';
 import type { Request, RequestHandler } from 'express';
 import type { ParamsDictionary, Query } from 'express-serve-static-core';
-import { type ValidationIssue, ValidationException } from '@shared/errors';
+import { ValidationException, type ValidationIssue } from '../errors';
 
 type ValidateRequestSchemas<TParams, TBody, TQuery> = {
   params?: ZodType<TParams>;

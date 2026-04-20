@@ -1,8 +1,8 @@
-import { ENV } from '@config/env.loader';
-import { TodoException } from '@shared/errors';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import type { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from '@shared/constants';
+import { ENV } from '@/config/env.loader';
+import { StatusCodes } from '../constants';
+import { TodoException } from '../errors';
 
 const JWKS = createRemoteJWKSet(new URL(`${ENV.JWT_ISSUER}/.well-known/jwks.json`), {
   cooldownDuration: 60 * 60 * 1000, // 1 hour

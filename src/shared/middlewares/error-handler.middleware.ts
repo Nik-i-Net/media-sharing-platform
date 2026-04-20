@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { NotFoundException, ValidationException } from '@shared/errors';
-import { BaseError } from '@shared/errors/base.error';
-import { StatusCodes } from '@shared/constants';
+import { StatusCodes } from '../constants';
+import { NotFoundException, ValidationException } from '../errors';
+import { BaseError } from '../errors/base.error';
 
 export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
   if (!(err instanceof BaseError)) {
