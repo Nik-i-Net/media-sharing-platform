@@ -1,19 +1,19 @@
+import { Identity } from '../domain/identity';
 import type { Knex } from 'knex';
-import { Identity } from '../entities/identity';
 
 export class IdentitiesRepository {
-  constructor(private readonly qb: Knex | Knex.Transaction) {}
+  constructor(private readonly db: Knex | Knex.Transaction) {}
 
   async save(identity: Identity): Promise<void> {
     const data = this.toPersistence(identity);
-    await this.identities
+    await this.db('identities')
       .insert(data)
       .onConflict('id')
       .merge(['email', 'email_verified', 'updated_at']);
   }
 
   async findByProviderIdentity(provider: string, providerUserId: string): Promise<Identity | null> {
-    const record = await this.identities
+    const record = await this.db('identities')
       .where({ provider, provider_user_id: providerUserId })
       .first();
     if (!record) return null;
@@ -21,23 +21,19 @@ export class IdentitiesRepository {
   }
 
   async findByEmail(email: string): Promise<Identity | null> {
-    const record = await this.identities.where({ email }).first();
+    const record = await this.db('identities').where({ email }).first();
     if (!record) return null;
     return this.toDomain(record);
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    const found = await this.identities.where({ email }).first('id');
+    const found = await this.db('identities').where({ email }).first('id');
     return Boolean(found);
   }
 
   async delete(id: string): Promise<boolean> {
-    const affectedRows = await this.identities.where({ id }).del();
+    const affectedRows = await this.db('identities').where({ id }).del();
     return affectedRows > 0;
-  }
-
-  private get identities() {
-    return this.qb('identities');
   }
 
   private toPersistence(identity: Identity): InsertIdentityRecord {
@@ -67,7 +63,7 @@ export class IdentitiesRepository {
   }
 }
 
-export interface IdentityRecord {
+interface IdentityRecord {
   id: string;
   user_id: string;
   provider: string;
@@ -77,8 +73,13 @@ export interface IdentityRecord {
   created_at: Date;
   updated_at: Date;
 }
-
-export type InsertIdentityRecord = IdentityRecord;
-export type UpdateIdentityRecord = Partial<
+type InsertIdentityRecord = IdentityRecord;
+type UpdateIdentityRecord = Partial<
   Pick<IdentityRecord, 'email' | 'email_verified' | 'updated_at'>
 >;
+
+declare module 'knex/types/tables' {
+  interface Tables {
+    identities: Knex.CompositeTableType<IdentityRecord, InsertIdentityRecord, UpdateIdentityRecord>;
+  }
+}

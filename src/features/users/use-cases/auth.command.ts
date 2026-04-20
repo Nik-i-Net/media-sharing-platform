@@ -1,15 +1,13 @@
-import { Identity } from '../entities/identity';
-import { User } from '../entities/user';
-import type { UnitOfWork } from '@shared/ports/unit-of-work';
-import { TodoException } from '@shared/errors';
+import { TodoException } from '@/shared/errors';
+import type { UnitOfWork } from '@/shared/ports/unit-of-work';
+import { Identity } from '../domain/identity';
+import { User } from '../domain/user';
 
-export class AuthCommand {
-  constructor(
-    readonly provider: string,
-    readonly providerUserId: string,
-    readonly email?: string,
-    readonly emailVerified?: boolean,
-  ) {}
+export interface AuthCommand {
+  provider: string;
+  providerUserId: string;
+  email?: string;
+  emailVerified?: boolean;
 }
 
 export class AuthCommandHandler {

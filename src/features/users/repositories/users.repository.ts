@@ -1,38 +1,37 @@
+import { User } from '../domain/user';
 import type { Knex } from 'knex';
-import { User } from '../entities/user';
 
 export class UsersRepository {
   constructor(private readonly db: Knex | Knex.Transaction) {}
 
   async save(user: User): Promise<void> {
     const data = this.toPersistence(user);
-    await this.users.insert(data).onConflict('id').merge(['email', 'email_verified', 'updated_at']);
+    await this.db('users')
+      .insert(data)
+      .onConflict('id')
+      .merge(['email', 'email_verified', 'updated_at']);
   }
 
   async findById(id: string): Promise<User | null> {
-    const record = await this.users.where({ id }).first();
+    const record = await this.db('users').where({ id }).first();
     if (!record) return null;
     return this.toDomain(record);
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const record = await this.users.where({ email }).first();
+    const record = await this.db('users').where({ email }).first();
     if (!record) return null;
     return this.toDomain(record);
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    const found = await this.users.where({ email }).first('id');
+    const found = await this.db('users').where({ email }).first('id');
     return Boolean(found);
   }
 
   async delete(id: string): Promise<boolean> {
-    const affectedRows = await this.users.where({ id }).del();
+    const affectedRows = await this.db('users').where({ id }).del();
     return affectedRows > 0;
-  }
-
-  private get users() {
-    return this.db('users');
   }
 
   private toPersistence(user: User): UserRecord {
@@ -56,13 +55,18 @@ export class UsersRepository {
   }
 }
 
-export interface UserRecord {
+interface UserRecord {
   id: string;
   email: string | null;
   email_verified: boolean;
   created_at: Date;
   updated_at: Date;
 }
+type InsertUserRecord = UserRecord;
+type UpdateUserRecord = Partial<Pick<UserRecord, 'email' | 'email_verified' | 'updated_at'>>;
 
-export type InsertUserRecord = UserRecord;
-export type UpdateUserRecord = Partial<Pick<UserRecord, 'email' | 'email_verified' | 'updated_at'>>;
+declare module 'knex/types/tables' {
+  interface Tables {
+    users: Knex.CompositeTableType<UserRecord, InsertUserRecord, UpdateUserRecord>;
+  }
+}
