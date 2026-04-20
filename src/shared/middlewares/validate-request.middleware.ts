@@ -34,6 +34,7 @@ export function validateRequest<TParams extends ParamsDictionary, TBody, TQuery 
       }
     }
 
+    // TODO: respond instead of throwing. Add openapi response example
     if (issues.length) {
       throw new ValidationException(issues);
     }

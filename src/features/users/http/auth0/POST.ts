@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { Router } from 'express';
 import { authCommandHandler } from '@/di';
 import { ENV } from '@/config/env.loader';
-import { checkApiKey, validateRequest } from '@/shared/middlewares';
+import { checkApiKey, OPENAPI_InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/config/openapi';
 
 const RequestSchema = z.object({
@@ -16,16 +16,34 @@ const ResponseSchema = z.object({
   data: z.object({ userId: z.uuidv4() }),
 });
 
-const response500 = {
-  description: 'Internal server error',
-  content: {
-    'application/json': {
-      schema: z.object({
-        error: z.object({
-          code: z.literal('INTERNAL_SERVER_ERROR'),
-          message: z.literal('Internal server error'),
+const OPENAPI_ValidationErrorResponse = {
+  422: {
+    description: 'Validation error',
+    content: {
+      'application/json': {
+        schema: z.object({
+          error: z.object({
+            code: z.literal('VALIDATION_ERROR'),
+            message: z.literal('Validation failed'),
+          }),
         }),
-      }),
+      },
+    },
+  },
+};
+
+const OPENAPI_InternalServerErrorResponse = {
+  500: {
+    description: 'Internal server error',
+    content: {
+      'application/json': {
+        schema: z.object({
+          error: z.object({
+            code: z.literal('INTERNAL_SERVER_ERROR'),
+            message: z.literal('Internal server error'),
+          }),
+        }),
+      },
     },
   },
 };
@@ -44,10 +62,12 @@ openapiRegistry.registerPath({
   },
   responses: {
     200: {
-      description: 'UserId',
+      description: 'Returns `userId`',
       content: { 'application/json': { schema: ResponseSchema } },
     },
-    500: response500,
+    ...OPENAPI_InvalidApiKeyResponse,
+    ...OPENAPI_ValidationErrorResponse,
+    ...OPENAPI_InternalServerErrorResponse,
   },
 });
 
