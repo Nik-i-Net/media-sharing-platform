@@ -21,17 +21,15 @@ export const openapiDocument = generator.generateDocument({
   info: { title: 'Mediahub API', version: '1.0.0' },
 });
 
-router.use('/docs', swaggerUi.serve);
-router.get('/docs', swaggerUi.setup(openapiDocument));
-router.get('/docs.json', (_req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(openapiDocument);
-});
-
 export const app = express();
 app.use(cors({ origin: ENV.CLIENT_BASE_URL }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
+app.use('/api-docs.json', (_req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json(openapiDocument);
+});
 app.use(unknownRouteHandler);
 app.use(errorHandler);
