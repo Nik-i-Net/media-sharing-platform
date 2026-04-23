@@ -1,7 +1,7 @@
 import { StatusCodes } from '../constants';
 import { BaseError } from './base.error';
 
-export class NotFoundException extends BaseError {
+export class NotFoundError extends BaseError {
   readonly httpStatusCode = StatusCodes.NOT_FOUND;
 
   constructor(message: string, code: string) {

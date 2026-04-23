@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from '../constants';
-import { NotFoundException, ValidationException } from '../errors';
+import { NotFoundError, ValidationError } from '../errors';
 import { BaseError } from '../errors/base.error';
 
 export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
@@ -8,12 +8,12 @@ export function errorHandler(err: unknown, req: Request, res: Response, _next: N
     handleUnknownError(err, req, res);
   }
 
-  if (err instanceof NotFoundException) {
+  if (err instanceof NotFoundError) {
     return res.status(err.httpStatusCode).json({
       message: err.message,
       code: err.code,
     });
-  } else if (err instanceof ValidationException) {
+  } else if (err instanceof ValidationError) {
     return res.status(err.httpStatusCode).json({
       message: err.message,
       code: err.code,

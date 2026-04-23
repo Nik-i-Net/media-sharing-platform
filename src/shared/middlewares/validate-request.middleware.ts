@@ -1,7 +1,7 @@
 import type { ZodType } from 'zod';
 import type { Request, RequestHandler } from 'express';
 import type { ParamsDictionary, Query } from 'express-serve-static-core';
-import { ValidationException, type ValidationIssue } from '../errors';
+import { ValidationError, type ValidationIssue } from '../errors';
 
 type ValidateRequestSchemas<TParams, TBody, TQuery> = {
   params?: ZodType<TParams>;
@@ -34,9 +34,8 @@ export function validateRequest<TParams extends ParamsDictionary, TBody, TQuery 
       }
     }
 
-    // TODO: respond instead of throwing. Add openapi response example
     if (issues.length) {
-      throw new ValidationException(issues);
+      throw new ValidationError(issues);
     }
 
     next();

@@ -1,34 +1,30 @@
 import type { RequestHandler } from 'express-serve-static-core';
 import { StatusCodes } from '../constants';
 import { z } from 'zod';
-
-const ErrorResponseSchema = z.object({
-  error: z.object({
-    code: z.literal('UNAUTHORIZED'),
-    message: z.literal('Missing or invalid API key'),
-  }),
-});
-const errorResponse: z.infer<typeof ErrorResponseSchema> = {
-  error: {
-    code: 'UNAUTHORIZED',
-    message: 'Missing or invalid API key',
-  },
-};
-
-export const OPENAPI_InvalidApiKeyResponse = {
-  [StatusCodes.UNAUTHORIZED]: {
-    description: 'Missing or invalid `x-api-key` header',
-    content: { 'application/json': { schema: ErrorResponseSchema } },
-  },
-};
+import { UnauthorizedError, type ErrorResponse } from '../errors';
 
 export function checkApiKey(apiKey: string): RequestHandler {
-  return (req, res, next) => {
+  return (req, _res, next) => {
     if (req.headers['x-api-key'] !== apiKey) {
-      res.status(StatusCodes.UNAUTHORIZED).json(errorResponse);
-      return;
+      throw new UnauthorizedError('Missing or invalid API key');
     }
 
     next();
   };
 }
+
+export const InvalidApiKeyResponse = {
+  [StatusCodes.UNAUTHORIZED]: {
+    description: 'Missing or invalid `x-api-key` header',
+    content: {
+      'application/json': {
+        schema: z.object({
+          error: z.object({
+            message: z.literal('Missing or invalid API key'),
+            code: z.literal('UNAUTHORIZED'),
+          }),
+        }),
+      },
+    },
+  },
+} satisfies ErrorResponse;

@@ -1,3 +1,5 @@
+import type { z } from 'zod';
+
 export abstract class BaseError extends Error {
   readonly timestamp: Date;
 
@@ -10,3 +12,19 @@ export abstract class BaseError extends Error {
     this.name = this.constructor.name;
   }
 }
+
+export type ErrorResponse = {
+  [statusCode: number]: {
+    description: string;
+    content: {
+      'application/json': {
+        schema: z.ZodObject<{
+          error: z.ZodObject<{
+            message: z.ZodLiteral<string>;
+            code: z.ZodLiteral<string>;
+          }>;
+        }>;
+      };
+    };
+  };
+};

@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import type { Router } from 'express';
+import type { Response, Router } from 'express';
 import { authCommandHandler } from '@/di';
 import { ENV } from '@/config/env.loader';
-import { checkApiKey, OPENAPI_InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
+import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/config/openapi';
+import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
 
 const RequestSchema = z.object({
   provider: z.enum(['auth0', 'google-oauth2']),
@@ -15,38 +16,6 @@ const RequestSchema = z.object({
 const ResponseSchema = z.object({
   data: z.object({ userId: z.uuidv4() }),
 });
-
-const OPENAPI_ValidationErrorResponse = {
-  422: {
-    description: 'Validation error',
-    content: {
-      'application/json': {
-        schema: z.object({
-          error: z.object({
-            code: z.literal('VALIDATION_ERROR'),
-            message: z.literal('Validation failed'),
-          }),
-        }),
-      },
-    },
-  },
-};
-
-const OPENAPI_InternalServerErrorResponse = {
-  500: {
-    description: 'Internal server error',
-    content: {
-      'application/json': {
-        schema: z.object({
-          error: z.object({
-            code: z.literal('INTERNAL_SERVER_ERROR'),
-            message: z.literal('Internal server error'),
-          }),
-        }),
-      },
-    },
-  },
-};
 
 openapiRegistry.registerPath({
   method: 'post',
@@ -60,14 +29,15 @@ openapiRegistry.registerPath({
       content: { 'application/json': { schema: RequestSchema } },
     },
   },
+  tags: ['Auth0'],
   responses: {
     200: {
       description: 'Returns `userId`',
       content: { 'application/json': { schema: ResponseSchema } },
     },
-    ...OPENAPI_InvalidApiKeyResponse,
-    ...OPENAPI_ValidationErrorResponse,
-    ...OPENAPI_InternalServerErrorResponse,
+    ...InvalidApiKeyResponse,
+    ...ValidationErrorResponse,
+    ...InternalServerErrorResponse,
   },
 });
 
@@ -76,7 +46,7 @@ export function registerRoute(usersRouter: Router) {
     '/auth0',
     checkApiKey(ENV.AUTH0_API_KEY),
     validateRequest({ body: RequestSchema }),
-    async (req, res) => {
+    async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
       const userId = await authCommandHandler.execute(req.body);
       const response = ResponseSchema.parse({ data: { userId } });
       res.json(response);

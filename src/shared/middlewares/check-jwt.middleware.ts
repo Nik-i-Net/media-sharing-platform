@@ -2,7 +2,7 @@ import { createRemoteJWKSet, jwtVerify } from 'jose';
 import type { NextFunction, Request, Response } from 'express';
 import { ENV } from '@/config/env.loader';
 import { StatusCodes } from '../constants';
-import { TodoException } from '../errors';
+import { TodoError } from '../errors';
 
 const JWKS = createRemoteJWKSet(new URL(`${ENV.JWT_ISSUER}/.well-known/jwks.json`), {
   cooldownDuration: 60 * 60 * 1000, // 1 hour
@@ -25,7 +25,7 @@ export async function checkJwt(req: Request, res: Response, next: NextFunction) 
 
     const userId = payload[`${ENV.JWT_AUDIENCE}/userId`];
     if (!userId || typeof userId !== 'string') {
-      throw new TodoException('Invalid userId');
+      throw new TodoError('Invalid userId');
     }
     req.user = { id: userId };
 

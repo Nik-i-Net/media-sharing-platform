@@ -1,7 +1,7 @@
 import { StatusCodes } from '../constants';
 import { BaseError } from './base.error';
 
-export class TodoException extends BaseError {
+export class TodoError extends BaseError {
   readonly httpStatusCode = StatusCodes.BAD_REQUEST;
 
   constructor(message: string) {

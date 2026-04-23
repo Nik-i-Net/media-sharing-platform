@@ -1,4 +1,4 @@
-import { TodoException } from '@/shared/errors';
+import { TodoError } from '@/shared/errors';
 import type { UnitOfWork } from '@/shared/ports/unit-of-work';
 import { Identity } from '../domain/identity';
 import { User } from '../domain/user';
@@ -20,7 +20,7 @@ export class AuthCommandHandler {
 
       if (email && emailVerified) {
         const foundUser = await repos.users.findByEmail(email);
-        if (foundUser) throw new TodoException('User already exists. Sign in to link accounts.');
+        if (foundUser) throw new TodoError('User already exists. Sign in to link accounts.');
       }
 
       const user = User.register({ id: crypto.randomUUID(), email, emailVerified });
