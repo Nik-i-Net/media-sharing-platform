@@ -3,7 +3,7 @@ import { BaseError, type ErrorResponse } from './base.error';
 import { z } from 'zod';
 
 export type ValidationIssue = {
-  value: unknown;
+  value: string;
   message: string;
   code: string;
   location: string;
@@ -27,6 +27,15 @@ export const ValidationErrorResponse = {
           error: z.object({
             message: z.literal('Validation failed'),
             code: z.literal('VALIDATION_ERROR'),
+            issues: z.array(
+              z.object({
+                value: z.string().meta({ example: '123' }),
+                message: z.string().meta({ example: 'Invalid email address' }),
+                code: z.string().meta({ example: 'invalid_format' }),
+                location: z.string().meta({ example: 'body' }),
+                path: z.array(z.string()).meta({ example: ['email'] }),
+              }),
+            ),
           }),
         }),
       },

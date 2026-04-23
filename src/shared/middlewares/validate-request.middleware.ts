@@ -24,7 +24,7 @@ export function validateRequest<TParams extends ParamsDictionary, TBody, TQuery 
       } else {
         parseResult.error.issues.forEach((err) => {
           issues.push({
-            value: err.input,
+            value: String(err.input),
             message: err.message,
             code: err.code,
             location: key,
