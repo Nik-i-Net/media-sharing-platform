@@ -5,8 +5,8 @@ import cors from 'cors';
 import { ENV } from './config/env.loader';
 import { registerUsersRoutes, usersRouter } from './features/users/http/users.routes';
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
-import { openapiRegistry } from './config/openapi';
 import swaggerUi from 'swagger-ui-express';
+import { openapiRegistry } from './shared/openapi-registry';
 
 await Promise.all([
   registerUsersRoutes(), //

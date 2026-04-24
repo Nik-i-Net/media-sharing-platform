@@ -3,8 +3,8 @@ import type { Response, Router } from 'express';
 import { authCommandHandler } from '@/di';
 import { ENV } from '@/config/env.loader';
 import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
-import { openapiRegistry } from '@/config/openapi';
 import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
+import { openapiRegistry } from '@/shared/openapi-registry';
 
 export function registerRoute(usersRouter: Router) {
   const RequestSchema = z.object({
