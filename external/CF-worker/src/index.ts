@@ -1,5 +1,7 @@
 interface Env {
 	MEDIA_BUCKET: R2Bucket;
+	MEDIA_UPLOADS_QUEUE: Queue;
+	CONFIRM_UPLOADS_WEBHOOK_URL: string;
 }
 
 export default {
@@ -27,5 +29,24 @@ export default {
 		return new Response(object.body, {
 			headers,
 		});
+	},
+
+	async queue(batch, env, ctx): Promise<void> {
+		const response = await fetch(env.CONFIRM_UPLOADS_WEBHOOK_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				event: 'upload.confirmed',
+				data: batch.messages.map((message) => message.body),
+			}),
+		});
+
+		if (!response.ok) {
+			throw new Error(`RETRY_BATCH: Backend responded with ${response.status}`);
+		}
+
+		batch.ackAll();
 	},
 } satisfies ExportedHandler<Env>;

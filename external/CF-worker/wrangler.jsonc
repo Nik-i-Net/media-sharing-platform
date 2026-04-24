@@ -47,4 +47,22 @@
 			"remote": true,
 		},
 	],
+
+	"queues": {
+		// for tests
+		"producers": [
+			{
+				"queue": "media-uploads",
+				"binding": "MEDIA_UPLOADS_QUEUE",
+			},
+		],
+
+		"consumers": [
+			{
+				"queue": "media-uploads",
+				"max_batch_size": 10,
+				"max_batch_timeout": 5,
+			},
+		],
+	},
 }
