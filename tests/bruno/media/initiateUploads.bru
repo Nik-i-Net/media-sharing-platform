@@ -5,23 +5,28 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}/media/uploads
+  url: {{BASE_URL}}/media/batch
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    
+    "files": [{
+      "title": "customTitle",
+      "mimeType": "image/png",
+      "size": 7399,
+      "sha256Base64": "tHy+QBYYfHYhrrTC4OBdCHsK9UMldZ2VMA3foB6q6DQ="
+    }]
   }
 }
 
 script:post-response {
   if (res.getStatus() === 200) {
-    const url = res.body.url
+    const url = res.body[0].url
     if (!url) return
-  
-    bru.setVar('R2uploadUrl', url)
+    
+    bru.setVar('R2UploadUrl', url)
   }
 }
 

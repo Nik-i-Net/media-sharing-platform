@@ -5,13 +5,14 @@ meta {
 }
 
 put {
-  url: {{R2uploadUrl}}
+  url: {{R2UploadUrl}}
   body: file
   auth: none
 }
 
 headers {
   Content-Length: 7399
+  x-amz-checksum-sha256: tHy+QBYYfHYhrrTC4OBdCHsK9UMldZ2VMA3foB6q6DQ=
 }
 
 body:json {
