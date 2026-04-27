@@ -1,13 +1,4 @@
-interface RegisterIdentityProps {
-  id: string;
-  userId: string;
-  provider: string;
-  providerUserId: string;
-  email?: string | undefined;
-  emailVerified?: boolean | undefined;
-}
-
-interface NewIdentityProps {
+interface IdentityProps {
   id: string;
   userId: string;
   provider: string;
@@ -17,63 +8,59 @@ interface NewIdentityProps {
   createdAt: Date;
   updatedAt: Date;
 }
+type RegisterIdentityProps = Omit<IdentityProps, 'createdAt' | 'updatedAt'>;
 
 export class Identity {
   static register(props: RegisterIdentityProps) {
-    const identity = new Identity({
+    return new Identity({
       id: props.id,
       userId: props.userId,
       provider: props.provider,
       providerUserId: props.providerUserId,
-      email: props.email ?? null,
-      emailVerified: props.emailVerified ?? false,
+      email: props.email,
+      emailVerified: props.emailVerified,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    return identity;
   }
 
   readonly id: string;
   readonly userId: string;
   readonly provider: string;
   readonly providerUserId: string;
-  private _email: string | null;
-  private _emailVerified: boolean;
+  #email: string | null;
+  #emailVerified: boolean;
   readonly createdAt: Date;
-  private _updatedAt: Date;
+  #updatedAt: Date;
 
-  constructor(props: NewIdentityProps) {
+  constructor(props: IdentityProps) {
     this.id = props.id;
     this.userId = props.userId;
     this.provider = props.provider;
     this.providerUserId = props.providerUserId;
-    this._email = props.email;
-    this._emailVerified = props.emailVerified;
+    this.#email = props.email;
+    this.#emailVerified = props.emailVerified;
     this.createdAt = props.createdAt;
-    this._updatedAt = props.updatedAt;
+    this.#updatedAt = props.updatedAt;
   }
 
   get email() {
-    return this._email;
+    return this.#email;
   }
   get emailVerified() {
-    return this._emailVerified;
+    return this.#emailVerified;
   }
   get updatedAt() {
-    return this._updatedAt;
+    return this.#updatedAt;
   }
 
   changeEmail(newEmail: string) {
-    this._email = newEmail;
-    this.touch();
+    this.#email = newEmail;
+    this.#updatedAt = new Date();
   }
 
   verifyEmail() {
-    this._emailVerified = true;
-    this.touch();
-  }
-
-  private touch() {
-    this._updatedAt = new Date();
+    this.#emailVerified = true;
+    this.#updatedAt = new Date();
   }
 }

@@ -1,12 +1,6 @@
 import type { Identity } from './identity';
 
-interface RegisterUserProps {
-  id: string;
-  email?: string | undefined;
-  emailVerified?: boolean | undefined;
-}
-
-interface RestoreUserProps {
+interface UserProps {
   id: string;
   email: string | null;
   emailVerified: boolean;
@@ -14,113 +8,79 @@ interface RestoreUserProps {
   createdAt: Date;
   updatedAt: Date;
 }
+type RegisterUserProps = Pick<UserProps, 'id' | 'email' | 'emailVerified'>;
 
 export class User {
-  static register(props: RegisterUserProps) {
-    const { id, email = null, emailVerified = null } = props;
-    const totalStorageBytes = 0;
-    const now = new Date();
-    return new User(id, email, emailVerified, totalStorageBytes, now, now);
-  }
+  readonly id: string;
+  #email: string | null;
+  #emailVerified: boolean;
+  #totalStorageBytes: number;
+  readonly createdAt: Date;
+  #updatedAt: Date;
 
-  static restore(props: RestoreUserProps) {
-    return new User(
-      props.id,
-      props.email,
-      props.emailVerified,
-      props.totalStorageBytes,
-      props.createdAt,
-      props.updatedAt,
-    );
+  constructor(props: UserProps) {
+    this.id = props.id;
+    this.#email = props.email;
+    this.#emailVerified = props.emailVerified;
+    this.#totalStorageBytes = props.totalStorageBytes;
+    this.createdAt = props.createdAt;
+    this.#updatedAt = props.updatedAt;
   }
-
-  protected constructor(
-    readonly id: string,
-    private _email: string | null,
-    private _emailVerified: boolean | null,
-    private _totalStorageBytes: number,
-    readonly createdAt: Date,
-    protected _updatedAt: Date,
-  ) {}
 
   get email() {
-    return this._email;
+    return this.#email;
   }
   get emailVerified() {
-    return this._emailVerified;
+    return this.#emailVerified;
   }
   get updatedAt() {
-    return this._updatedAt;
+    return this.#updatedAt;
   }
   get totalStorageBytes() {
-    return this._totalStorageBytes;
+    return this.#totalStorageBytes;
   }
 
   changeEmail(newEmail: string) {
-    this._email = newEmail;
-    this._updatedAt = new Date();
+    this.#email = newEmail;
+    this.#updatedAt = new Date();
   }
 
   verifyEmail() {
-    this._emailVerified = true;
-    this._updatedAt = new Date();
+    this.#emailVerified = true;
+    this.#updatedAt = new Date();
   }
-}
-
-interface RegisterUserWithIdentitiesProps extends RegisterUserProps {
-  identities: Identity[];
-}
-
-interface RestoreUserWithIdentitiesProps extends RestoreUserProps {
-  identities: Identity[];
 }
 
 export class UserWithIdentities extends User {
-  static register(props: RegisterUserWithIdentitiesProps) {
-    const { id, email = null, emailVerified = null, identities = [] } = props;
-    const totalStorageBytes = 0;
-    const now = new Date();
-    return new UserWithIdentities(
-      id,
-      email,
-      emailVerified,
-      totalStorageBytes,
-      now,
-      now,
-      identities,
-    );
+  static register(props: RegisterUserProps) {
+    return new UserWithIdentities({
+      id: props.id,
+      email: props.email,
+      emailVerified: props.emailVerified,
+      totalStorageBytes: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      identities: [],
+    });
   }
 
-  static restore(props: RestoreUserWithIdentitiesProps) {
-    return new UserWithIdentities(
-      props.id,
-      props.email,
-      props.emailVerified,
-      props.totalStorageBytes,
-      props.createdAt,
-      props.updatedAt,
-      props.identities,
-    );
-  }
+  #identities: Identity[];
 
-  constructor(
-    id: string,
-    email: string | null,
-    emailVerified: boolean | null,
-    totalStorageBytes: number,
-    createdAt: Date,
-    updatedAt: Date,
-    private _identities: Identity[],
-  ) {
-    super(id, email, emailVerified, totalStorageBytes, createdAt, updatedAt);
+  constructor(props: UserProps & { identities: Identity[] }) {
+    const { identities, ...rest } = props;
+    super(rest);
+    this.#identities = identities;
   }
 
   get identities() {
-    return this._identities;
+    return this.#identities;
   }
 
   addIdentity(identity: Identity) {
-    this._identities.push(identity);
-    this._updatedAt = new Date();
+    this.#identities.push(identity);
+  }
+
+  removeIdentity(id: string) {
+    this.#identities = this.#identities.filter((i) => i.id !== id);
   }
 }
