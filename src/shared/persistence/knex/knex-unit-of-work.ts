@@ -1,7 +1,7 @@
 import { IdentitiesRepository } from '@/features/users/repositories/identities.repository';
-import { UsersRepository } from '@/features/users/repositories/users.repository';
+import { KnexUsersRepository } from '@/features/users/repositories/knex-users.repository';
 import type { Knex } from 'knex';
-import type { UnitOfWork, Repositories } from '../ports/unit-of-work';
+import type { UnitOfWork, Repositories } from '../../ports/unit-of-work';
 
 export class KnexUnitOfWork implements UnitOfWork {
   constructor(private readonly db: Knex | Knex.Transaction) {}
@@ -13,13 +13,13 @@ export class KnexUnitOfWork implements UnitOfWork {
 }
 
 export class KnexRepositories implements Repositories {
-  private _users?: UsersRepository;
+  private _users?: KnexUsersRepository;
   private _identities?: IdentitiesRepository;
 
   constructor(private readonly db: Knex | Knex.Transaction) {}
 
-  get users(): UsersRepository {
-    return (this._users ??= new UsersRepository(this.db));
+  get users(): KnexUsersRepository {
+    return (this._users ??= new KnexUsersRepository(this.db));
   }
 
   get identities(): IdentitiesRepository {
