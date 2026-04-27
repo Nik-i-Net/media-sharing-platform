@@ -4,7 +4,7 @@ export function assertDefined<T>(value: T, errorMessage?: string): asserts value
   }
 }
 
-export function ensureDefined<T>(value: T, errorMessage?: string): NonNullable<T> {
+export function requireDefined<T>(value: T, errorMessage?: string): NonNullable<T> {
   if (value === undefined || value === null) {
     throw new Error(errorMessage ?? 'Value is not defined');
   }
