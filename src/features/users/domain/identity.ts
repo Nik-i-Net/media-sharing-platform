@@ -1,6 +1,5 @@
 interface IdentityProps {
   id: string;
-  userId: string;
   provider: string;
   providerUserId: string;
   email: string | null;
@@ -14,7 +13,6 @@ export class Identity {
   static register(props: RegisterIdentityProps) {
     return new Identity({
       id: props.id,
-      userId: props.userId,
       provider: props.provider,
       providerUserId: props.providerUserId,
       email: props.email,
@@ -25,7 +23,6 @@ export class Identity {
   }
 
   readonly id: string;
-  readonly userId: string;
   readonly provider: string;
   readonly providerUserId: string;
   #email: string | null;
@@ -35,7 +32,6 @@ export class Identity {
 
   constructor(props: IdentityProps) {
     this.id = props.id;
-    this.userId = props.userId;
     this.provider = props.provider;
     this.providerUserId = props.providerUserId;
     this.#email = props.email;
@@ -56,11 +52,15 @@ export class Identity {
 
   changeEmail(newEmail: string) {
     this.#email = newEmail;
-    this.#updatedAt = new Date();
+    this.touch();
   }
 
   verifyEmail() {
     this.#emailVerified = true;
+    this.touch();
+  }
+
+  private touch() {
     this.#updatedAt = new Date();
   }
 }
