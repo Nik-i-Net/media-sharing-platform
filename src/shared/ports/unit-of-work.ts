@@ -1,11 +1,12 @@
-import type { IdentitiesRepository } from '@/features/users/repositories/identities.repository';
-import type { UsersRepository } from '@/features/users/repositories/users.repository';
+import type { UsersRepository } from '@/features/users/domain/users.repository';
 
 export interface UnitOfWork {
-  execute<T>(callback: (repos: Repositories) => Promise<T>): Promise<T>;
+  execute<T>(callback: (ctx: UnitOfWorkContext) => Promise<T>): Promise<T>;
 }
 
-export interface Repositories {
-  get users(): UsersRepository;
-  get identities(): IdentitiesRepository;
+export interface UnitOfWorkContext {
+  get usersRepository(): UsersRepository;
+  // get mediaRepository(): MediaRepository;
+  // get collectionsRepository(): CollectionsRepository;
+  // get subscriptionsRepository(): SubscriptionsRepository;
 }

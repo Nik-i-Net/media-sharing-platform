@@ -1,28 +1,24 @@
-import { IdentitiesRepository } from '@/features/users/repositories/identities.repository';
 import { KnexUsersRepository } from '@/features/users/repositories/knex-users.repository';
+import type { UnitOfWork, UnitOfWorkContext } from '@/shared/ports/unit-of-work';
 import type { Knex } from 'knex';
-import type { UnitOfWork, Repositories } from '../../ports/unit-of-work';
 
 export class KnexUnitOfWork implements UnitOfWork {
-  constructor(private readonly db: Knex | Knex.Transaction) {}
+  constructor(private readonly db: Knex) {}
 
-  async execute<T>(work: (repos: Repositories) => Promise<T>): Promise<T> {
-    const repos = new KnexRepositories(this.db);
-    return work(repos);
+  async execute<T>(work: (ctx: KnexUnitOfWorkContext) => Promise<T>): Promise<T> {
+    return await this.db.transaction(async (trx) => {
+      const ctx = new KnexUnitOfWorkContext(trx);
+      return await work(ctx);
+    });
   }
 }
 
-export class KnexRepositories implements Repositories {
-  private _users?: KnexUsersRepository;
-  private _identities?: IdentitiesRepository;
+export class KnexUnitOfWorkContext implements UnitOfWorkContext {
+  private _usersRepository?: KnexUsersRepository;
 
-  constructor(private readonly db: Knex | Knex.Transaction) {}
+  constructor(private readonly trx: Knex.Transaction) {}
 
-  get users(): KnexUsersRepository {
-    return (this._users ??= new KnexUsersRepository(this.db));
-  }
-
-  get identities(): IdentitiesRepository {
-    return (this._identities ??= new IdentitiesRepository(this.db));
+  get usersRepository(): KnexUsersRepository {
+    return (this._usersRepository ??= new KnexUsersRepository(this.trx));
   }
 }
