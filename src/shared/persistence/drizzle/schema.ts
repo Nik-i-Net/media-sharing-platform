@@ -8,6 +8,7 @@ export const usersTable = t.pgTable('users', {
   totalStorageBytes: t.integer('total_storage_bytes').notNull(),
   createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  deletedAt: t.timestamp('deleted_at', { withTimezone: true }),
 });
 
 export const identitiesTable = t.pgTable(

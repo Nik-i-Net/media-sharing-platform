@@ -1,9 +1,8 @@
-import type { User, UserWithIdentities } from './user';
+import type { User } from './user';
 
 export interface UsersRepository {
-  save(user: User | UserWithIdentities): Promise<void>;
+  save(user: User): Promise<void>;
   findById(id: string): Promise<User | null>;
-  findByIdWithIdentities(id: string): Promise<UserWithIdentities | null>;
   existsByEmail(email: string): Promise<boolean>;
   delete(id: string): Promise<boolean>;
 }
