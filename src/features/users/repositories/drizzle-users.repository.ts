@@ -1,79 +1,60 @@
 import type { UsersRepository } from '../domain/users.repository';
 import { User } from '../domain/user';
-import { Identity } from '../domain/identity';
-import { identitiesTable, usersTable } from '@/shared/persistence/drizzle/schema';
-import { eq, inArray } from 'drizzle-orm';
-import { excluded } from '@/shared/persistence/drizzle/utils';
+import { usersTable } from '@/shared/persistence/drizzle/schema';
+import { eq } from 'drizzle-orm';
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/persistence/drizzle/client';
 
 export class DrizzleUsersRepository implements UsersRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
 
   async save(user: User): Promise<void> {
-    await this.db.transaction(async (tx) => {
-      const { id, email, emailVerified, totalStorageBytes, createdAt, updatedAt } = user;
-      const identitiesData: (typeof identitiesTable.$inferInsert)[] = user.identities.map((i) => ({
-        id: i.id,
-        userId: user.id,
-        provider: i.provider,
-        providerUserId: i.providerUserId,
-        email: i.email,
-        emailVerified: i.emailVerified,
-        createdAt: i.createdAt,
-        updatedAt: i.updatedAt,
-      }));
-
-      await tx
-        .insert(usersTable)
-        .values({ id, email, emailVerified, totalStorageBytes, createdAt, updatedAt })
-        .onConflictDoUpdate({
-          target: usersTable.id,
-          set: { email, emailVerified, totalStorageBytes, updatedAt },
-        });
-
-      await tx
-        .insert(identitiesTable)
-        .values(identitiesData)
-        .onConflictDoUpdate({
-          target: identitiesTable.id,
-          set: {
-            email: excluded(identitiesTable.email),
-            emailVerified: excluded(identitiesTable.emailVerified),
-            updatedAt: excluded(identitiesTable.updatedAt),
-          },
-        });
-
-      if (user._removedIdentityIds.length > 0) {
-        await tx
-          .delete(identitiesTable)
-          .where(inArray(identitiesTable.id, user._removedIdentityIds));
-        user._removedIdentityIds = [];
-      }
-    });
+    await this.db
+      .insert(usersTable)
+      .values({
+        id: user.id,
+        auth0UserId: user.externalId,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        identities: user.identities,
+        totalStorageBytes: user.totalStorageBytes,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        deletedAt: user.deletedAt,
+      })
+      .onConflictDoUpdate({
+        target: usersTable.id,
+        set: {
+          email: user.email,
+          emailVerified: user.emailVerified,
+          identities: user.identities,
+          totalStorageBytes: user.totalStorageBytes,
+          updatedAt: user.updatedAt,
+          deletedAt: user.deletedAt,
+        },
+      });
   }
 
   async findById(id: string): Promise<User | null> {
     const row = await this.db.query.usersTable.findFirst({
       where: eq(usersTable.id, id),
-      with: { identities: true },
     });
     if (!row) return null;
-
-    const { identities, ...rest } = row;
-    return new User({ ...rest, identities: identities.map((i) => new Identity(i)) });
+    return new User({ ...row, externalId: row.auth0UserId });
   }
 
-  async existsByEmail(email: string): Promise<boolean> {
-    const found = await this.db.query.usersTable.findFirst({
-      columns: { id: true },
+  async findByExternalId(id: string): Promise<User | null> {
+    const row = await this.db.query.usersTable.findFirst({
+      where: eq(usersTable.auth0UserId, id),
+    });
+    if (!row) return null;
+    return new User({ ...row, externalId: row.auth0UserId });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const row = await this.db.query.usersTable.findFirst({
       where: eq(usersTable.email, email),
     });
-
-    return found !== undefined;
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const deletedRows = await this.db.delete(usersTable).where(eq(usersTable.id, id)).returning();
-    return deletedRows.length > 0;
+    if (!row) return null;
+    return new User({ ...row, externalId: row.auth0UserId });
   }
 }
