@@ -1,16 +1,15 @@
+// TODO: handle errors
+
 const JWT_AUDIENCE = 'http://your-domain.com';
 const URL = `${JWT_AUDIENCE}/api/v1/users/auth0`;
 
 /**
  * @param {string} url
  * @param {string} apiToken
- * @param {{provider: string, sub: string, email: {value: string, verified: boolean} | null}} userInfo
  */
 async function fetchUserId(url, apiToken, userInfo) {
   const controller = new AbortController();
-  setTimeout(() => controller.abort(), 1000);
-
-  const [provider, providerUserId] = userInfo.user_id.split('|');
+  setTimeout(() => controller.abort(), 5000);
 
   const response = await fetch(url, {
     method: 'POST',
@@ -20,10 +19,13 @@ async function fetchUserId(url, apiToken, userInfo) {
       'x-api-key': apiToken,
     },
     body: JSON.stringify({
-      provider,
-      providerUserId,
+      userId: userInfo.user_id,
       email: userInfo.email,
       emailVerified: userInfo.email_verified,
+      identities: userInfo.identities.map((i) => ({
+        provider: i.provider,
+        userId: i.userId,
+      })),
     }),
   });
 
@@ -32,12 +34,8 @@ async function fetchUserId(url, apiToken, userInfo) {
 }
 
 exports.onExecutePostLogin = async (event, api) => {
-  let userId = event.user.app_metadata?.userId;
-  if (!userId) {
-    const apiToken = event.secrets.AUTH0_API_KEY;
-    userId = await fetchUserId(URL, apiToken, event.user);
-    api.user.setAppMetadata('userId', userId);
-  }
+  const apiToken = event.secrets.API_TOKEN;
+  const userId = await fetchUserId(URL, apiToken, event.user);
   api.accessToken.setCustomClaim(`${JWT_AUDIENCE}/userId`, userId);
 };
 
