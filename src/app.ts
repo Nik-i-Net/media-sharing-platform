@@ -7,6 +7,7 @@ import { registerUsersRoutes, usersRouter } from './features/users/http/users.ro
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
 import swaggerUi from 'swagger-ui-express';
 import { openapiRegistry } from './shared/openapi-registry';
+// import { mediaRouter } from './features/media/http/media.routes';
 
 await Promise.all([
   registerUsersRoutes(), //
@@ -14,6 +15,7 @@ await Promise.all([
 
 const router = Router();
 router.use('/users', usersRouter);
+// router.use('/media', mediaRouter);
 
 const generator = new OpenApiGeneratorV31(openapiRegistry.definitions);
 export const openapiDocument = generator.generateDocument({
@@ -25,6 +27,7 @@ export const app = express();
 app.use(cors({ origin: ENV.CLIENT_BASE_URL }));
 app.use(express.json());
 app.use(cookieParser());
+
 app.use('/api/v1', router);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 app.use('/api-docs.json', (_req, res) => {

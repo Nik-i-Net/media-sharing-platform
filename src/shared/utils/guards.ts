@@ -10,3 +10,10 @@ export function requireDefined<T>(value: T, errorMessage?: string): NonNullable<
   }
   return value as NonNullable<T>;
 }
+
+export function requireNotEmpty<T>(arr: T[], errorMessage?: string): [T, ...T[]] {
+  if (arr.length === 0) {
+    throw new Error(errorMessage ?? 'Array is empty');
+  }
+  return arr as [T, ...T[]];
+}
