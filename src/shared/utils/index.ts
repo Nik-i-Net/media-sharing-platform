@@ -1,5 +1,5 @@
 export * from './guards';
-export * from './catchError';
+export * from './errors';
 export * from './ms';
 export * from './strings';
 export * from './objects';

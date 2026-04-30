@@ -1,40 +1,62 @@
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from '../constants';
-import { NotFoundError, ValidationError } from '../errors';
+import { NotFoundError, UnauthorizedError, ValidationError } from '../errors';
 import { BaseError } from '../errors/base.error';
+import { z } from 'zod';
 
-export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
-  if (!(err instanceof BaseError)) {
-    handleUnknownError(err, req, res);
-  }
+const ErrorResponseSchema = z
+  .object({
+    error: z.object({
+      message: z.string(),
+      code: z.string(),
+      details: z.unknown().optional(),
+    }),
+  })
+  .brand<'ErrorResponse'>();
+type ResponseObject = z.infer<typeof ErrorResponseSchema>;
+type ErrorObject = z.infer<typeof ErrorResponseSchema.shape.error>;
 
-  if (err instanceof NotFoundError) {
-    return res.status(err.httpStatusCode).json({
+function errorEnvelope(err: ErrorObject): ResponseObject {
+  return ErrorResponseSchema.decode({
+    error: {
       message: err.message,
       code: err.code,
-    });
-  } else if (err instanceof ValidationError) {
-    return res.status(err.httpStatusCode).json({
-      message: err.message,
-      code: err.code,
-      details: err.issues,
-    });
-  }
-
-  handleUnknownError(new Error('Unhandled BaseError'), req, res);
+      details: err.details,
+    },
+  });
 }
 
-function handleUnknownError(err: unknown, req: Request, res: Response) {
-  console.error(`${req.method} ${req.url}`);
+function respondWithInternalServerError(res: Response<ResponseObject>) {
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+    errorEnvelope({
+      message: 'Internal server error',
+      code: 'INTERNAL_SERVER_ERROR',
+    }),
+  );
+}
 
-  if (err instanceof Error) {
-    console.error('UnknownError:', err.stack || err.message);
-  } else {
-    console.error('UnknownError:', err);
+export function errorHandler(
+  err: unknown,
+  req: Request,
+  res: Response<ResponseObject>,
+  _next: NextFunction,
+) {
+  if (!(err instanceof BaseError)) {
+    console.error('UnknownError');
+    console.error(`Route: ${req.method} ${req.url}`);
+    console.error(err instanceof Error ? err.stack || err.message : err);
+    return respondWithInternalServerError(res);
   }
 
-  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-    message: 'Internal server error',
-    code: 'INTERNAL_SERVER_ERROR',
-  });
+  if (
+    err instanceof NotFoundError || //
+    err instanceof UnauthorizedError
+  ) {
+    res.status(err.httpStatusCode).json(errorEnvelope(err));
+  }
+  if (err instanceof ValidationError) {
+    res.status(err.httpStatusCode).json(errorEnvelope({ ...err, details: err.issues }));
+  }
+
+  respondWithInternalServerError(res);
 }
