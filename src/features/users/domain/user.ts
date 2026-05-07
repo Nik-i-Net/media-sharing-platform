@@ -1,4 +1,5 @@
 import { TodoError } from '@/shared/errors';
+import { Plan } from './plan';
 
 export interface Identity {
   provider: string;
@@ -12,6 +13,7 @@ interface UserProps {
   emailVerified: boolean;
   identities: Identity[];
   totalStorageBytes: number;
+  plan: Plan;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
@@ -34,6 +36,7 @@ export class User {
       emailVerified: props.emailVerified,
       identities: [props.identity],
       totalStorageBytes: 0,
+      plan: Plan.FREE,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
@@ -46,6 +49,7 @@ export class User {
   #emailVerified: boolean;
   #identities: Identity[];
   #totalStorageBytes: number;
+  #plan: Plan;
   readonly createdAt: Date;
   #updatedAt: Date;
   #deletedAt: Date | null;
@@ -59,6 +63,7 @@ export class User {
     if (props.identities.length === 0) throw new TodoError('User must have at least one identity');
     this.#identities = props.identities;
     this.#totalStorageBytes = props.totalStorageBytes;
+    this.#plan = props.plan;
     this.createdAt = props.createdAt;
     this.#updatedAt = props.updatedAt;
     this.#deletedAt = props.deletedAt;
@@ -75,6 +80,9 @@ export class User {
   }
   get totalStorageBytes() {
     return this.#totalStorageBytes;
+  }
+  get plan() {
+    return this.#plan;
   }
   get updatedAt() {
     return this.#updatedAt;
@@ -123,6 +131,24 @@ export class User {
 
     this.#identities.splice(idx, 1);
     this.touch();
+  }
+
+  changePlan(newPlan: Plan) {
+    if (this.#plan.id === newPlan.id) throw new TodoError('Plan is already set');
+
+    this.#plan = newPlan;
+    this.touch();
+  }
+
+  ensureCanUpload(batch: { id: string; mimeType: string; sizeBytes: number }[]) {
+    let totalBytes = 0;
+    batch.forEach(({ id, mimeType, sizeBytes }) => {
+      if (!this.#plan.allowedMimeTypes.includes(mimeType)) {
+        throw new TodoError(`Mime type ${mimeType} not allowed. Id: ${id}`);
+      }
+      totalBytes += sizeBytes;
+    });
+    if (totalBytes > this.#plan.maxFileSizeBytes) throw new TodoError('Not enough storage space');
   }
 
   suspendAccount() {

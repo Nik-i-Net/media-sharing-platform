@@ -1,14 +1,16 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { ENV } from '@/config/env.loader';
-import { TodoError, UnauthorizedError } from '../errors';
+import { UnauthorizedError, type ErrorResponse } from '../errors';
 import { JOSEError } from 'jose/errors';
 import type { RequestHandler } from 'express';
+import { StatusCodes } from '../constants';
+import { z } from 'zod';
 
 const JWKS = createRemoteJWKSet(new URL(`${ENV.JWT_ISSUER}/.well-known/jwks.json`), {
   cooldownDuration: 60 * 60 * 1000, // 1 hour
 });
 
-export function checkJwt({ rejectRequest = true }): RequestHandler {
+export function checkJwt(): RequestHandler {
   return async (req, _res, next) => {
     const authHeader = req.headers.authorization;
     const [scheme, token] = authHeader?.split(' ') ?? [];
@@ -26,14 +28,12 @@ export function checkJwt({ rejectRequest = true }): RequestHandler {
 
       const userId = payload[`${ENV.JWT_AUDIENCE}/userId`];
       if (!userId || typeof userId !== 'string') {
-        throw new TodoError('Invalid userId');
+        throw new UnauthorizedError('Invalid userId');
       }
       req.user = { id: userId };
 
       next();
     } catch (err) {
-      if (!rejectRequest) next();
-
       if (err instanceof JOSEError) {
         throw new UnauthorizedError();
       }
@@ -41,6 +41,22 @@ export function checkJwt({ rejectRequest = true }): RequestHandler {
     }
   };
 }
+
+export const UnauthorizedResponse = {
+  [StatusCodes.UNAUTHORIZED]: {
+    description: 'Missing or invalid `Authorization` header',
+    content: {
+      'application/json': {
+        schema: z.object({
+          error: z.object({
+            message: z.literal('Authorization required'),
+            code: z.literal('UNAUTHORIZED'),
+          }),
+        }),
+      },
+    },
+  },
+} satisfies ErrorResponse;
 
 declare module 'express-serve-static-core' {
   interface Request {

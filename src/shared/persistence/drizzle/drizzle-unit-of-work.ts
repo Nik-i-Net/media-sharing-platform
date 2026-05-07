@@ -1,4 +1,4 @@
-import { DrizzleUsersRepository } from '@/features/users/repositories/drizzle-users.repository';
+import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
 import type { UnitOfWork, UnitOfWorkContext } from '@/shared/ports/unit-of-work';
 import type { DrizzleDB, DrizzleTransaction } from './client';
 

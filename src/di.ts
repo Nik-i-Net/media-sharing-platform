@@ -1,10 +1,10 @@
-import { ResolveUserIdUseCase } from './features/users/use-cases/resolve-user-id';
+import { ResolveUserIdUseCase } from './features/users/application/resolve-user-id';
 import { ENV } from './config/env.loader';
-import { R2StorageService } from './features/media/infrastructure/R2-storage.service';
-import { InitiateUploadsCommandHandler } from './features/media/use-cases/initiate-uploads.command';
+import { R2StorageService } from './features/media/infrastructure/R2-storage.provider';
+import { InitiateUploadsUseCase } from './features/media/application/initiate-uploads.command';
 // import { DrizzleUnitOfWork } from './shared/persistence/drizzle/drizzle-unit-of-work';
 import { db } from './shared/persistence/drizzle/client';
-import { DrizzleUsersRepository } from './features/users/repositories/drizzle-users.repository';
+import { DrizzleUsersRepository } from './features/users/infrastructure/drizzle-users.repository';
 
 // const uow = new DrizzleUnitOfWork(db);
 
@@ -19,4 +19,4 @@ const storageService = new R2StorageService({
   secretAccessKey: ENV.CLOUDFLARE_SECRET_ACCESS_KEY,
   bucket: ENV.CLOUDFLARE_BUCKET,
 });
-export const initiateUploadsCommandHandler = new InitiateUploadsCommandHandler(storageService);
+export const initiateUploads = new InitiateUploadsUseCase(storageService);

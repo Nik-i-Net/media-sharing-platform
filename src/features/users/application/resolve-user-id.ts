@@ -11,6 +11,7 @@ export interface ResolveUserIdCommand {
   identities: Identities;
 }
 
+// TODO: split into: register, resolveUserId (only for getting userId) and syncIdentities
 export class ResolveUserIdUseCase {
   constructor(private readonly usersRepo: UsersRepository) {}
 

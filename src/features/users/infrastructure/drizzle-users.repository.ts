@@ -3,9 +3,13 @@ import { User } from '../domain/user';
 import { usersTable } from '@/shared/persistence/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/persistence/drizzle/client';
+import type { PlanProvider } from '../application/ports/plan.provider';
 
 export class DrizzleUsersRepository implements UsersRepository {
-  constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
+  constructor(
+    private readonly db: DrizzleDB | DrizzleTransaction,
+    private readonly planProvider: PlanProvider,
+  ) {}
 
   async save(user: User): Promise<void> {
     await this.db
@@ -17,6 +21,7 @@ export class DrizzleUsersRepository implements UsersRepository {
         emailVerified: user.emailVerified,
         identities: user.identities,
         totalStorageBytes: user.totalStorageBytes,
+        planId: user.plan.id,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         deletedAt: user.deletedAt,
@@ -28,6 +33,7 @@ export class DrizzleUsersRepository implements UsersRepository {
           emailVerified: user.emailVerified,
           identities: user.identities,
           totalStorageBytes: user.totalStorageBytes,
+          planId: user.plan.id,
           updatedAt: user.updatedAt,
           deletedAt: user.deletedAt,
         },
@@ -39,7 +45,12 @@ export class DrizzleUsersRepository implements UsersRepository {
       where: eq(usersTable.id, id),
     });
     if (!row) return null;
-    return new User({ ...row, externalId: row.auth0UserId });
+
+    return new User({
+      ...row,
+      externalId: row.auth0UserId,
+      plan: await this.planProvider.getPlan(row.planId),
+    });
   }
 
   async findByExternalId(id: string): Promise<User | null> {
@@ -47,7 +58,12 @@ export class DrizzleUsersRepository implements UsersRepository {
       where: eq(usersTable.auth0UserId, id),
     });
     if (!row) return null;
-    return new User({ ...row, externalId: row.auth0UserId });
+
+    return new User({
+      ...row,
+      externalId: row.auth0UserId,
+      plan: await this.planProvider.getPlan(row.planId),
+    });
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -55,6 +71,11 @@ export class DrizzleUsersRepository implements UsersRepository {
       where: eq(usersTable.email, email),
     });
     if (!row) return null;
-    return new User({ ...row, externalId: row.auth0UserId });
+
+    return new User({
+      ...row,
+      externalId: row.auth0UserId,
+      plan: await this.planProvider.getPlan(row.planId),
+    });
   }
 }
