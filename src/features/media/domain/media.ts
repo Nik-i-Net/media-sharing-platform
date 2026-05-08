@@ -1,39 +1,39 @@
 interface CreateMediaProps {
   id: string;
-  userId: string | null;
-  blobId: number;
-  title: string;
+  userId: string;
+  blobId: string;
+  fileName: string;
   expiresAt: Date | null;
 }
 
 export class Media {
   static create(props: CreateMediaProps) {
-    const { id, userId, blobId, title, expiresAt } = props;
+    const { id, userId, blobId, fileName: fileName, expiresAt } = props;
     const now = new Date();
-    const media = new Media(id, userId, blobId, title, expiresAt, now, now);
+    const media = new Media(id, userId, blobId, fileName, expiresAt, now, now);
     return media;
   }
 
-  #title: string;
+  #fileName: string;
   #expiresAt: Date | null;
   #updatedAt: Date;
 
   constructor(
     readonly id: string,
-    readonly userId: string | null,
-    readonly blobId: number,
-    title: string,
+    readonly userId: string,
+    readonly blobId: string,
+    fileName: string,
     expiresAt: Date | null,
     readonly createdAt: Date,
     updatedAt: Date,
   ) {
-    this.#title = title;
+    this.#fileName = fileName;
     this.#expiresAt = expiresAt;
     this.#updatedAt = updatedAt;
   }
 
-  get title() {
-    return this.#title;
+  get fileName() {
+    return this.#fileName;
   }
   get expiresAt() {
     return this.#expiresAt;
@@ -42,8 +42,8 @@ export class Media {
     return this.#updatedAt;
   }
 
-  changeTitle(newTitle: string) {
-    this.#title = newTitle;
+  changeFileName(newFileName: string) {
+    this.#fileName = newFileName;
     this.#touch();
   }
 
