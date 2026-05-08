@@ -52,10 +52,10 @@ export function errorHandler(
     err instanceof NotFoundError || //
     err instanceof UnauthorizedError
   ) {
-    res.status(err.httpStatusCode).json(errorEnvelope(err));
+    return res.status(err.httpStatusCode).json(errorEnvelope(err));
   }
   if (err instanceof ValidationError) {
-    res.status(err.httpStatusCode).json(errorEnvelope({ ...err, details: err.issues }));
+    return res.status(err.httpStatusCode).json(errorEnvelope({ ...err, details: err.issues }));
   }
 
   respondWithInternalServerError(res);

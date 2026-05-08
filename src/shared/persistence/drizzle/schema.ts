@@ -4,14 +4,14 @@ export const plansTable = t.pgTable('plans', {
   id: t.varchar('id').primaryKey(),
   allowedMimeTypes: t.jsonb('allowed_mime_types').$type<string[]>().notNull(),
   maxFileSizeBytes: t.integer('max_file_size_bytes').notNull(),
-  maxStorageBytes: t.integer('max_storage_bytes').notNull(),
+  maxStorageBytes: t.bigint('max_storage_bytes', { mode: 'number' }).notNull(),
 });
 
 export const usersTable = t.pgTable('users', {
   id: t.uuid('id').primaryKey(),
   auth0UserId: t.varchar('auth0_user_id', { length: 50 }).notNull().unique(),
   planId: t
-    .uuid('plan_id')
+    .varchar('plan_id')
     .references(() => plansTable.id, { onDelete: 'cascade' })
     .notNull(),
   email: t.varchar('email', { length: 255 }).unique(),
