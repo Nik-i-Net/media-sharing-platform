@@ -1,5 +1,5 @@
-import { Collection } from './domain/collection';
 import type { Knex } from 'knex';
+import { Collection } from '../domain/collection';
 
 export class CollectionRepository {
   constructor(private readonly db: Knex) {}
@@ -35,7 +35,7 @@ export class CollectionRepository {
     return {
       id: collection.id,
       user_id: collection.userId,
-      title: collection.title,
+      title: collection.name,
       is_public: collection.isPublic,
       created_at: collection.createdAt,
       updated_at: collection.updatedAt,

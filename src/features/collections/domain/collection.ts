@@ -1,30 +1,30 @@
 export class Collection {
-  public static create(id: string, userId: string, title: string) {
+  public static create(id: string, userId: string, name: string) {
     const isPublic = false;
     const now = new Date();
-    const collection = new Collection(id, userId, title, isPublic, now, now);
+    const collection = new Collection(id, userId, name, isPublic, now, now);
     return collection;
   }
 
-  #title: string;
+  #name: string;
   #isPublic: boolean;
   #updatedAt: Date;
 
   constructor(
     readonly id: string,
     readonly userId: string,
-    title: string,
+    name: string,
     isPublic: boolean,
     readonly createdAt: Date,
     updatedAt: Date,
   ) {
-    this.#title = title;
+    this.#name = name;
     this.#isPublic = isPublic;
     this.#updatedAt = updatedAt;
   }
 
-  get title() {
-    return this.#title;
+  get name() {
+    return this.#name;
   }
   get isPublic() {
     return this.#isPublic;
@@ -33,8 +33,8 @@ export class Collection {
     return this.#updatedAt;
   }
 
-  changeTitle(newTitle: string) {
-    this.#title = newTitle;
+  changeName(newName: string) {
+    this.#name = newName;
     this.#touch();
   }
 
