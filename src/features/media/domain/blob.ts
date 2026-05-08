@@ -1,4 +1,5 @@
 interface CreateBlobParams {
+  id: string;
   storageKey: string;
   hash: string;
   mimeType: string;
@@ -7,8 +8,7 @@ interface CreateBlobParams {
 
 export class BlobEntity {
   public static create(props: CreateBlobParams) {
-    const { storageKey, hash, mimeType, sizeBytes } = props;
-    const id = null;
+    const { id, storageKey, hash, mimeType, sizeBytes } = props;
     const hashAlgorithm = 'sha256base64';
     const now = new Date();
     const blob = new BlobEntity(id, storageKey, hash, hashAlgorithm, mimeType, sizeBytes, now, now);
@@ -16,7 +16,7 @@ export class BlobEntity {
   }
 
   constructor(
-    readonly id: number | null,
+    readonly id: string,
     readonly storageKey: string,
     readonly hash: string,
     readonly hashAlgorithm: string,
