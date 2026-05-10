@@ -46,6 +46,14 @@ export class DrizzleCollectionsRepository implements CollectionsRepository {
     return records.map((record) => this.toDomain(record));
   }
 
+  async existsById(id: string): Promise<boolean> {
+    const record = await this.db.query.collectionsTable.findFirst({
+      columns: { id: true },
+      where: eq(collectionsTable.id, id),
+    });
+    return Boolean(record);
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.db.delete(collectionsTable).where(eq(collectionsTable.id, id));
     return (result.rowCount ?? 0) > 0;
