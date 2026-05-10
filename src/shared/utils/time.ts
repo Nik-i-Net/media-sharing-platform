@@ -28,3 +28,10 @@ export function duration(d1: Duration) {
     eq: (d2: Duration) => ms(d1) === ms(d2),
   };
 }
+
+export function requireDuration(value: unknown): Duration {
+  if (!(typeof value === 'string') || !/^\d+[smhd]$/.test(value)) {
+    throw new Error(`Invalid duration: ${value}`);
+  }
+  return value as Duration;
+}
