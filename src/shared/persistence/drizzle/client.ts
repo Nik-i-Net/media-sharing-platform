@@ -13,7 +13,11 @@ const pool = new Pool({
   database: ENV.POSTGRES_DB,
 });
 
-export const db = drizzle(pool, { schema, casing: 'snake_case' });
+export const db = drizzle(pool, {
+  schema, //
+  casing: 'snake_case',
+  // logger: true,
+});
 
 export type DrizzleDB = NodePgDatabase<typeof schema>;
 export type DrizzleTransaction = PgTransaction<
