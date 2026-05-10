@@ -1,7 +1,7 @@
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/persistence/drizzle/client';
 import type { CollectionsRepository } from '../domain/collections.repository';
-import { asc, eq, type InferSelectModel } from 'drizzle-orm';
-import { collectionsTable } from '@/shared/persistence/drizzle/schema';
+import { and, asc, eq, inArray, type InferSelectModel } from 'drizzle-orm';
+import { collectionsMediaTable, collectionsTable } from '@/shared/persistence/drizzle/schema';
 import { Collection } from '../domain/collection';
 
 export class DrizzleCollectionsRepository implements CollectionsRepository {
@@ -57,6 +57,23 @@ export class DrizzleCollectionsRepository implements CollectionsRepository {
   async delete(id: string): Promise<boolean> {
     const result = await this.db.delete(collectionsTable).where(eq(collectionsTable.id, id));
     return (result.rowCount ?? 0) > 0;
+  }
+
+  async addMedia(collectionId: string, mediaIds: string[]) {
+    await this.db
+      .insert(collectionsMediaTable)
+      .values(mediaIds.map((mediaId) => ({ collectionId, mediaId })));
+  }
+
+  async removeMedia(collectionId: string, mediaIds: string[]) {
+    await this.db
+      .delete(collectionsMediaTable)
+      .where(
+        and(
+          eq(collectionsMediaTable.collectionId, collectionId),
+          inArray(collectionsMediaTable.mediaId, mediaIds),
+        ),
+      );
   }
 
   private toDomain(record: InferSelectModel<typeof collectionsTable>) {
