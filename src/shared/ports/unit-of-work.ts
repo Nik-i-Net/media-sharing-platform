@@ -1,3 +1,6 @@
+import type { CollectionsRepository } from '@/features/collections/domain/collections.repository';
+import type { BlobsRepository } from '@/features/media/domain/blobs.repository';
+import type { MediaRepository } from '@/features/media/domain/media.repository';
 import type { UsersRepository } from '@/features/users/domain/users.repository';
 
 export interface UnitOfWork {
@@ -6,7 +9,8 @@ export interface UnitOfWork {
 
 export interface UnitOfWorkContext {
   get usersRepository(): UsersRepository;
-  // get mediaRepository(): MediaRepository;
-  // get collectionsRepository(): CollectionsRepository;
+  get blobsRepository(): BlobsRepository;
+  get mediaRepository(): MediaRepository;
+  get collectionsRepository(): CollectionsRepository;
   // get subscriptionsRepository(): SubscriptionsRepository;
 }

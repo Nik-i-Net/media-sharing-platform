@@ -6,6 +6,7 @@ interface CreateMediaProps {
   expiresAt: Date | null;
 }
 
+// TODO: rename to Upload
 export class Media {
   static create(props: CreateMediaProps) {
     const { id, userId, blobId, fileName: fileName, expiresAt } = props;

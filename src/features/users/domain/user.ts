@@ -1,5 +1,6 @@
 import { TodoError } from '@/shared/errors';
 import { Plan } from './plan';
+import { duration, type Duration } from '@/shared/utils';
 
 export interface Identity {
   provider: string;
@@ -140,15 +141,26 @@ export class User {
     this.touch();
   }
 
-  ensureCanUpload(batch: { id: string; mimeType: string; sizeBytes: number }[]) {
+  ensureCanUpload(
+    files: { id: string; mimeType: string; sizeBytes: number; ttl: Duration | null }[],
+  ) {
     let totalBytes = 0;
-    batch.forEach(({ id, mimeType, sizeBytes }) => {
+
+    files.forEach(({ id, mimeType, sizeBytes, ttl }) => {
       if (!this.#plan.allowedMimeTypes.includes(mimeType)) {
         throw new TodoError(`Mime type ${mimeType} not allowed. Id: ${id}`);
       }
+
+      if (ttl !== null && (duration(ttl).lt('1h') || duration(ttl).gt('30d'))) {
+        throw new TodoError(`TTL ${ttl} not allowed. Id: ${id}`);
+      }
+
       totalBytes += sizeBytes;
     });
-    if (totalBytes > this.#plan.maxFileSizeBytes) throw new TodoError('Not enough storage space');
+
+    if (totalBytes > this.#plan.maxFileSizeBytes) {
+      throw new TodoError('Not enough storage space');
+    }
   }
 
   suspendAccount() {

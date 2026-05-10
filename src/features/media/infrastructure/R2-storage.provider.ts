@@ -1,6 +1,10 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { StorageService, UploadUrlParams } from '../application/ports/storage.provider';
+import type {
+  StorageService,
+  UploadUrlParams,
+  UploadInfo,
+} from '../application/ports/storage.provider';
 
 type R2Params = {
   accountId: string;
@@ -25,7 +29,7 @@ export class R2StorageService implements StorageService {
     this.downloadBaseUrl = downloadBaseUrl;
   }
 
-  async getUploadUrl({ key, mimeType, sizeBytes, hash }: UploadUrlParams) {
+  async getUploadInfo({ key, mimeType, sizeBytes, hash }: UploadUrlParams): Promise<UploadInfo> {
     const command = new PutObjectCommand({
       Bucket: this.bucket,
       Key: key,
@@ -40,10 +44,19 @@ export class R2StorageService implements StorageService {
       unhoistableHeaders: new Set(['x-amz-checksum-sha256']),
     });
 
-    return url;
+    return {
+      url,
+      method: 'PUT',
+      headers: {
+        'Content-Type': mimeType,
+        'Content-Length': sizeBytes,
+        'x-amz-checksum-sha256': hash,
+      },
+    };
   }
 
   async getDownloadUrl(key: string) {
     return `${this.downloadBaseUrl}/${key}`;
   }
 }
+

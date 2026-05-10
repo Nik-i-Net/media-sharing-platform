@@ -7,7 +7,14 @@ export type UploadUrlParams = {
   hash: Sha256Base64;
 };
 
+export type UploadInfo = {
+  url: string;
+  method: 'PUT';
+  headers: { [key: string]: string | number };
+};
+
 export interface StorageService {
-  getUploadUrl(params: UploadUrlParams): Promise<string>;
+  getUploadInfo(params: UploadUrlParams): Promise<UploadInfo>;
   getDownloadUrl(key: string): Promise<string>;
 }
+

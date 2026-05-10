@@ -3,7 +3,6 @@ import { blobsTable } from '@/shared/persistence/drizzle/schema';
 import { and, eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import type { BlobsRepository } from '../domain/blobs.repository';
 import { BlobEntity } from '../domain/blob';
-import { excluded } from '@/shared/persistence/drizzle/utils';
 
 export class DrizzleBlobsRepository implements BlobsRepository {
   private readonly defaultHashAlgorithm = 'sha256base64';
@@ -11,33 +10,11 @@ export class DrizzleBlobsRepository implements BlobsRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
 
   async save(blob: BlobEntity): Promise<void> {
-    await this.db
-      .insert(blobsTable)
-      .values(this.toInsertModel(blob))
-      .onConflictDoUpdate({
-        target: blobsTable.id,
-        set: {
-          storageKey: blob.storageKey,
-          hash: blob.hash,
-          hashAlgorithm: blob.hashAlgorithm,
-          updatedAt: blob.updatedAt,
-        },
-      });
+    await this.db.insert(blobsTable).values(this.toInsertModel(blob));
   }
 
   async saveMany(blobs: BlobEntity[]): Promise<void> {
-    await this.db
-      .insert(blobsTable)
-      .values(blobs.map((blob) => this.toInsertModel(blob)))
-      .onConflictDoUpdate({
-        target: blobsTable.id,
-        set: {
-          storageKey: excluded(blobsTable.storageKey),
-          hash: excluded(blobsTable.hash),
-          hashAlgorithm: excluded(blobsTable.hashAlgorithm),
-          updatedAt: excluded(blobsTable.updatedAt),
-        },
-      });
+    await this.db.insert(blobsTable).values(blobs.map((blob) => this.toInsertModel(blob)));
   }
 
   async findById(id: string): Promise<BlobEntity | null> {

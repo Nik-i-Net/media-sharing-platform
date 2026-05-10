@@ -4,8 +4,9 @@ import { plansTable } from '@/shared/persistence/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { Plan } from '../domain/plan';
 import { ms } from '@/shared/utils';
+import type { PlanProvider } from '../application/ports/plan.provider';
 
-export class DrizzlePlanProvider {
+export class DrizzlePlanProvider implements PlanProvider {
   private readonly cache = new Map<string, Plan>();
 
   constructor(
