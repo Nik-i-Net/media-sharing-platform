@@ -1,5 +1,5 @@
 import { app } from './app';
-import { ENV } from './config/env.loader';
+import { ENV } from './shared/env.loader';
 
 const port = Number(ENV.PORT);
 app.listen(port, () => {

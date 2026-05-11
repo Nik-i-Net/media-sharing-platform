@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import type { Response, Router } from 'express';
 import { resolveUserId } from '@/di';
-import { ENV } from '@/config/env.loader';
 import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
 import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireNotEmpty } from '@/shared/utils';
 import type { ResolveUserIdCommand } from '../application/resolve-user-id';
+import { ENV } from '@/shared/env.loader';
 
 export function registerRoute(usersRouter: Router) {
   usersRouter.post(

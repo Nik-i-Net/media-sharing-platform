@@ -39,7 +39,7 @@ export const blobsTable = t.pgTable(
   (table) => [t.unique().on(table.hash, table.hashAlgorithm)],
 );
 
-export const mediaTable = t.pgTable('media', {
+export const uploadsTable = t.pgTable('uploads', {
   id: t.uuid('id').primaryKey(),
   userId: t
     .uuid('user_id')
@@ -55,7 +55,7 @@ export const mediaTable = t.pgTable('media', {
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const collectionsTable = t.pgTable('collections', {
+export const albumsTable = t.pgTable('albums', {
   id: t.uuid('id').primaryKey(),
   userId: t
     .uuid('user_id')
@@ -67,44 +67,17 @@ export const collectionsTable = t.pgTable('collections', {
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const collectionsMediaTable = t.pgTable(
-  'collections_media',
+export const albumsUploadsTable = t.pgTable(
+  'albums_uploads',
   {
-    collectionId: t
-      .uuid('collection_id')
-      .references(() => collectionsTable.id, { onDelete: 'cascade' })
+    albumId: t
+      .uuid('album_id')
+      .references(() => albumsTable.id, { onDelete: 'cascade' })
       .notNull(),
-    mediaId: t
-      .uuid('media_id')
-      .references(() => mediaTable.id, { onDelete: 'cascade' })
+    uploadId: t
+      .uuid('upload_id')
+      .references(() => uploadsTable.id, { onDelete: 'cascade' })
       .notNull(),
   },
-  (table) => [t.primaryKey({ columns: [table.collectionId, table.mediaId] })],
+  (table) => [t.primaryKey({ columns: [table.albumId, table.uploadId] })],
 );
-
-// export const identitiesTable = t.pgTable(
-//   'identities',
-//   {
-//     id: t.uuid('id').primaryKey(),
-//     userId: t
-//       .uuid('user_id')
-//       .references(() => usersTable.id, { onDelete: 'cascade' })
-//       .notNull(),
-//     provider: t.varchar('provider', { length: 50 }).notNull(),
-//     providerUserId: t.varchar('provider_user_id', { length: 50 }).notNull(),
-//     createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-//     updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-//   },
-//   (table) => [t.unique().on(table.provider, table.providerUserId)],
-// );
-
-// export const usersRelations = relations(usersTable, ({ many }) => ({
-//   identities: many(identitiesTable),
-// }));
-//
-// export const identitiesRelations = relations(identitiesTable, ({ one }) => ({
-//   user: one(usersTable, {
-//     fields: [identitiesTable.userId],
-//     references: [usersTable.id],
-//   }),
-// }));

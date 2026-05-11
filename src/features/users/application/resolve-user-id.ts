@@ -1,6 +1,7 @@
 import { User, type Identity } from '../domain/user';
 import { TodoError } from '@/shared/errors';
 import type { UsersRepository } from '../domain/users.repository';
+import type { PlanProvider } from './ports/plan.provider';
 
 type Identities = [Identity, ...Identity[]];
 
@@ -13,7 +14,10 @@ export interface ResolveUserIdCommand {
 
 // TODO: split into: register, resolveUserId (only for getting userId) and syncIdentities
 export class ResolveUserIdUseCase {
-  constructor(private readonly usersRepo: UsersRepository) {}
+  constructor(
+    private readonly usersRepo: UsersRepository,
+    private readonly planProvider: PlanProvider,
+  ) {}
 
   async execute(cmd: ResolveUserIdCommand): Promise<string> {
     const userByExternalId = await this.usersRepo.findByExternalId(cmd.externalId);
@@ -33,6 +37,7 @@ export class ResolveUserIdUseCase {
       email: cmd.email,
       emailVerified: cmd.emailVerified,
       identity: cmd.identities[0],
+      plan: await this.planProvider.getDefaultPlan(),
     });
     await this.usersRepo.save(newUser);
 

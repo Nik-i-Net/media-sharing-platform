@@ -1,6 +1,6 @@
-import type { CollectionsRepository } from '@/features/collections/domain/collections.repository';
-import type { BlobsRepository } from '@/features/media/domain/blobs.repository';
-import type { MediaRepository } from '@/features/media/domain/media.repository';
+import type { AlbumsRepository } from '@/features/albums/domain/albums.repository';
+import type { BlobsRepository } from '@/features/uploads/domain/blobs.repository';
+import type { UploadsRepository } from '@/features/uploads/domain/uploads.repository';
 import type { UsersRepository } from '@/features/users/domain/users.repository';
 
 export interface UnitOfWork {
@@ -10,7 +10,7 @@ export interface UnitOfWork {
 export interface UnitOfWorkContext {
   get usersRepository(): UsersRepository;
   get blobsRepository(): BlobsRepository;
-  get mediaRepository(): MediaRepository;
-  get collectionsRepository(): CollectionsRepository;
+  get uploadsRepository(): UploadsRepository;
+  get albumsRepository(): AlbumsRepository;
   // get subscriptionsRepository(): SubscriptionsRepository;
 }

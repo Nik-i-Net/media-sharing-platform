@@ -1,5 +1,5 @@
 {
-  "name": "media-sharing-platform",
+  "name": "mediahub",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -11,7 +11,6 @@
     "typecheck": "tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "build": "esbuild src/bootstrap.ts --bundle --format=esm --platform=node --packages=external --outfile=dist/main.js --sourcemap",
-    "knex": "tsx --env-file=.env node_modules/knex/bin/cli.js --knexfile src/config/knexfile.ts",
     "services:start": "docker compose up -d",
     "services:stop": "docker compose stop",
     "psql": "node --env-file=.env scripts/psql.js",

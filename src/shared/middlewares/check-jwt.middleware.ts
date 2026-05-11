@@ -1,10 +1,10 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
-import { ENV } from '@/config/env.loader';
 import { UnauthorizedError, type ErrorResponse } from '../errors';
 import { JOSEError } from 'jose/errors';
 import type { RequestHandler } from 'express';
 import { StatusCodes } from '../constants';
 import { z } from 'zod';
+import { ENV } from '../env.loader';
 
 const JWKS = createRemoteJWKSet(new URL(`${ENV.JWT_ISSUER}/.well-known/jwks.json`), {
   cooldownDuration: 60 * 60 * 1000, // 1 hour

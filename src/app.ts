@@ -2,9 +2,9 @@ import express, { Router } from 'express';
 import cookieParser from 'cookie-parser';
 import { unknownRouteHandler, errorHandler } from './shared/middlewares';
 import cors from 'cors';
-import { ENV } from './config/env.loader';
+import { ENV } from './shared/env.loader';
 import { usersRouter } from './features/users/http/users.router';
-import { mediaRouter } from './features/media/http/media.router';
+import { uploadsRouter } from './features/uploads/http/uploads.router';
 import { webhooksRouter } from './features/webhooks/webhooks.router';
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
 import swaggerUi from 'swagger-ui-express';
@@ -12,7 +12,7 @@ import { openapiRegistry } from './shared/openapi-registry';
 
 const router = Router();
 router.use('/users', usersRouter);
-router.use('/media', mediaRouter);
+router.use('/uploads', uploadsRouter);
 router.use('/webhooks', webhooksRouter);
 
 const generator = new OpenApiGeneratorV31(openapiRegistry.definitions);

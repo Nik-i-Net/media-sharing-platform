@@ -26,6 +26,7 @@ interface RegisterUserProps {
   email: string | null;
   emailVerified: boolean;
   identity: Identity;
+  plan: Plan;
 }
 
 export class User {
@@ -37,7 +38,7 @@ export class User {
       emailVerified: props.emailVerified,
       identities: [props.identity],
       totalStorageBytes: 0,
-      plan: Plan.FREE,
+      plan: props.plan,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,

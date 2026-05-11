@@ -1,9 +1,9 @@
 import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
 import type { UnitOfWork, UnitOfWorkContext } from '@/shared/ports/unit-of-work';
 import type { DrizzleDB, DrizzleTransaction } from './client';
-import { DrizzleCollectionsRepository } from '@/features/collections/infrastructure/drizzle-collections.repository';
-import { DrizzleBlobsRepository } from '@/features/media/infrastructure/drizzle-blobs.repository';
-import { DrizzleMediaRepository } from '@/features/media/infrastructure/drizzle-media.repository';
+import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
+import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
+import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
 import { plansProvider } from '@/di';
 
 export class DrizzleUnitOfWork implements UnitOfWork {
@@ -20,8 +20,8 @@ export class DrizzleUnitOfWork implements UnitOfWork {
 export class DrizzleUnitOfWorkContext implements UnitOfWorkContext {
   private _usersRepository?: DrizzleUsersRepository;
   private _blobsRepository?: DrizzleBlobsRepository;
-  private _mediaRepository?: DrizzleMediaRepository;
-  private _collectionsRepository?: DrizzleCollectionsRepository;
+  private _uploadsRepository?: DrizzleUploadsRepository;
+  private _albumsRepository?: DrizzleAlbumsRepository;
 
   constructor(private readonly trx: DrizzleTransaction) {}
 
@@ -31,10 +31,10 @@ export class DrizzleUnitOfWorkContext implements UnitOfWorkContext {
   get blobsRepository(): DrizzleBlobsRepository {
     return (this._blobsRepository ??= new DrizzleBlobsRepository(this.trx));
   }
-  get mediaRepository(): DrizzleMediaRepository {
-    return (this._mediaRepository ??= new DrizzleMediaRepository(this.trx));
+  get uploadsRepository(): DrizzleUploadsRepository {
+    return (this._uploadsRepository ??= new DrizzleUploadsRepository(this.trx));
   }
-  get collectionsRepository(): DrizzleCollectionsRepository {
-    return (this._collectionsRepository ??= new DrizzleCollectionsRepository(this.trx));
+  get albumsRepository(): DrizzleAlbumsRepository {
+    return (this._albumsRepository ??= new DrizzleAlbumsRepository(this.trx));
   }
 }

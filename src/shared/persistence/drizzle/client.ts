@@ -1,9 +1,9 @@
-import { ENV } from '@/config/env.loader';
 import { Pool } from 'pg';
 import { drizzle, NodePgDatabase, type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import * as schema from './schema';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import type { ExtractTablesWithRelations } from 'drizzle-orm';
+import { ENV } from '@/shared/env.loader';
 
 const pool = new Pool({
   user: ENV.POSTGRES_USER,
