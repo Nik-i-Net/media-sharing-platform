@@ -1,8 +1,8 @@
 import type { UsersRepository } from '../domain/users.repository';
 import { User } from '../domain/user';
-import { usersTable } from '@/shared/persistence/drizzle/schema';
+import { usersTable } from '@/shared/db/drizzle/schema';
 import { eq } from 'drizzle-orm';
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/persistence/drizzle/client';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import type { PlanProvider } from '../application/ports/plan.provider';
 
 export class DrizzleUsersRepository implements UsersRepository {

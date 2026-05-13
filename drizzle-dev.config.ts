@@ -1,4 +1,6 @@
 import { defineConfig } from 'drizzle-kit';
+import { loadEnvFile } from 'node:process';
+loadEnvFile('./.env.development');
 
 const user = process.env.POSTGRES_USER;
 const password = process.env.POSTGRES_PASSWORD;

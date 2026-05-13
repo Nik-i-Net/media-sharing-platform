@@ -52,4 +52,5 @@ export async function seed_plans(db: DrizzleDB) {
         maxStorageBytes: excluded(plansTable.maxStorageBytes),
       },
     });
+  console.log('Seeded plans');
 }

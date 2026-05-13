@@ -1,6 +1,6 @@
 import { TodoError } from '@/shared/errors';
-import type { DrizzleDB } from '@/shared/persistence/drizzle/client';
-import { plansTable } from '@/shared/persistence/drizzle/schema';
+import type { DrizzleDB } from '@/shared/db/drizzle/client';
+import { plansTable } from '@/shared/db/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { Plan } from '../domain/plan';
 import { ms } from '@/shared/utils';

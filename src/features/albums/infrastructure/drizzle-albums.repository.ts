@@ -1,7 +1,7 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/persistence/drizzle/client';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import type { AlbumsRepository } from '../domain/albums.repository';
 import { and, asc, eq, inArray, type InferSelectModel } from 'drizzle-orm';
-import { albumsUploadsTable, albumsTable } from '@/shared/persistence/drizzle/schema';
+import { albumsUploadsTable, albumsTable } from '@/shared/db/drizzle/schema';
 import { Album } from '../domain/album';
 
 export class DrizzleAlbumsRepository implements AlbumsRepository {

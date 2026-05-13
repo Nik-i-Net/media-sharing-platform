@@ -1,9 +1,9 @@
-import { uploadsTable } from '@/shared/persistence/drizzle/schema';
+import { uploadsTable } from '@/shared/db/drizzle/schema';
 import { eq, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import { Upload } from '../domain/upload';
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/persistence/drizzle/client';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import type { UploadsRepository } from '../domain/uploads.repository';
-import { excluded } from '@/shared/persistence/drizzle/utils';
+import { excluded } from '@/shared/db/drizzle/utils';
 
 export class DrizzleUploadsRepository implements UploadsRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}

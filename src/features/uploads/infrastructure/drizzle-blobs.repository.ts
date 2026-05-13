@@ -1,5 +1,5 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/persistence/drizzle/client';
-import { blobsTable } from '@/shared/persistence/drizzle/schema';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
+import { blobsTable } from '@/shared/db/drizzle/schema';
 import { and, eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import type { BlobsRepository } from '../domain/blobs.repository';
 import { BlobEntity } from '../domain/blob';
