@@ -1,4 +1,6 @@
 const vars = [
+  'NODE_ENV',
+
   'PORT',
   'HOST',
 

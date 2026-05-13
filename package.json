@@ -10,12 +10,11 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
-    "build": "esbuild src/bootstrap.ts --bundle --format=esm --platform=node --packages=external --outfile=dist/main.js --sourcemap",
-    "services:start": "docker compose up -d",
-    "services:stop": "docker compose stop",
-    "psql": "node --env-file=.env scripts/psql.js",
-    "db:push": "drizzle-kit push",
-    "db:seed": "tsx --env-file=.env src/shared/persistence/drizzle/seeds/index.ts"
+    "services:start": "docker compose --env-file .env.development up -d",
+    "services:stop": "docker compose --env-file .env.development stop",
+    "psql": "node --env-file=.env.development scripts/psql.js",
+    "db:push": "drizzle-kit push --config=drizzle-dev.config.ts",
+    "db:seed": "tsx --env-file=.env.development src/shared/db/drizzle/seeds/index.ts"
   },
   "keywords": [],
   "author": "nikinet",
