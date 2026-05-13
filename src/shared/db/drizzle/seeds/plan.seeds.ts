@@ -4,12 +4,10 @@ import { excluded } from '../utils';
 import { type DrizzleDB } from '../client';
 
 const freeMimeTypes = [
-  'image/jpeg',
+  'image/jpeg', //
   'image/png',
   'image/gif',
   'image/webp',
-  'image/svg+xml',
-  'image/avif',
 ];
 
 const proMimeTypes = [
@@ -17,11 +15,8 @@ const proMimeTypes = [
 
   'audio/mpeg',
   'audio/mp4',
-  'audio/m4a',
-  'audio/x-m4a',
   'audio/wav',
   'audio/ogg',
-  'audio/webm',
 
   'video/mp4',
   'video/webm',

@@ -24,11 +24,11 @@ export function validateRequest<TParams extends ParamsDictionary, TBody, TQuery 
       } else {
         parseResult.error.issues.forEach((err) => {
           issues.push({
-            value: String(err.input),
             message: err.message,
             code: err.code,
             location: key,
             path: err.path.map(String),
+            value: String(err.input),
           });
         });
       }
