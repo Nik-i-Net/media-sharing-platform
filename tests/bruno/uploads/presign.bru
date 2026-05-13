@@ -1,0 +1,42 @@
+meta {
+  name: presign
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/uploads/presign
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+  //   "albumId": 'id',
+    "files": [{
+      "id": "file_1",
+      "fileName": "image",
+      "mimeType": "image/png",
+      "sizeBytes": 7399,
+      "sha256Base64": "lcwl0uKmD7RGnpRuqAPTiQFuwkisHPl9sEFgZReRQ7c="
+    }]
+  }
+}
+
+script:post-response {
+  const firstResult = res.body.data[0]
+  
+  if (res.getStatus() === 200 && firstResult.uploadNeeded) {
+    const {url, headers} = firstResult
+    
+    bru.setVar('R2.upload-url', url)
+    bru.setVar('R2.headers.Content-Type', headers['Content-Type']) 
+    bru.setVar('R2.headers.Content-Length', headers['Content-Length']) 
+    bru.setVar('R2.headers.x-amz-checksum-sha256', headers['x-amz-checksum-sha256'])
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

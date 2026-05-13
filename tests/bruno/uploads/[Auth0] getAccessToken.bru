@@ -1,0 +1,35 @@
+meta {
+  name: [Auth0] getAccessToken
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://{{AUTH0_DOMAIN}}/oauth/token
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "client_id": "{{AUTH0_CLIENT_ID}}",
+    "client_secret": "{{AUTH0_CLIENT_SECRET}}",
+    "audience": "{{JWT_AUDIENCE}}",
+    "grant_type": "client_credentials",
+    "user_id": "{{freeUserId}}"
+  }
+}
+
+script:post-response {
+  const data = res.getBody()
+  bru.setVar('accessToken', data.access_token)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
