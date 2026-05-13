@@ -29,11 +29,11 @@ export const ValidationErrorResponse = {
             code: z.literal('VALIDATION_ERROR'),
             issues: z.array(
               z.object({
-                value: z.string().meta({ example: '123' }),
                 message: z.string().meta({ example: 'Invalid email address' }),
                 code: z.string().meta({ example: 'invalid_format' }),
                 location: z.string().meta({ example: 'body' }),
                 path: z.array(z.string()).meta({ example: ['email'] }),
+                value: z.string().meta({ example: '123' }),
               }),
             ),
           }),

@@ -10,6 +10,8 @@ export abstract class BaseError extends Error {
     super(message);
     this.timestamp = new Date();
     this.name = this.constructor.name;
+
+    Object.defineProperty(this, 'message', { value: message, enumerable: true });
   }
 }
 
