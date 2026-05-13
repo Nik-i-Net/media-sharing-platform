@@ -9,7 +9,7 @@ import type { Response, Router } from 'express';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.post(
-    '/signed-urls', //
+    '/presign', //
     checkJwt(),
     validateRequest({ body: RequestBodySchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
@@ -96,24 +96,26 @@ const ResponseSchema = z
 
 openapiRegistry.registerPath({
   method: 'post',
-  path: '/api/v1/uploads/signed-urls',
-  summary: 'Get signed URLs for R2 uploads',
+  path: '/api/v1/uploads/presign',
+  summary: 'Get upload info for multiple files',
   description: `
-Validates file metadata and returns info for direct-to-storage uploading.
-`,
+Receives metadata for multiple files and returns the information needed for direct uploading to a blob storage.  
+For each file, the response either:
+- provides the upload URL, method and headers **required** for uploading
+- indicates that no upload is required.`,
   request: {
     headers: z.object({
       Authorization: z.templateLiteral(['Bearer ', z.jwt()]).meta({ description: 'Bearer `JWT`' }),
     }),
     body: {
-      description: 'Files metadata',
+      description: 'List of file metadata',
       content: { 'application/json': { schema: RequestBodySchema } },
     },
   },
   tags: ['Uploads', 'R2'],
   responses: {
     200: {
-      description: 'List of signed URLs, methods and headers **required** for uploading.',
+      description: 'Upload information for requested files',
       content: { 'application/json': { schema: ResponseSchema } },
     },
     ...UnauthorizedResponse,

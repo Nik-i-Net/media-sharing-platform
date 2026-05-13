@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 rm -rf tmp && mkdir tmp
 
@@ -39,7 +39,6 @@ EOF
 magick -depth 8 -size 640x480 -background red   -fill white -gravity center label:"AVIF" tmp/avif-red.png
 magick -depth 8 -size 640x480 -background green -fill white -gravity center label:"AVIF" tmp/avif-green.png
 magick -depth 8 -size 640x480 -background blue  -fill white -gravity center label:"AVIF" tmp/avif-blue.png
-avifenc --timescale 1000 --duration 500 tmp/avif-red.png tmp/avif-green.png tmp/avif-blue.png image.avif > /dev/null
 
 # 1 MiB+
 magick -size 800x800 xc: +noise Gaussian \
