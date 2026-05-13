@@ -22,10 +22,10 @@ export class DrizzleUploadsRepository implements UploadsRepository {
       });
   }
 
-  async saveMany(upload: Upload[]): Promise<void> {
+  async saveMany(uploads: Upload[]): Promise<void> {
     await this.db
       .insert(uploadsTable)
-      .values(upload.map((m) => this.toInsertModel(m)))
+      .values(uploads.map((m) => this.toInsertModel(m)))
       .onConflictDoUpdate({
         target: uploadsTable.id,
         set: {

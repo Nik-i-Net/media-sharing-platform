@@ -104,8 +104,11 @@ export class InitiateUploadsUseCase {
     }
 
     await this.uow.execute(async (ctx) => {
-      // TODO: think about race conditions and hash squatting
-      await ctx.blobsRepository.saveMany(blobsToSave);
+      if (blobsToSave.length > 0) {
+        // TODO: think about race conditions and hash squatting
+        await ctx.blobsRepository.saveMany(blobsToSave);
+      }
+
       await ctx.uploadsRepository.saveMany(uploadsToSave);
 
       if (albumId) {
