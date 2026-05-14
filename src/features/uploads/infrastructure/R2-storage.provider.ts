@@ -1,10 +1,7 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type {
-  StorageProvider,
-  UploadUrlParams,
-  UploadInfo,
-} from '../application/ports/storage.provider';
+import type { StorageProvider, UploadInfo } from '../application/ports/storage.provider';
+import type { BlobEntity } from '../domain/blob';
 
 type R2Params = {
   accountId: string;
@@ -29,18 +26,13 @@ export class R2StorageService implements StorageProvider {
     this.downloadBaseUrl = downloadBaseUrl;
   }
 
-  async getDirectUploadInfo({
-    key,
-    mimeType,
-    sizeBytes,
-    hash,
-  }: UploadUrlParams): Promise<UploadInfo> {
+  async getDirectUploadInfo(key: string, blob: BlobEntity): Promise<UploadInfo> {
     const command = new PutObjectCommand({
       Bucket: this.bucket,
       Key: key,
-      ContentType: mimeType,
-      ContentLength: sizeBytes,
-      ChecksumSHA256: hash,
+      ContentType: blob.mimeType,
+      ContentLength: blob.sizeBytes,
+      ChecksumSHA256: blob.hash.base64,
     });
 
     const url = await getSignedUrl(this.S3, command, {
@@ -53,9 +45,9 @@ export class R2StorageService implements StorageProvider {
       url,
       method: 'PUT',
       headers: {
-        'Content-Type': mimeType,
-        'Content-Length': sizeBytes,
-        'x-amz-checksum-sha256': hash,
+        'Content-Type': blob.mimeType,
+        'Content-Length': blob.sizeBytes,
+        'x-amz-checksum-sha256': blob.hash.base64,
       },
     };
   }
