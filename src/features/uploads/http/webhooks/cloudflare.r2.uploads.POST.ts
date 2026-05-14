@@ -1,31 +1,38 @@
-import { validateRequest } from '@/shared/middlewares';
+import { confirmUploads } from '@/di';
+import { ENV } from '@/shared/env.loader';
+import { checkApiKey, validateRequest } from '@/shared/middlewares';
+import assert from 'assert';
 import type { Router } from 'express';
 import { z } from 'zod';
-
-const RequestBodySchema = z.object({
-  data: z.array(
-    z.object({
-      object: z.object({
-        id: z.string(),
-        storage: z.object({
-          bucket: z.string(),
-          key: z.string(),
-        }),
-      }),
-    }),
-  ),
-});
 
 export function registerRoute(webhooksRouter: Router) {
   webhooksRouter.post(
     '/cloudflare/r2/uploads',
+    checkApiKey(ENV.CLOUDFLARE_API_KEY),
     validateRequest({ body: RequestBodySchema }),
     async (req, res) => {
-      console.log('webhook', req.body.data[0]?.object);
+      assert(req.body.event === 'upload.confirmed');
+      await confirmUploads.execute(req.body.objects);
       res.sendStatus(200);
     },
   );
 }
+
+const RequestBodySchema = z.object({
+  event: z.literal('upload.confirmed'),
+  objects: z
+    .array(
+      z.object({
+        key: z.string(),
+        sizeBytes: z.number(),
+        mimeType: z.union([
+          z.string().regex(/^(image|audio|video)\/[a-zA-Z0-9\-+]+$/),
+          z.literal('application/octet-stream'),
+        ]),
+      }),
+    )
+    .nonempty(),
+});
 
 // // --- Schema Definitions ---
 // const UploadWebhookSchema = registry.register('UploadWebhook', z.object({

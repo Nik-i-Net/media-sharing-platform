@@ -2,7 +2,7 @@ function eq(a: Uint8Array, b: number[]): boolean {
 	return a.every((v, i) => v === b[i]);
 }
 
-export function sniffMimeType(bytes: Uint8Array): string | null {
+export function sniffMimeType(bytes: Uint8Array): string {
 	if (eq(bytes.slice(0, 4), [0x89, 0x50, 0x4e, 0x47])) {
 		return 'image/png';
 	}
@@ -22,7 +22,7 @@ export function sniffMimeType(bytes: Uint8Array): string | null {
 		if (eq(bytes.slice(8, 12), [0x57, 0x41, 0x56, 0x45])) {
 			return 'audio/wav';
 		}
-		return null;
+		return 'application/octet-stream';
 	}
 
 	if (eq(bytes.slice(0, 3), [0x49, 0x44, 0x33])) {
@@ -44,5 +44,5 @@ export function sniffMimeType(bytes: Uint8Array): string | null {
 		return 'video/webm';
 	}
 
-	return null;
+	return 'application/octet-stream';
 }

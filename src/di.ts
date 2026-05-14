@@ -8,6 +8,7 @@ import { DrizzlePlanProvider } from './features/users/infrastructure/drizzle-pla
 import { DrizzleBlobsRepository } from './features/uploads/infrastructure/drizzle-blobs.repository';
 import { DrizzleAlbumsRepository } from './features/albums/infrastructure/drizzle-albums.repository';
 import { DrizzleUnitOfWork } from './shared/db/drizzle/drizzle-unit-of-work';
+import { ConfirmUploadsUseCase } from './features/uploads/application/confirm-uploads.command';
 
 const unitOfWork = new DrizzleUnitOfWork(db);
 
@@ -33,3 +34,5 @@ export const initiateUploads = new InitiateUploadsUseCase(
   unitOfWork,
   storageService,
 );
+
+export const confirmUploads = new ConfirmUploadsUseCase(blobsRepository);

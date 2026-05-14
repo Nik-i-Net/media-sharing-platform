@@ -45,14 +45,14 @@ export class BlobEntity {
     return this.#updatedAt;
   }
 
-  confirm(actualMimeType: string | null) {
+  confirm(actualMimeType: string) {
     if (this.status !== 'pending') throw new TodoError('Blob not in pending state');
 
-    if (actualMimeType !== null) {
+    if (actualMimeType === 'application/octet-stream') {
+      this.#status = 'rejected';
+    } else {
       this.#mimeType = actualMimeType;
       this.#status = 'ready';
-    } else {
-      this.#status = 'rejected';
     }
 
     this.touch();
