@@ -4,16 +4,37 @@ import { eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizz
 import type { BlobsRepository } from '../domain/blobs.repository';
 import { BlobEntity } from '../domain/blob';
 import { HashVO } from '../domain/hash.value-object';
+import { excluded } from '@/shared/db/drizzle/utils';
 
 export class DrizzleBlobsRepository implements BlobsRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
 
   async save(blob: BlobEntity): Promise<void> {
-    await this.db.insert(blobsTable).values(this.toInsertModel(blob));
+    await this.db
+      .insert(blobsTable)
+      .values(this.toInsertModel(blob))
+      .onConflictDoUpdate({
+        target: blobsTable.id,
+        set: {
+          mimeType: blob.mimeType,
+          status: blob.status,
+          updatedAt: blob.updatedAt,
+        },
+      });
   }
 
   async saveMany(blobs: BlobEntity[]): Promise<void> {
-    await this.db.insert(blobsTable).values(blobs.map((blob) => this.toInsertModel(blob)));
+    await this.db
+      .insert(blobsTable) //
+      .values(blobs.map((blob) => this.toInsertModel(blob)))
+      .onConflictDoUpdate({
+        target: blobsTable.id,
+        set: {
+          mimeType: excluded(blobsTable.mimeType),
+          status: excluded(blobsTable.status),
+          updatedAt: excluded(blobsTable.updatedAt),
+        },
+      });
   }
 
   async findById(id: string): Promise<BlobEntity | null> {
