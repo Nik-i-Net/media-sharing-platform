@@ -1,8 +1,5 @@
 import * as t from 'drizzle-orm/pg-core';
 
-const sha256 = t.customType<{ data: Buffer }>({ dataType: () => 'bytea' });
-const statusEnum = t.pgEnum('blob_status', ['pending', 'ready', 'rejected']);
-
 export const plansTable = t.pgTable('plans', {
   id: t.varchar('id').primaryKey(),
   allowedMimeTypes: t.jsonb('allowed_mime_types').$type<string[]>().notNull(),
@@ -26,12 +23,15 @@ export const usersTable = t.pgTable('users', {
   deletedAt: t.timestamp('deleted_at', { withTimezone: true }),
 });
 
+const sha256 = t.customType<{ data: Buffer }>({ dataType: () => 'bytea' });
+export const blobStatus = t.pgEnum('blob_status', ['pending', 'ready', 'rejected']);
+
 export const blobsTable = t.pgTable('blobs', {
   id: t.uuid('id').primaryKey(),
   hash: sha256('hash').notNull().unique(),
   mimeType: t.varchar('mime_type', { length: 50 }).notNull(),
   sizeBytes: t.bigint('size_bytes', { mode: 'number' }).notNull(),
-  status: statusEnum('status').default('pending').notNull(),
+  status: blobStatus('status').default('pending').notNull(),
   createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

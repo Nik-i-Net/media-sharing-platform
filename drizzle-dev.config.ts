@@ -10,7 +10,7 @@ const database = process.env.POSTGRES_DB;
 
 export default defineConfig({
   out: './drizzle',
-  schema: './src/shared/persistence/drizzle/schema.ts',
+  schema: './src/shared/db/drizzle/schema.ts',
   dialect: 'postgresql',
   dbCredentials: {
     url: `postgres://${user}:${password}@${host}:${port}/${database}`,
