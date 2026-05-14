@@ -1,12 +1,11 @@
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { blobsTable } from '@/shared/db/drizzle/schema';
-import { and, eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
+import { eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import type { BlobsRepository } from '../domain/blobs.repository';
 import { BlobEntity } from '../domain/blob';
+import { HashVO } from '../domain/hash.value-object';
 
 export class DrizzleBlobsRepository implements BlobsRepository {
-  private readonly defaultHashAlgorithm = 'sha256base64';
-
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
 
   async save(blob: BlobEntity): Promise<void> {
@@ -25,40 +24,31 @@ export class DrizzleBlobsRepository implements BlobsRepository {
     return this.toDomain(record);
   }
 
-  async findByHash(hash: string): Promise<BlobEntity | null> {
+  async findByHash(hash: HashVO): Promise<BlobEntity | null> {
     const record = await this.db.query.blobsTable.findFirst({
-      where: and(
-        eq(blobsTable.hash, hash), //
-        eq(blobsTable.hashAlgorithm, this.defaultHashAlgorithm),
-      ),
+      where: eq(blobsTable.hash, hash.value),
     });
     if (!record) return null;
     return this.toDomain(record);
   }
 
-  async findManyByHashes(hashes: string[]): Promise<BlobEntity[]> {
+  async findManyByHashes(hashes: HashVO[]): Promise<BlobEntity[]> {
     const records = await this.db.query.blobsTable.findMany({
-      where: and(
-        inArray(blobsTable.hash, hashes), //
-        eq(blobsTable.hashAlgorithm, this.defaultHashAlgorithm),
+      where: inArray(
+        blobsTable.hash,
+        hashes.map((hash) => hash.value),
       ),
     });
     return records.map((record) => this.toDomain(record));
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await this.db.delete(blobsTable).where(eq(blobsTable.id, id));
-    return (result.rowCount ?? 0) > 0;
-  }
-
   private toDomain(record: InferSelectModel<typeof blobsTable>): BlobEntity {
     return new BlobEntity(
       record.id,
-      record.storageKey,
-      record.hash,
-      record.hashAlgorithm,
+      new HashVO(record.hash),
       record.mimeType,
       record.sizeBytes,
+      record.status,
       record.createdAt,
       record.updatedAt,
     );
@@ -67,11 +57,10 @@ export class DrizzleBlobsRepository implements BlobsRepository {
   private toInsertModel(blob: BlobEntity): InferInsertModel<typeof blobsTable> {
     return {
       id: blob.id,
-      storageKey: blob.storageKey,
-      hash: blob.hash,
-      hashAlgorithm: blob.hashAlgorithm,
+      hash: blob.hash.value,
       mimeType: blob.mimeType,
       sizeBytes: blob.sizeBytes,
+      status: blob.status,
       createdAt: blob.createdAt,
       updatedAt: blob.updatedAt,
     };
