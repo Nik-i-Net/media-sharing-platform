@@ -45,7 +45,7 @@ export class BlobEntity {
     return this.#updatedAt;
   }
 
-  verify(actualMimeType: string | null) {
+  confirm(actualMimeType: string | null) {
     if (this.status !== 'pending') throw new TodoError('Blob not in pending state');
 
     if (actualMimeType !== null) {
