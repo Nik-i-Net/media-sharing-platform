@@ -1,8 +1,9 @@
 import { TodoError } from '@/shared/errors';
+import type { HashVO } from './hash.value-object';
 
 interface CreateBlobParams {
   id: string;
-  hash: string;
+  hash: HashVO;
   mimeType: string;
   sizeBytes: number;
 }
@@ -22,7 +23,7 @@ export class BlobEntity {
 
   constructor(
     readonly id: string,
-    readonly hash: string,
+    readonly hash: HashVO,
     mimeType: string,
     readonly sizeBytes: number,
     status: 'pending' | 'ready' | 'rejected',

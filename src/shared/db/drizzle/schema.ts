@@ -1,11 +1,6 @@
 import * as t from 'drizzle-orm/pg-core';
 
-const sha256 = t.customType<{ data: string; driverData: Buffer }>({
-  dataType: () => 'bytea',
-  fromDriver: (value: Buffer) => value.toString('hex'),
-  toDriver: (value: string) => Buffer.from(value, 'hex'),
-});
-
+const sha256 = t.customType<{ data: Buffer }>({ dataType: () => 'bytea' });
 const statusEnum = t.pgEnum('blob_status', ['pending', 'ready', 'rejected']);
 
 export const plansTable = t.pgTable('plans', {
