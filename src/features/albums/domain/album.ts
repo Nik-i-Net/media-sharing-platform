@@ -35,15 +35,15 @@ export class Album {
 
   changeName(newName: string) {
     this.#name = newName;
-    this.#touch();
+    this.touch();
   }
 
   setPublic(isPublic: boolean = true) {
     this.#isPublic = isPublic;
-    this.#touch();
+    this.touch();
   }
 
-  #touch() {
+  private touch() {
     this.#updatedAt = new Date();
   }
 }

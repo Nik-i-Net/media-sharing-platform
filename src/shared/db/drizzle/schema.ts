@@ -1,5 +1,13 @@
 import * as t from 'drizzle-orm/pg-core';
 
+const sha256 = t.customType<{ data: string; driverData: Buffer }>({
+  dataType: () => 'bytea',
+  fromDriver: (value: Buffer) => value.toString('hex'),
+  toDriver: (value: string) => Buffer.from(value, 'hex'),
+});
+
+const statusEnum = t.pgEnum('blob_status', ['pending', 'ready', 'rejected']);
+
 export const plansTable = t.pgTable('plans', {
   id: t.varchar('id').primaryKey(),
   allowedMimeTypes: t.jsonb('allowed_mime_types').$type<string[]>().notNull(),
@@ -23,21 +31,15 @@ export const usersTable = t.pgTable('users', {
   deletedAt: t.timestamp('deleted_at', { withTimezone: true }),
 });
 
-export const blobsTable = t.pgTable(
-  'blobs',
-  {
-    id: t.uuid('id').primaryKey(),
-    storageKey: t.varchar('storage_key', { length: 255 }).notNull().unique(),
-    hash: t.varchar('hash', { length: 255 }).notNull(),
-    hashAlgorithm: t.varchar('hash_algorithm', { length: 50 }).notNull(),
-    mimeType: t.varchar('mime_type', { length: 50 }).notNull(),
-    sizeBytes: t.bigint('size_bytes', { mode: 'number' }).notNull(),
-    createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-  },
-
-  (table) => [t.unique().on(table.hash, table.hashAlgorithm)],
-);
+export const blobsTable = t.pgTable('blobs', {
+  id: t.uuid('id').primaryKey(),
+  hash: sha256('hash').notNull().unique(),
+  mimeType: t.varchar('mime_type', { length: 50 }).notNull(),
+  sizeBytes: t.bigint('size_bytes', { mode: 'number' }).notNull(),
+  status: statusEnum('status').default('pending').notNull(),
+  createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
 
 export const uploadsTable = t.pgTable('uploads', {
   id: t.uuid('id').primaryKey(),

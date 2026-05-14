@@ -44,7 +44,7 @@ export class Upload {
 
   changeFileName(newFileName: string) {
     this.#fileName = newFileName;
-    this.#touch();
+    this.touch();
   }
 
   changeExpiresAt(newExpiresAt: Date | null) {
@@ -52,10 +52,10 @@ export class Upload {
       throw new Error('expiresAt must be in the future');
     }
     this.#expiresAt = newExpiresAt;
-    this.#touch();
+    this.touch();
   }
 
-  #touch() {
+  private touch() {
     this.#updatedAt = new Date();
   }
 }

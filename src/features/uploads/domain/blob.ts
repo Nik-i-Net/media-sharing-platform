@@ -1,6 +1,7 @@
+import { TodoError } from '@/shared/errors';
+
 interface CreateBlobParams {
   id: string;
-  storageKey: string;
   hash: string;
   mimeType: string;
   sizeBytes: number;
@@ -8,21 +9,55 @@ interface CreateBlobParams {
 
 export class BlobEntity {
   public static create(props: CreateBlobParams) {
-    const { id, storageKey, hash, mimeType, sizeBytes } = props;
-    const hashAlgorithm = 'sha256base64';
+    const { id, hash, mimeType, sizeBytes } = props;
+    const status = 'pending';
     const now = new Date();
-    const blob = new BlobEntity(id, storageKey, hash, hashAlgorithm, mimeType, sizeBytes, now, now);
+    const blob = new BlobEntity(id, hash, mimeType, sizeBytes, status, now, now);
     return blob;
   }
 
+  #mimeType: string;
+  #status: 'pending' | 'ready' | 'rejected';
+  #updatedAt: Date;
+
   constructor(
     readonly id: string,
-    readonly storageKey: string,
     readonly hash: string,
-    readonly hashAlgorithm: string,
-    readonly mimeType: string,
+    mimeType: string,
     readonly sizeBytes: number,
+    status: 'pending' | 'ready' | 'rejected',
     readonly createdAt: Date,
-    readonly updatedAt: Date,
-  ) {}
+    updatedAt: Date,
+  ) {
+    this.#mimeType = mimeType;
+    this.#status = status;
+    this.#updatedAt = updatedAt;
+  }
+
+  get mimeType() {
+    return this.#mimeType;
+  }
+  get status() {
+    return this.#status;
+  }
+  get updatedAt() {
+    return this.#updatedAt;
+  }
+
+  verify(actualMimeType: string | null) {
+    if (this.status !== 'pending') throw new TodoError('Blob not in pending state');
+
+    if (actualMimeType !== null) {
+      this.#mimeType = actualMimeType;
+      this.#status = 'ready';
+    } else {
+      this.#status = 'rejected';
+    }
+
+    this.touch();
+  }
+
+  private touch() {
+    this.#updatedAt = new Date();
+  }
 }
