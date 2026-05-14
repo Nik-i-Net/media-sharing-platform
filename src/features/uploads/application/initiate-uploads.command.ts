@@ -9,6 +9,7 @@ import type { BlobsRepository } from '../domain/blobs.repository';
 import type { StorageProvider } from './ports/storage.provider';
 import type { AlbumsRepository } from '@/features/albums/domain/albums.repository';
 import { HashVO } from '../domain/hash.value-object';
+import { TodoError } from '@/shared/errors';
 
 export interface InitiateUploadsCommand {
   userId: string;
@@ -24,10 +25,10 @@ export interface InitiateUploadsCommand {
 }
 
 type ResultItem =
-  | { id: string; uploadNeeded: false }
+  | { id: string; status: 'ok' }
   | {
       id: string;
-      uploadNeeded: true;
+      status: 'upload_required';
       url: string;
       method: 'PUT';
       headers: { [key: string]: string | number };
@@ -53,40 +54,40 @@ export class InitiateUploadsUseCase {
     user.ensureCanUpload(files);
 
     const result: ResultItem[] = [];
-
     const fileHashes = files.map((file) => HashVO.fromHex(file.sha256Hex));
-    const existingBlobs = await this.blobsRepo.findManyByHashes(fileHashes);
+    const blobsByHashHex = new Map(
+      (await this.blobsRepo.findManyByHashes(fileHashes)).map((b) => [b.hash.hex, b]),
+    );
 
     const blobsToSave: BlobEntity[] = [];
     const uploadsToSave: Upload[] = [];
-    const seenHashes = new Set();
 
     for (const file of files) {
-      if (seenHashes.has(file.sha256Hex)) continue;
-      seenHashes.add(file.sha256Hex);
-
-      const hash = HashVO.fromHex(file.sha256Hex);
-      let blob = existingBlobs.find((blob) => blob.hash === hash);
-
-      if (blob) {
-        result.push({ id: file.id, uploadNeeded: false });
-      } else {
+      let blob = blobsByHashHex.get(file.sha256Hex);
+      if (!blob) {
         blob = BlobEntity.create({
           id: crypto.randomUUID(),
-          hash,
+          hash: HashVO.fromHex(file.sha256Hex),
           mimeType: file.mimeType,
           sizeBytes: file.sizeBytes,
         });
         blobsToSave.push(blob);
+        blobsByHashHex.set(file.sha256Hex, blob);
+      }
 
-        const uploadInfo = await this.storageProvider.getDirectUploadInfo({
-          key: file.sha256Hex,
-          hash: file.sha256Hex,
-          mimeType: file.mimeType,
-          sizeBytes: file.sizeBytes,
-        });
-
-        result.push({ id: file.id, uploadNeeded: true, ...uploadInfo });
+      switch (blob.status) {
+        case 'pending': {
+          const uploadInfo = await this.storageProvider.getDirectUploadInfo(file.sha256Hex, blob);
+          result.push({ id: file.id, status: 'upload_required', ...uploadInfo });
+          break;
+        }
+        case 'ready':
+          result.push({ id: file.id, status: 'ok' });
+          break;
+        case 'rejected':
+          throw new TodoError(`Upload ${file.id} rejected`);
+        default:
+          throw new Error(`Unexpected blob status: ${blob.status satisfies never}`);
       }
 
       uploadsToSave.push(

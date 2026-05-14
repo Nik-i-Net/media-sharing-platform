@@ -8,7 +8,7 @@ import type { Response, Router } from 'express';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.post(
-    '/presign', //
+    '/', //
     checkJwt(),
     validateRequest({ body: RequestBodySchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
@@ -76,11 +76,16 @@ const ResponseSchema = z
   .object({
     data: z
       .array(
-        z.discriminatedUnion('uploadNeeded', [
-          z.object({ id: z.string().meta({ example: 'file_1' }), uploadNeeded: z.literal(false) }),
+        z.discriminatedUnion('status', [
           z.object({
             id: z.string().meta({ example: 'file_1' }),
-            uploadNeeded: z.literal(true),
+            status: z
+              .literal('ok')
+              .meta({ description: 'A copy of file found, no upload required.' }),
+          }),
+          z.object({
+            id: z.string().meta({ example: 'file_1' }),
+            status: z.literal('upload_required'),
             url: z.url(),
             method: z.enum(['PUT']),
             headers: z.record(z.string(), z.union([z.string(), z.number()])).meta({
@@ -99,7 +104,7 @@ const ResponseSchema = z
 
 openapiRegistry.registerPath({
   method: 'post',
-  path: '/api/v1/uploads/presign',
+  path: '/api/v1/uploads',
   summary: 'Get upload info for multiple files',
   description: `
 Receives metadata for multiple files and returns the information needed for direct uploading to a blob storage.  
