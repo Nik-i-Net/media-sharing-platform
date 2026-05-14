@@ -48,7 +48,15 @@ export function errorHandler(
   } catch (err) {
     console.error('Unhandled Error');
     console.error(`Route: ${req.method} ${req.url}`);
-    console.error(err instanceof Error ? err.stack || err.message : err);
+
+    if (err instanceof Error) {
+      console.error('Message:', err.message);
+      console.error('Stack:', err.stack);
+      console.error('Cause:', err.cause);
+    } else {
+      console.error('Unknown Error:', err);
+    }
+
     res.status(500).json({
       error: { message: 'Internal server error', code: 'INTERNAL_SERVER_ERROR' },
     } as ResponseObject);
