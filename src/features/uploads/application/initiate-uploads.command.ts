@@ -5,10 +5,10 @@ import { AlbumNotFoundError } from '@/features/albums/errors/album-not-found.err
 import { ms, type Duration } from '@/shared/utils';
 import type { UsersRepository } from '@/features/users/domain/users.repository';
 import type { UnitOfWork } from '@/shared/ports/unit-of-work';
-import type { Sha256Base64 } from '@/shared/schemas/primitives.zod';
 import type { BlobsRepository } from '../domain/blobs.repository';
 import type { StorageProvider } from './ports/storage.provider';
 import type { AlbumsRepository } from '@/features/albums/domain/albums.repository';
+import { HashVO } from '../domain/hash.value-object';
 
 export interface InitiateUploadsCommand {
   userId: string;
@@ -18,7 +18,7 @@ export interface InitiateUploadsCommand {
     fileName: string;
     mimeType: string;
     sizeBytes: number;
-    sha256Base64: Sha256Base64;
+    sha256Hex: string;
     ttl: Duration | null;
   }[];
 }
@@ -54,7 +54,7 @@ export class InitiateUploadsUseCase {
 
     const result: ResultItem[] = [];
 
-    const fileHashes = files.map((file) => file.sha256Base64);
+    const fileHashes = files.map((file) => HashVO.fromHex(file.sha256Hex));
     const existingBlobs = await this.blobsRepo.findManyByHashes(fileHashes);
 
     const blobsToSave: BlobEntity[] = [];
@@ -62,31 +62,28 @@ export class InitiateUploadsUseCase {
     const seenHashes = new Set();
 
     for (const file of files) {
-      if (seenHashes.has(file.sha256Base64)) continue;
-      seenHashes.add(file.sha256Base64);
+      if (seenHashes.has(file.sha256Hex)) continue;
+      seenHashes.add(file.sha256Hex);
 
-      let blob = existingBlobs.find((blob) => blob.hash === file.sha256Base64);
+      const hash = HashVO.fromHex(file.sha256Hex);
+      let blob = existingBlobs.find((blob) => blob.hash === hash);
 
       if (blob) {
         result.push({ id: file.id, uploadNeeded: false });
       } else {
-        const sha256Hex = Buffer.from(file.sha256Base64, 'base64').toString('hex');
-        const key = `${sha256Hex.slice(0, 2)}/${sha256Hex.slice(2)}`;
-
         blob = BlobEntity.create({
           id: crypto.randomUUID(),
-          storageKey: key,
+          hash,
           mimeType: file.mimeType,
           sizeBytes: file.sizeBytes,
-          hash: file.sha256Base64,
         });
         blobsToSave.push(blob);
 
         const uploadInfo = await this.storageProvider.getDirectUploadInfo({
-          key,
+          key: file.sha256Hex,
+          hash: file.sha256Hex,
           mimeType: file.mimeType,
           sizeBytes: file.sizeBytes,
-          hash: file.sha256Base64,
         });
 
         result.push({ id: file.id, uploadNeeded: true, ...uploadInfo });
@@ -105,7 +102,6 @@ export class InitiateUploadsUseCase {
 
     await this.uow.execute(async (ctx) => {
       if (blobsToSave.length > 0) {
-        // TODO: think about race conditions and hash squatting
         await ctx.blobsRepository.saveMany(blobsToSave);
       }
 
