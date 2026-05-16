@@ -5,8 +5,8 @@ import { z } from 'zod';
 export class UnauthorizedError extends BaseError {
   readonly httpStatusCode = StatusCodes.UNAUTHORIZED;
 
-  constructor(message?: string) {
-    super(message ?? 'Unauthorized', 'UNAUTHORIZED');
+  constructor() {
+    super('Unauthorized', 'UNAUTHORIZED');
   }
 }
 

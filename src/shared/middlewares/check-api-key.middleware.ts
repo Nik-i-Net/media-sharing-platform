@@ -6,7 +6,7 @@ import { UnauthorizedError, type ErrorResponse } from '../errors';
 export function checkApiKey(apiKey: string): RequestHandler {
   return (req, _res, next) => {
     if (req.headers['x-api-key'] !== apiKey) {
-      throw new UnauthorizedError('Missing or invalid API key');
+      throw new UnauthorizedError();
     }
 
     next();
