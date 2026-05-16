@@ -43,7 +43,7 @@ export class InitiateUploadsUseCase {
     private readonly storageProvider: StorageProvider,
   ) {}
 
-  async execute({ userId, files, albumId }: InitiateUploadsCommand) {
+  async execute({ userId, albumId, files }: InitiateUploadsCommand): Promise<ResultItem[]> {
     const user = await this.usersRepo.findById(userId);
     if (!user) throw new UserNotFoundError();
 

@@ -2,18 +2,19 @@ import { requireDefined } from '@/shared/utils';
 import type { BlobsRepository } from '../domain/blobs.repository';
 import { HashVO } from '../domain/hash.value-object';
 
-type MimeType = string | null;
-interface UploadInfo {
-  key: string;
-  mimeType: MimeType;
+interface ConfirmUploadsCommand {
+  uploads: {
+    key: string;
+    mimeType: string;
+  }[];
 }
 
 export class ConfirmUploadsUseCase {
   constructor(private readonly blobsRepo: BlobsRepository) {}
 
-  async execute(uploads: UploadInfo[]) {
+  async execute({ uploads }: ConfirmUploadsCommand): Promise<void> {
     const hashes: HashVO[] = [];
-    const mimeByKey = new Map<string, MimeType>();
+    const mimeByKey = new Map();
     uploads.forEach((u) => {
       hashes.push(HashVO.fromHex(u.key));
       mimeByKey.set(u.key, u.mimeType);

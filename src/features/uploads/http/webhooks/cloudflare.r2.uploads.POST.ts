@@ -12,7 +12,7 @@ export function registerRoute(webhooksRouter: Router) {
     validateRequest({ body: RequestBodySchema }),
     async (req, res) => {
       assert(req.body.event === 'upload.confirmed');
-      await confirmUploads.execute(req.body.objects);
+      await confirmUploads.execute({ uploads: req.body.objects });
       res.sendStatus(200);
     },
   );

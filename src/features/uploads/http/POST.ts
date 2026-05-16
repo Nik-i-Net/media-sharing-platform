@@ -1,9 +1,13 @@
-import { checkJwt, UnauthorizedResponse, validateRequest } from '@/shared/middlewares';
+import { checkJwt, validateRequest } from '@/shared/middlewares';
 import { initiateUploads } from '@/di';
 import { requireDefined, requireDuration } from '@/shared/utils';
 import { z } from 'zod';
 import { openapiRegistry } from '@/shared/openapi-registry';
-import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
+import {
+  InternalServerErrorResponse,
+  UnauthorizedErrorResponse,
+  ValidationErrorResponse,
+} from '@/shared/errors';
 import type { Response, Router } from 'express';
 
 export function registerRoute(uploadsRouter: Router) {
@@ -126,7 +130,7 @@ For each file, the response either:
       description: 'Upload information for requested files',
       content: { 'application/json': { schema: ResponseSchema } },
     },
-    ...UnauthorizedResponse,
+    ...UnauthorizedErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },
