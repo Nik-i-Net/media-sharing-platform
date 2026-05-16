@@ -1,7 +1,8 @@
 import { Router } from 'express';
 
 const modules = await Promise.all([
-  import('./presign.POST'), //
+  import('./POST'), //
+  import('./[id].GET'),
 ]);
 
 export const uploadsRouter = Router();

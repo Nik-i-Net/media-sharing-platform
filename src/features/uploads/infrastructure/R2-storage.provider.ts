@@ -11,7 +11,7 @@ type R2Params = {
   downloadBaseUrl: string;
 };
 
-export class R2StorageService implements StorageProvider {
+export class R2StorageProvider implements StorageProvider {
   private readonly S3: S3Client;
   private readonly bucket: string;
   private readonly downloadBaseUrl: string;
