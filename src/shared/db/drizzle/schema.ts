@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import * as t from 'drizzle-orm/pg-core';
 
 export const plansTable = t.pgTable('plans', {
@@ -47,10 +48,18 @@ export const uploadsTable = t.pgTable('uploads', {
     .references(() => blobsTable.id, { onDelete: 'cascade' })
     .notNull(),
   fileName: t.varchar('file_name', { length: 50 }).notNull(),
+  isPublic: t.boolean('is_public').notNull().default(true),
   expiresAt: t.timestamp('expires_at', { withTimezone: true }),
   createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+export const uploadsRelations = relations(uploadsTable, ({ one }) => ({
+  blob: one(blobsTable, {
+    fields: [uploadsTable.blobId],
+    references: [blobsTable.id],
+  }),
+}));
 
 export const albumsTable = t.pgTable('albums', {
   id: t.uuid('id').primaryKey(),
