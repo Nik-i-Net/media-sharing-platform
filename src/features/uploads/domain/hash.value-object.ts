@@ -1,12 +1,18 @@
+import assert from 'assert';
+
 export class HashVO {
   static fromHex(hex: string) {
-    return new HashVO(Buffer.from(hex, 'hex'));
+    const hash = new HashVO(Buffer.from(hex, 'hex'));
+    hash.#hex = hex;
+    return hash;
   }
 
   #hex?: string;
   #base64?: string;
 
-  constructor(readonly value: Buffer) {}
+  constructor(readonly value: Buffer) {
+    assert(Buffer.isBuffer(value));
+  }
 
   get base64() {
     return (this.#base64 ??= this.value.toString('base64'));

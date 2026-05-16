@@ -47,7 +47,7 @@ export class DrizzleBlobsRepository implements BlobsRepository {
 
   async findByHash(hash: HashVO): Promise<BlobEntity | null> {
     const record = await this.db.query.blobsTable.findFirst({
-      where: eq(blobsTable.hash, hash.value),
+      where: eq(blobsTable.hash, hash),
     });
     if (!record) return null;
     return this.toDomain(record);
@@ -57,7 +57,7 @@ export class DrizzleBlobsRepository implements BlobsRepository {
     const records = await this.db.query.blobsTable.findMany({
       where: inArray(
         blobsTable.hash,
-        hashes.map((hash) => hash.value),
+        hashes.map((hash) => hash),
       ),
     });
     return records.map((record) => this.toDomain(record));
@@ -66,7 +66,7 @@ export class DrizzleBlobsRepository implements BlobsRepository {
   private toDomain(record: InferSelectModel<typeof blobsTable>): BlobEntity {
     return new BlobEntity(
       record.id,
-      new HashVO(record.hash),
+      record.hash,
       record.mimeType,
       record.sizeBytes,
       record.status,
@@ -78,7 +78,7 @@ export class DrizzleBlobsRepository implements BlobsRepository {
   private toInsertModel(blob: BlobEntity): InferInsertModel<typeof blobsTable> {
     return {
       id: blob.id,
-      hash: blob.hash.value,
+      hash: blob.hash,
       mimeType: blob.mimeType,
       sizeBytes: blob.sizeBytes,
       status: blob.status,

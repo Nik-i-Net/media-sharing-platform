@@ -1,5 +1,7 @@
+import { HashVO } from '@/features/uploads/domain/hash.value-object';
 import { relations } from 'drizzle-orm';
 import * as t from 'drizzle-orm/pg-core';
+import z from 'zod';
 
 export const plansTable = t.pgTable('plans', {
   id: t.varchar('id').primaryKey(),
@@ -24,7 +26,29 @@ export const usersTable = t.pgTable('users', {
   deletedAt: t.timestamp('deleted_at', { withTimezone: true }),
 });
 
-const sha256 = t.customType<{ data: Buffer }>({ dataType: () => 'bytea' });
+const sha256 = t.customType<{
+  data: HashVO;
+  driverData: Buffer | string;
+}>({
+  dataType: () => 'bytea',
+  toDriver(value) {
+    return value.value;
+  },
+  fromDriver(value) {
+    // Regular queries
+    if (Buffer.isBuffer(value)) return new HashVO(value);
+
+    // Joined tables using QueryApi (v0.45.2) return '\\x' + hex
+    if (typeof value === 'string' && value.startsWith('\\x')) {
+      const hex = value.slice(2);
+      const parsedResult = z.hash('sha256', { enc: 'hex' }).safeParse(hex);
+      if (parsedResult.error) throw parsedResult.error;
+      return HashVO.fromHex(parsedResult.data);
+    }
+
+    throw new Error('[CustomType.Sha256] Unexpected driver data type');
+  },
+});
 export const blobStatus = t.pgEnum('blob_status', ['pending', 'ready', 'rejected']);
 
 export const blobsTable = t.pgTable('blobs', {
