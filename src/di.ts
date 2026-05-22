@@ -12,6 +12,7 @@ import { ConfirmUploadsCommandHandler } from './features/uploads/application/con
 import { GetUploadByIdQueryHandler } from './features/uploads/application/get-upload-by-id.query';
 import { GetUploadsByUserIdQueryHandler } from './features/uploads/application/get-uploads-by-user-id.query';
 import { CreateAlbumCommandHandler } from './features/albums/application/create-album.command';
+import { DeleteAlbumCommandHandler } from './features/albums/application/delete-album.command';
 
 const unitOfWork = new DrizzleUnitOfWork(db);
 
@@ -41,4 +42,6 @@ export const initiateUploads = new InitiateUploadsCommandHandler(
 export const confirmUploads = new ConfirmUploadsCommandHandler(blobsRepository);
 export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
 export const getUploadsByUserId = new GetUploadsByUserIdQueryHandler(db, storageProvider);
+
 export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
+export const deleteAlbum = new DeleteAlbumCommandHandler(albumsRepository);
