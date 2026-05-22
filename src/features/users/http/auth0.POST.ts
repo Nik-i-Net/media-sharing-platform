@@ -67,7 +67,7 @@ An endpoint designed for Auth0 Post-Login Actions.
       content: { 'application/json': { schema: RequestBodySchema } },
     },
   },
-  tags: ['Auth0'],
+  tags: ['Auth0', 'Integrations'],
   responses: {
     200: {
       description: 'Returns `userId`',

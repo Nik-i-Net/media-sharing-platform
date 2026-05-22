@@ -54,8 +54,8 @@ const ResponseSchema = z
 openapiRegistry.registerPath({
   method: 'get',
   path: '/api/v1/uploads/:id',
-  summary: 'TODO',
-  description: `TODO`,
+  summary: 'Get upload by ID',
+  description: 'Returns  metadata for a file identified by its ID',
   request: {
     headers: z.object({
       Authorization: z
@@ -68,7 +68,7 @@ openapiRegistry.registerPath({
   tags: ['Uploads'],
   responses: {
     200: {
-      description: 'Information about requested file',
+      description: 'Successful response containing the upload details for the requested ID',
       content: { 'application/json': { schema: ResponseSchema } },
     },
     ...UnauthorizedErrorResponse,

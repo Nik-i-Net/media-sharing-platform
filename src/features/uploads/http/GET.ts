@@ -66,10 +66,8 @@ openapiRegistry.registerPath({
   method: 'get',
   path: '/api/v1/uploads',
   summary: 'List uploaded files',
-  description: `
-Retrieves a paginated list of metadata for all files uploaded by the 
-authenticated user. Files are returned in reverse chronological order 
-(newest first).`,
+  description:
+    'Returns a paginated list of metadata for all files uploaded by the authenticated user',
   request: {
     headers: z.object({
       Authorization: z

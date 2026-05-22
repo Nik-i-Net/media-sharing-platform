@@ -1,6 +1,8 @@
 import { confirmUploads } from '@/di';
 import { ENV } from '@/shared/env.loader';
-import { checkApiKey, validateRequest } from '@/shared/middlewares';
+import { ValidationErrorResponse, InternalServerErrorResponse } from '@/shared/errors';
+import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
+import { openapiRegistry } from '@/shared/openapi-registry';
 import assert from 'assert';
 import type { Router } from 'express';
 import { z } from 'zod';
@@ -34,40 +36,25 @@ const RequestBodySchema = z.object({
     .nonempty(),
 });
 
-// // --- Schema Definitions ---
-// const UploadWebhookSchema = registry.register('UploadWebhook', z.object({
-//   uploads: z.array(z.object({
-//     uploadId: z.string().uuid().openapi({ description: 'The ID linked to your DB' }),
-//     key: z.string().openapi({ example: 'uploads/2024/01/file.png' }),
-//     status: z.enum(['success', 'failure']),
-//     metadata: z.record(z.string()).optional()
-//   }))
-// }));
-//
-// // --- Path Registration ---
-// registry.registerPath({
-//   method: 'post',
-//   path: '/api/v1/webhooks/r2-uploads',
-//   summary: 'Webhook for R2 upload completion',
-//   description: 'Triggered by Cloudflare Worker after batch file processing',
-//   request: {
-//     body: {
-//       content: {
-//         'application/json': {
-//           schema: UploadWebhookSchema
-//         }
-//       }
-//     }
-//   },
-//   responses: {
-//     200: {
-//       description: 'Webhook processed successfully',
-//       content: {
-//         'application/json': {
-//           schema: z.object({ received: z.boolean() })
-//         }
-//       }
-//     },
-//     401: { description: 'Unauthorized - Invalid webhook secret' }
-//   }
-// });
+openapiRegistry.registerPath({
+  method: 'post',
+  path: '/api/v1/webhooks/cloudflare.r2.uploads',
+  summary: 'Webhook for R2 upload confirmation',
+  description: 'Triggered by Cloudflare Worker after processing batch messages from a queue.',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: RequestBodySchema,
+        },
+      },
+    },
+  },
+  tags: ['Uploads', 'R2', 'Webhooks', 'Integrations'],
+  responses: {
+    204: { description: 'OK' },
+    ...InvalidApiKeyResponse,
+    ...ValidationErrorResponse,
+    ...InternalServerErrorResponse,
+  },
+});
