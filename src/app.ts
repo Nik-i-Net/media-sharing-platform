@@ -9,10 +9,12 @@ import { webhooksRouter } from './features/webhooks/webhooks.router';
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
 import swaggerUi from 'swagger-ui-express';
 import { openapiRegistry } from './shared/openapi-registry';
+import { albumsRouter } from './features/albums/http/albums.router';
 
 const router = Router();
 router.use('/users', usersRouter);
 router.use('/uploads', uploadsRouter);
+router.use('/albums', albumsRouter);
 router.use('/webhooks', webhooksRouter);
 
 const generator = new OpenApiGeneratorV31(openapiRegistry.definitions);

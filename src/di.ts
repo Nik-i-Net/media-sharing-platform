@@ -11,6 +11,7 @@ import { DrizzleUnitOfWork } from './shared/db/drizzle/drizzle-unit-of-work';
 import { ConfirmUploadsCommandHandler } from './features/uploads/application/confirm-uploads.command';
 import { GetUploadByIdQueryHandler } from './features/uploads/application/get-upload-by-id.query';
 import { GetUploadsByUserIdQueryHandler } from './features/uploads/application/get-uploads-by-user-id.query';
+import { CreateAlbumCommandHandler } from './features/albums/application/create-album.command';
 
 const unitOfWork = new DrizzleUnitOfWork(db);
 
@@ -40,3 +41,4 @@ export const initiateUploads = new InitiateUploadsCommandHandler(
 export const confirmUploads = new ConfirmUploadsCommandHandler(blobsRepository);
 export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
 export const getUploadsByUserId = new GetUploadsByUserIdQueryHandler(db, storageProvider);
+export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);

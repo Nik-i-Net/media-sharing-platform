@@ -1,6 +1,13 @@
+interface CreateAlbumParams {
+  id: string;
+  userId: string;
+  name: string;
+  isPublic: boolean;
+}
+
 export class Album {
-  public static create(id: string, userId: string, name: string) {
-    const isPublic = false;
+  public static create(params: CreateAlbumParams) {
+    const { id, userId, name, isPublic } = params;
     const now = new Date();
     const album = new Album(id, userId, name, isPublic, now, now);
     return album;
