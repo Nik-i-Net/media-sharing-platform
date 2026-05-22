@@ -13,6 +13,7 @@ import { GetUploadByIdQueryHandler } from './features/uploads/application/get-up
 import { ListUserUploadsQueryHandler } from './features/uploads/application/list-user-uploads.query';
 import { CreateAlbumCommandHandler } from './features/albums/application/create-album.command';
 import { DeleteAlbumCommandHandler } from './features/albums/application/delete-album.command';
+import { GetAlbumByIdQueryHandler } from './features/albums/application/get-album-by-id.query';
 
 const unitOfWork = new DrizzleUnitOfWork(db);
 
@@ -44,4 +45,5 @@ export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
 export const listUserUploads = new ListUserUploadsQueryHandler(db, storageProvider);
 
 export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
+export const getAlbumById = new GetAlbumByIdQueryHandler(db);
 export const deleteAlbum = new DeleteAlbumCommandHandler(albumsRepository);

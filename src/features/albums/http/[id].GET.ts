@@ -1,4 +1,4 @@
-import { deleteAlbum } from '@/di';
+import { getAlbumById } from '@/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -7,31 +7,50 @@ import {
 import { checkJwt, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
+import type { Response } from 'express';
 import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
 
 export function registerRoute(uploadsRouter: Router) {
-  uploadsRouter.delete(
+  uploadsRouter.get(
     '/:id', //
     checkJwt(),
     validateRequest({ params: RequestParamsSchema }),
-    async (req, res) => {
-      await deleteAlbum.execute({
-        id: req.params.id,
+    async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
+      const album = await getAlbumById.execute({
+        albumId: req.params.id,
         userId: requireDefined(req.user?.id),
       });
-      res.sendStatus(204);
+      const response = ResponseSchema.decode({ data: album });
+      res.status(200).json(response);
     },
   );
 }
 
 const RequestParamsSchema = z.object({ id: z.uuid() });
 
+const BasicInfoSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+});
+
+const ResponseSchema = z
+  .object({
+    data: z.discriminatedUnion('canEdit', [
+      BasicInfoSchema.extend({ canEdit: z.literal(false) }),
+      BasicInfoSchema.extend({
+        canEdit: z.literal(true),
+        isPublic: z.boolean(),
+      }),
+    ]),
+  })
+  .brand<'Response'>();
+
 openapiRegistry.registerPath({
-  method: 'delete',
+  method: 'get',
   path: '/api/v1/albums/:id',
-  summary: 'Delete album',
-  description: `Deletes the album with the provided ID.`,
+  summary: 'Get album',
+  description: `Returns information about the album with the provided ID.`,
   request: {
     headers: z.object({
       Authorization: z.templateLiteral(['Bearer ', z.jwt()]).meta({ description: 'Bearer `JWT`' }),
@@ -40,7 +59,7 @@ openapiRegistry.registerPath({
   },
   tags: ['Albums'],
   responses: {
-    204: { description: 'Successfully deleted the album' },
+    200: { description: 'Successfully retrieved the album' },
     ...UnauthorizedErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,

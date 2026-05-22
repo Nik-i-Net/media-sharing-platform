@@ -1,13 +1,20 @@
 meta {
-  name: deleteAlbum
+  name: getOneById
   type: http
-  seq: 3
+  seq: 2
 }
 
-delete {
+get {
   url: {{BASE_URL}}/albums/{{albums.createdId}}
   body: none
   auth: inherit
+}
+
+body:json {
+  {
+    "name": "album_1",
+    "isPublic": true
+  }
 }
 
 settings {
