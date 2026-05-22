@@ -3,23 +3,19 @@ import { and, desc, eq } from 'drizzle-orm';
 import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import type { StorageProvider } from './ports/storage.provider';
 
-export interface GetUploadsByUserIdQuery {
+export interface ListUserUploadsQuery {
   userId: string;
   page?: number;
   limit?: number;
 }
 
-export class GetUploadsByUserIdQueryHandler {
+export class ListUserUploadsQueryHandler {
   constructor(
     private readonly db: DrizzleDB,
     private readonly storageProvider: StorageProvider,
   ) {}
 
-  async execute({
-    userId,
-    page = 1,
-    limit = 20,
-  }: GetUploadsByUserIdQuery): Promise<PaginatedResult> {
+  async execute({ userId, page = 1, limit = 20 }: ListUserUploadsQuery): Promise<PaginatedResult> {
     const uploadsPromise = this.db
       .select({
         id: uploadsTable.id,

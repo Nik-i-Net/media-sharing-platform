@@ -1,4 +1,4 @@
-import { getUploadsByUserId } from '@/di';
+import { listUserUploads } from '@/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -9,7 +9,7 @@ import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Request, Response, Router } from 'express';
 import z from 'zod';
-import type { GetUploadsByUserIdQuery } from '../application/get-uploads-by-user-id.query';
+import type { ListUserUploadsQuery } from '../application/list-user-uploads.query';
 import { validateRequest } from '@/shared/utils/validate-request';
 
 export function registerRoute(uploadsRouter: Router) {
@@ -19,13 +19,13 @@ export function registerRoute(uploadsRouter: Router) {
     async (req: UnknownRequest, res: Response<z.infer<typeof ResponseSchema>>) => {
       const validated = validateRequest(req.query, RequestQueriesSchema, 'query');
 
-      const query: GetUploadsByUserIdQuery = {
+      const query: ListUserUploadsQuery = {
         userId: requireDefined(req.user?.id),
         page: Number(validated.page),
         limit: Number(validated.limit),
       };
 
-      const result = await getUploadsByUserId.execute(query);
+      const result = await listUserUploads.execute(query);
       const response = ResponseSchema.decode(result);
       res.status(200).json(response);
     },
