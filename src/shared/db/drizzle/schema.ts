@@ -2,6 +2,7 @@ import { HashVO } from '@/features/uploads/domain/hash.value-object';
 import { relations } from 'drizzle-orm';
 import * as t from 'drizzle-orm/pg-core';
 import z from 'zod';
+import { desc } from 'drizzle-orm';
 
 export const plansTable = t.pgTable('plans', {
   id: t.varchar('id').primaryKey(),
@@ -85,17 +86,21 @@ export const uploadsRelations = relations(uploadsTable, ({ one }) => ({
   }),
 }));
 
-export const albumsTable = t.pgTable('albums', {
-  id: t.uuid('id').primaryKey(),
-  userId: t
-    .uuid('user_id')
-    .references(() => usersTable.id, { onDelete: 'cascade' })
-    .notNull(),
-  name: t.varchar('name', { length: 50 }).notNull(),
-  isPublic: t.boolean('is_public').notNull(),
-  createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-});
+export const albumsTable = t.pgTable(
+  'albums',
+  {
+    id: t.uuid('id').primaryKey(),
+    userId: t
+      .uuid('user_id')
+      .references(() => usersTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    name: t.varchar('name', { length: 50 }).notNull(),
+    isPublic: t.boolean('is_public').notNull(),
+    createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [t.index('idx_albums_userId_createdAtDESC').on(table.userId, desc(table.createdAt))],
+);
 
 export const albumsUploadsTable = t.pgTable(
   'albums_uploads',
