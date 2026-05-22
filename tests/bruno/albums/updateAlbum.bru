@@ -1,13 +1,20 @@
 meta {
-  name: deleteAlbum
+  name: updateAlbum
   type: http
-  seq: 4
+  seq: 3
 }
 
-delete {
+patch {
   url: {{BASE_URL}}/albums/{{albums.createdId}}
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "name": "updated_album_1",
+    "isPublic": false
+  }
 }
 
 settings {

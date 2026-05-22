@@ -14,6 +14,7 @@ import { ListUserUploadsQueryHandler } from './features/uploads/application/list
 import { CreateAlbumCommandHandler } from './features/albums/application/create-album.command';
 import { DeleteAlbumCommandHandler } from './features/albums/application/delete-album.command';
 import { GetAlbumByIdQueryHandler } from './features/albums/application/get-album-by-id.query';
+import { UpdateAlbumCommandHandler } from './features/albums/application/update-album.command';
 
 const unitOfWork = new DrizzleUnitOfWork(db);
 
@@ -46,4 +47,5 @@ export const listUserUploads = new ListUserUploadsQueryHandler(db, storageProvid
 
 export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
 export const getAlbumById = new GetAlbumByIdQueryHandler(db);
+export const updateAlbum = new UpdateAlbumCommandHandler(albumsRepository);
 export const deleteAlbum = new DeleteAlbumCommandHandler(albumsRepository);

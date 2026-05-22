@@ -3,6 +3,7 @@ import { Router } from 'express';
 const modules = await Promise.all([
   import('./POST'), //
   import('./[id].GET'),
+  import('./[id].PATCH'),
   import('./[id].DELETE'),
 ]);
 
