@@ -1,13 +1,18 @@
 meta {
-  name: getDownloadUrl
+  name: getManyByUserId
   type: http
   seq: 4
 }
 
 get {
-  url: {{BASE_URL}}/uploads/3bb1dc66-13e1-4004-82c9-e9e3ce898967
+  url: {{BASE_URL}}/uploads?page=1&limit=20
   body: none
   auth: inherit
+}
+
+params:query {
+  page: 1
+  limit: 20
 }
 
 settings {

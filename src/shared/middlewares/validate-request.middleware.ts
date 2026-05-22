@@ -9,6 +9,7 @@ type ValidateRequestSchemas<TParams, TBody, TQuery> = {
   query?: ZodType<TQuery>;
 };
 
+// NOTE: req.query doesn't have a setter
 export function validateRequest<TParams extends ParamsDictionary, TBody, TQuery extends Query>(
   schemas: ValidateRequestSchemas<TParams, TBody, TQuery>,
 ): RequestHandler<TParams, unknown, TBody, TQuery> {

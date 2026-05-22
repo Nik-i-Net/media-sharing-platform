@@ -9,7 +9,7 @@ interface ConfirmUploadsCommand {
   }[];
 }
 
-export class ConfirmUploadsUseCase {
+export class ConfirmUploadsCommandHandler {
   constructor(private readonly blobsRepo: BlobsRepository) {}
 
   async execute({ uploads }: ConfirmUploadsCommand): Promise<void> {

@@ -13,7 +13,7 @@ export interface ResolveUserIdCommand {
 }
 
 // TODO: split into: register, resolveUserId (only for getting userId) and syncIdentities
-export class ResolveUserIdUseCase {
+export class ResolveUserIdCommandHandler {
   constructor(
     private readonly usersRepo: UsersRepository,
     private readonly planProvider: PlanProvider,

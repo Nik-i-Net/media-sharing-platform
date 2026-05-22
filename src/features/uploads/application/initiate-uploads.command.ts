@@ -34,7 +34,7 @@ type ResultItem =
       headers: { [key: string]: string | number };
     };
 
-export class InitiateUploadsUseCase {
+export class InitiateUploadsCommandHandler {
   constructor(
     private readonly usersRepo: UsersRepository,
     private readonly blobsRepo: BlobsRepository,

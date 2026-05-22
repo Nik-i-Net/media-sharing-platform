@@ -2,6 +2,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { StorageProvider, UploadInfo } from '../application/ports/storage.provider';
 import type { BlobEntity } from '../domain/blob';
+import type { HashVO } from '../domain/hash.value-object';
 
 type R2Params = {
   accountId: string;
@@ -52,7 +53,11 @@ export class R2StorageProvider implements StorageProvider {
     };
   }
 
-  async getDownloadUrl(key: string) {
-    return `${this.downloadBaseUrl}/${key}`;
+  getDownloadUrl(hash: HashVO) {
+    return `${this.downloadBaseUrl}/${hash.hex}`;
+  }
+
+  getPreviewUrl(hash: HashVO): string {
+    return `${this.downloadBaseUrl}/${hash.hex}`;
   }
 }

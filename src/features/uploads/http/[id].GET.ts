@@ -6,8 +6,7 @@ import {
 } from '@/shared/errors';
 import { checkJwt, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
-import type { Response } from 'express';
-import type { Router } from 'express-serve-static-core';
+import type { Response, Router } from 'express';
 import z from 'zod';
 
 export function registerRoute(uploadsRouter: Router) {
@@ -16,9 +15,10 @@ export function registerRoute(uploadsRouter: Router) {
     checkJwt({ requireAuth: false }),
     validateRequest({ params: RequestParamsSchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
-      const uploadId = req.params.id;
-      const userId = req.user?.id ?? null;
-      const upload = await getUploadById.execute(uploadId, userId);
+      const upload = await getUploadById.execute({
+        uploadId: req.params.id,
+        userId: req.user?.id ?? null,
+      });
       const response = ResponseSchema.decode({ data: upload });
       res.status(200).json(response);
     },
@@ -46,7 +46,6 @@ const ResponseSchema = z
         isPublic: z.boolean(),
         expiresAt: z.date().nullable(),
         createdAt: z.date(),
-        updatedAt: z.date(),
       }),
     ]),
   })

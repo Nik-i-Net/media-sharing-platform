@@ -1,4 +1,5 @@
 import type { BlobEntity } from '../../domain/blob';
+import type { HashVO } from '../../domain/hash.value-object';
 
 export type UploadInfo = {
   url: string;
@@ -8,5 +9,6 @@ export type UploadInfo = {
 
 export interface StorageProvider {
   getDirectUploadInfo(key: string, blob: BlobEntity): Promise<UploadInfo>;
-  getDownloadUrl(key: string): Promise<string>;
+  getDownloadUrl(hash: HashVO): string;
+  getPreviewUrl(hash: HashVO): string;
 }

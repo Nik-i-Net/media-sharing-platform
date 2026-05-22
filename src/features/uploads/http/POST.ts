@@ -1,21 +1,21 @@
-import { checkJwt, validateRequest } from '@/shared/middlewares';
 import { initiateUploads } from '@/di';
-import { requireDefined, requireDuration } from '@/shared/utils';
-import { z } from 'zod';
-import { openapiRegistry } from '@/shared/openapi-registry';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import type { Response, Router } from 'express';
+import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { openapiRegistry } from '@/shared/openapi-registry';
+import { requireDefined, requireDuration } from '@/shared/utils';
+import type { Request, Response, Router } from 'express';
+import { z } from 'zod';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.post(
     '/', //
     checkJwt(),
     validateRequest({ body: RequestBodySchema }),
-    async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
+    async (req: TypedRequest, res: TypedResponse) => {
       const userId = requireDefined(req.user?.id);
       const albumId = req.body.albumId ?? null;
       const files = req.body.files.map((file) => ({
@@ -28,6 +28,9 @@ export function registerRoute(uploadsRouter: Router) {
     },
   );
 }
+
+type TypedRequest = Request<unknown, unknown, z.infer<typeof RequestBodySchema>>;
+type TypedResponse = Response<z.infer<typeof ResponseSchema>>;
 
 const FileMetadataSchema = z.object({
   id: z.string().meta({
