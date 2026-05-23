@@ -10,18 +10,19 @@ import { requireDefined, requireDuration } from '@/shared/utils';
 import type { Response, Router } from 'express';
 import { z } from 'zod';
 
-export function registerRoute(uploadsRouter: Router) {
-  uploadsRouter.post(
-    '/', //
+export function registerRoute(albumsRouter: Router) {
+  albumsRouter.post(
+    '/:id/uploads', //
     checkJwt(),
-    validateRequest({ body: RequestBodySchema }),
+    validateRequest({ params: RequestParamsSchema, body: RequestBodySchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
       const userId = requireDefined(req.user?.id);
+      const albumId = req.params.id;
       const files = req.body.files.map((file) => ({
         ...file,
         ttl: file.ttl ? requireDuration(file.ttl) : null,
       }));
-      const result = await initiateUploads.execute({ userId, albumId: null, files });
+      const result = await initiateUploads.execute({ userId, albumId, files });
       const response = ResponseSchema.decode({ data: result });
       res.json(response);
     },
@@ -57,6 +58,10 @@ The time-to-live after which the file will be automatically deleted.
 Supported units: \`s\`, \`m\`, \`h\`, \`d\` (seconds, minutes, hours and days respectively).  
 Minimum period - 1 hour, maximum - 30 days.`,
     }),
+});
+
+const RequestParamsSchema = z.object({
+  id: z.uuid(),
 });
 
 const RequestBodySchema = z.object({
@@ -106,8 +111,8 @@ const ResponseSchema = z
 
 openapiRegistry.registerPath({
   method: 'post',
-  path: '/api/v1/uploads',
-  summary: 'Initiate uploads',
+  path: '/api/v1/albums/:id/uploads',
+  summary: 'Initiate uploads to an album',
   description: `
 Receives metadata for multiple files and returns the information needed for direct uploading to a blob storage.  
 For each file, the response either:
@@ -122,7 +127,7 @@ For each file, the response either:
       content: { 'application/json': { schema: RequestBodySchema } },
     },
   },
-  tags: ['Uploads', 'R2'],
+  tags: ['Albums', 'Uploads', 'R2'],
   responses: {
     200: {
       description: 'Upload information for requested files',
