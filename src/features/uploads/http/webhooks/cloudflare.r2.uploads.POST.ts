@@ -1,4 +1,4 @@
-import { confirmUploads } from '@/di';
+import { confirmUploads } from '@/app/di';
 import { ENV } from '@/shared/env.loader';
 import { ValidationErrorResponse, InternalServerErrorResponse } from '@/shared/errors';
 import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';

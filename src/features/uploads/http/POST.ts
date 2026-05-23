@@ -1,4 +1,4 @@
-import { initiateUploads } from '@/di';
+import { initiateUploads } from '@/app/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,

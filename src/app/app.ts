@@ -1,15 +1,15 @@
-import express, { Router } from 'express';
-import cookieParser from 'cookie-parser';
-import { unknownRouteHandler, errorHandler } from './shared/middlewares';
-import cors from 'cors';
-import { ENV } from './shared/env.loader';
-import { usersRouter } from './features/users/http/users.router';
-import { uploadsRouter } from './features/uploads/http/uploads.router';
-import { webhooksRouter } from './features/webhooks/webhooks.router';
+import { albumsRouter } from '@/features/albums/http/albums.router';
+import { uploadsRouter } from '@/features/uploads/http/uploads.router';
+import { usersRouter } from '@/features/users/http/users.router';
+import { ENV } from '@/shared/env.loader';
+import { errorHandler, unknownRouteHandler } from '@/shared/middlewares';
+import { openapiRegistry } from '@/shared/openapi-registry';
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express, { Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
-import { openapiRegistry } from './shared/openapi-registry';
-import { albumsRouter } from './features/albums/http/albums.router';
+import { webhooksRouter } from './webhooks.router';
 
 const router = Router();
 router.use('/users', usersRouter);

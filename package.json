@@ -4,8 +4,8 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --env-file=.env.development src/bootstrap.ts",
-    "debug": "tsx --inspect --env-file=.env.development src/bootstrap.ts",
+    "dev": "tsx watch --env-file=.env.development src/server.ts",
+    "debug": "tsx --inspect --env-file=.env.development src/server.ts",
     "test": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

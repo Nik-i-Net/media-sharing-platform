@@ -1,4 +1,3 @@
-import { createAlbum } from '@/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -11,6 +10,7 @@ import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
 import type { CreateAlbumCommand } from '../application/create-album.command';
 import type { Response } from 'express';
+import { createAlbum } from '@/app/di';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.post(

@@ -4,7 +4,7 @@ import type { DrizzleDB, DrizzleTransaction } from './client';
 import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
 import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
 import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
-import { plansProvider } from '@/di';
+import { plansProvider } from '@/app/di';
 
 export class DrizzleUnitOfWork implements UnitOfWork {
   constructor(private readonly db: DrizzleDB) {}

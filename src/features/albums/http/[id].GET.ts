@@ -1,4 +1,4 @@
-import { getAlbumById } from '@/di';
+import { getAlbumById } from '@/app/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,

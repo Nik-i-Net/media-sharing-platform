@@ -1,4 +1,3 @@
-import { listUserUploads } from '@/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -11,6 +10,7 @@ import type { Request, Response, Router } from 'express';
 import z from 'zod';
 import type { ListUserUploadsQuery } from '../application/list-user-uploads.query';
 import { validateRequest } from '@/shared/utils/validate-request';
+import { listUserUploads } from '@/app/di';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(

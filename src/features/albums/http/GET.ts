@@ -1,4 +1,4 @@
-import { listUserAlbums } from '@/di';
+import { listUserAlbums } from '@/app/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,

@@ -1,4 +1,4 @@
-import { deleteAlbum } from '@/di';
+import { deleteAlbum } from '@/app/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,

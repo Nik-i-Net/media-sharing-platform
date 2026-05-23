@@ -1,0 +1,53 @@
+import { CreateAlbumCommandHandler } from '@/features/albums/application/create-album.command';
+import { DeleteAlbumCommandHandler } from '@/features/albums/application/delete-album.command';
+import { GetAlbumByIdQueryHandler } from '@/features/albums/application/get-album-by-id.query';
+import { ListUserAlbumsQueryHandler } from '@/features/albums/application/list-user-albums.query';
+import { UpdateAlbumCommandHandler } from '@/features/albums/application/update-album.command';
+import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
+import { ConfirmUploadsCommandHandler } from '@/features/uploads/application/confirm-uploads.command';
+import { GetUploadByIdQueryHandler } from '@/features/uploads/application/get-upload-by-id.query';
+import { InitiateUploadsCommandHandler } from '@/features/uploads/application/initiate-uploads.command';
+import { ListUserUploadsQueryHandler } from '@/features/uploads/application/list-user-uploads.query';
+import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
+import { R2StorageProvider } from '@/features/uploads/infrastructure/R2-storage.provider';
+import { ResolveUserIdCommandHandler } from '@/features/users/application/resolve-user-id';
+import { DrizzlePlanProvider } from '@/features/users/infrastructure/drizzle-plan-provider';
+import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
+import { db } from '@/shared/db/drizzle/client';
+import { DrizzleUnitOfWork } from '@/shared/db/drizzle/drizzle-unit-of-work';
+import { ENV } from '@/shared/env.loader';
+
+const unitOfWork = new DrizzleUnitOfWork(db);
+
+export const plansProvider = new DrizzlePlanProvider(db);
+const usersRepository = new DrizzleUsersRepository(db, plansProvider);
+export const resolveUserId = new ResolveUserIdCommandHandler(usersRepository, plansProvider);
+
+const storageProvider = new R2StorageProvider({
+  accountId: ENV.CLOUDFLARE_ACCOUNT_ID,
+  accessKeyId: ENV.CLOUDFLARE_ACCESS_KEY_ID,
+  secretAccessKey: ENV.CLOUDFLARE_SECRET_ACCESS_KEY,
+  bucket: ENV.CLOUDFLARE_BUCKET,
+  downloadBaseUrl: ENV.MEDIA_BASE_URL,
+});
+
+const blobsRepository = new DrizzleBlobsRepository(db);
+const albumsRepository = new DrizzleAlbumsRepository(db);
+
+export const initiateUploads = new InitiateUploadsCommandHandler(
+  usersRepository,
+  blobsRepository,
+  albumsRepository,
+  unitOfWork,
+  storageProvider,
+);
+
+export const confirmUploads = new ConfirmUploadsCommandHandler(blobsRepository);
+export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
+export const listUserUploads = new ListUserUploadsQueryHandler(db, storageProvider);
+
+export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
+export const listUserAlbums = new ListUserAlbumsQueryHandler(db);
+export const getAlbumById = new GetAlbumByIdQueryHandler(db);
+export const updateAlbum = new UpdateAlbumCommandHandler(albumsRepository);
+export const deleteAlbum = new DeleteAlbumCommandHandler(albumsRepository);

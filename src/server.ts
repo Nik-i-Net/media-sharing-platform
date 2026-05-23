@@ -1,4 +1,4 @@
-import { app } from './app';
+import { app } from './app/app';
 import { ENV } from './shared/env.loader';
 
 const port = Number(ENV.PORT);

@@ -1,4 +1,3 @@
-import { updateAlbum } from '@/di';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -11,6 +10,7 @@ import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
 import type { UpdateAlbumCommand } from '../application/update-album.command';
 import type { Response } from 'express';
+import { updateAlbum } from '@/app/di';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.patch(

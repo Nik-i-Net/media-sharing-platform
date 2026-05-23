@@ -1,4 +1,4 @@
-import { getUploadById } from '@/di';
+import { getUploadById } from '@/app/di';
 import {
   ValidationErrorResponse,
   InternalServerErrorResponse,
