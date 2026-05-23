@@ -2,16 +2,16 @@ import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import { albumsTable, albumsUploadsTable } from '@/shared/db/drizzle/schema';
 import { desc, eq } from 'drizzle-orm';
 
-export interface ListUserUploadsQuery {
+export interface ListUserAlbumsQuery {
   userId: string;
   page?: number;
   limit?: number;
 }
 
-export class ListUserUploadsQueryHandler {
+export class ListUserAlbumsQueryHandler {
   constructor(private readonly db: DrizzleDB) {}
 
-  async execute({ userId, page = 1, limit = 20 }: ListUserUploadsQuery): Promise<PaginatedResult> {
+  async execute({ userId, page = 1, limit = 20 }: ListUserAlbumsQuery): Promise<PaginatedResult> {
     if (limit > 50) throw new Error('Max limit is 50');
 
     const albumsPromise = this.db
@@ -43,7 +43,7 @@ export class ListUserUploadsQueryHandler {
         page,
         limit,
         totalItems: totalAlbums,
-        totalPages: Math.ceil(totalAlbums / limit),
+        totalPages: Math.ceil(totalAlbums / limit) || 1,
       },
     };
   }
