@@ -65,9 +65,8 @@ const ResponseSchema = z
 openapiRegistry.registerPath({
   method: 'get',
   path: '/api/v1/uploads',
-  summary: 'List uploaded files',
-  description:
-    'Returns a paginated list of metadata for all files uploaded by the authenticated user',
+  summary: 'List uploads',
+  description: 'Returns a paginated list of metadata for user uploads',
   request: {
     headers: z.object({
       Authorization: z
@@ -79,7 +78,7 @@ openapiRegistry.registerPath({
   tags: ['Uploads'],
   responses: {
     200: {
-      description: 'A paginated list of file metadata objects successfully retrieved.',
+      description: 'A paginated list of uploads metadata.',
       content: { 'application/json': { schema: ResponseSchema } },
     },
     ...UnauthorizedErrorResponse,

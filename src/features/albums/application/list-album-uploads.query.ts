@@ -71,7 +71,7 @@ export class ListAlbumUploadsQueryHandler {
       page,
       limit,
       totalItems,
-      totalPages: Math.ceil(totalItems / limit),
+      totalPages: Math.ceil(totalItems / limit) || 1,
     };
 
     if (isOwner) {

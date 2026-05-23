@@ -59,7 +59,7 @@ export class ListUserUploadsQueryHandler {
         page,
         limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / limit),
+        totalPages: Math.ceil(totalItems / limit) || 1,
       },
     };
   }
