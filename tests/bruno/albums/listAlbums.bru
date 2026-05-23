@@ -1,13 +1,18 @@
 meta {
-  name: getOneById
+  name: listAlbums
   type: http
-  seq: 3
+  seq: 2
 }
 
 get {
-  url: {{BASE_URL}}/albums/{{albums.createdId}}
+  url: {{BASE_URL}}/albums?page=1&limit=20
   body: none
   auth: inherit
+}
+
+params:query {
+  page: 1
+  limit: 20
 }
 
 body:json {
