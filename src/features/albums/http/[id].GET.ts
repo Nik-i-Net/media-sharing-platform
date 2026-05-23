@@ -59,7 +59,10 @@ openapiRegistry.registerPath({
   },
   tags: ['Albums'],
   responses: {
-    200: { description: 'Successfully retrieved the album' },
+    200: {
+      description: 'Album information.',
+      content: { 'application/json': { schema: ResponseSchema } },
+    },
     ...UnauthorizedErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,

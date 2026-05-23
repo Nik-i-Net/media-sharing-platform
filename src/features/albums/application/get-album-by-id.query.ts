@@ -1,5 +1,5 @@
 import type { DrizzleDB } from '@/shared/db/drizzle/client';
-import { albumsTable } from '@/shared/db/drizzle/schema';
+import { albumsTable, albumsUploadsTable } from '@/shared/db/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { AlbumNotFoundError } from '../errors/album-not-found.error';
 
@@ -22,6 +22,10 @@ export class GetAlbumByIdQueryHandler {
     const basicInfo: BasicInfo = {
       id: album.id,
       name: album.name,
+      totalItems: await this.db.$count(
+        albumsUploadsTable,
+        eq(albumsUploadsTable.albumId, albumsTable.id),
+      ),
     };
 
     return userId !== album.userId
@@ -37,6 +41,7 @@ export class GetAlbumByIdQueryHandler {
 interface BasicInfo {
   id: string;
   name: string;
+  totalItems: number;
 }
 
 interface PublicInfo extends BasicInfo {

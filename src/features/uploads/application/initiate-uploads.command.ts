@@ -25,6 +25,7 @@ export interface InitiateUploadsCommand {
 }
 
 type ResultItem =
+  // TODO: implement 'rejected' and 'skipped_already_exists'
   | { id: string; status: 'ok' }
   | {
       id: string;
