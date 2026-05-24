@@ -1,10 +1,10 @@
 meta {
-  name: linkUploads
+  name: unlinkUploads
   type: http
-  seq: 6
+  seq: 8
 }
 
-post {
+delete {
   url: {{BASE_URL}}/albums/{{albums.createdId}}/uploads
   body: json
   auth: inherit

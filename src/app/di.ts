@@ -4,6 +4,7 @@ import { GetAlbumByIdQueryHandler } from '@/features/albums/application/get-albu
 import { LinkUploadsToAlbumCommandHandler } from '@/features/albums/application/link-uploads-to-album.command';
 import { ListAlbumUploadsQueryHandler } from '@/features/albums/application/list-album-uploads.query';
 import { ListUserAlbumsQueryHandler } from '@/features/albums/application/list-user-albums.query';
+import { UnlinkUploadsFromAlbumCommandHandler } from '@/features/albums/application/unlink-uploads-from-album.command';
 import { UpdateAlbumCommandHandler } from '@/features/albums/application/update-album.command';
 import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
 import { ConfirmUploadsCommandHandler } from '@/features/uploads/application/confirm-uploads.command';
@@ -60,3 +61,4 @@ export const linkUploadsToAlbum = new LinkUploadsToAlbumCommandHandler(
   albumsRepository,
   uploadsRepository,
 );
+export const unlinkUploadsFromAlbum = new UnlinkUploadsFromAlbumCommandHandler(albumsRepository);

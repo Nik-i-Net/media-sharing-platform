@@ -33,8 +33,9 @@ export function registerRoute(uploadsRouter: Router) {
 const RequestBodySchema = z.object({
   name: z
     .string()
-    .regex(/^(\w|-)+$/)
-    .max(50),
+    .regex(/^(\w|\s|-)+$/)
+    .max(50)
+    .meta({ example: 'My Album' }),
   isPublic: z.boolean(),
 });
 

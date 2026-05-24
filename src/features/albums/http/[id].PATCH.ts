@@ -36,9 +36,10 @@ const RequestParamsSchema = z.object({ id: z.uuid() });
 const RequestBodySchema = z.object({
   name: z
     .string()
-    .regex(/^(\w|-)+$/)
+    .regex(/^(\w|\s|-)+$/)
     .max(50)
-    .optional(),
+    .optional()
+    .meta({ example: 'My Album' }),
   isPublic: z.boolean().optional(),
 });
 
