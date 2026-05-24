@@ -73,7 +73,7 @@ const ResponseSchema = z
 openapiRegistry.registerPath({
   method: 'get',
   path: '/api/v1/albums/{id}/uploads',
-  summary: 'List uploads in an album',
+  summary: 'List uploads in album',
   description: `
 Returns a paginated list of uploads metadata in an album.  
 Owners will see all their uploads, while other users will only see public uploads.`,

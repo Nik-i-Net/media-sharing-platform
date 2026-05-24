@@ -1,17 +1,17 @@
 meta {
   name: listAlbumUploads
   type: http
-  seq: 8
+  seq: 7
 }
 
 get {
-  url: {{BASE_URL}}/albums/{{albums.createdId}}/uploads?page=2&limit=20
+  url: {{BASE_URL}}/albums/{{albums.createdId}}/uploads?page=1&limit=20
   body: none
   auth: inherit
 }
 
 params:query {
-  page: 2
+  page: 1
   limit: 20
 }
 

@@ -1,6 +1,7 @@
 import { CreateAlbumCommandHandler } from '@/features/albums/application/create-album.command';
 import { DeleteAlbumCommandHandler } from '@/features/albums/application/delete-album.command';
 import { GetAlbumByIdQueryHandler } from '@/features/albums/application/get-album-by-id.query';
+import { LinkUploadsToAlbumCommandHandler } from '@/features/albums/application/link-uploads-to-album.command';
 import { ListAlbumUploadsQueryHandler } from '@/features/albums/application/list-album-uploads.query';
 import { ListUserAlbumsQueryHandler } from '@/features/albums/application/list-user-albums.query';
 import { UpdateAlbumCommandHandler } from '@/features/albums/application/update-album.command';
@@ -10,6 +11,7 @@ import { GetUploadByIdQueryHandler } from '@/features/uploads/application/get-up
 import { InitiateUploadsCommandHandler } from '@/features/uploads/application/initiate-uploads.command';
 import { ListUserUploadsQueryHandler } from '@/features/uploads/application/list-user-uploads.query';
 import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
+import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
 import { R2StorageProvider } from '@/features/uploads/infrastructure/R2-storage.provider';
 import { ResolveUserIdCommandHandler } from '@/features/users/application/resolve-user-id';
 import { DrizzlePlanProvider } from '@/features/users/infrastructure/drizzle-plan-provider';
@@ -33,6 +35,7 @@ const storageProvider = new R2StorageProvider({
 });
 
 const blobsRepository = new DrizzleBlobsRepository(db);
+const uploadsRepository = new DrizzleUploadsRepository(db);
 const albumsRepository = new DrizzleAlbumsRepository(db);
 
 export const initiateUploads = new InitiateUploadsCommandHandler(
@@ -53,3 +56,7 @@ export const getAlbumById = new GetAlbumByIdQueryHandler(db);
 export const listAlbumUploads = new ListAlbumUploadsQueryHandler(db, storageProvider);
 export const updateAlbum = new UpdateAlbumCommandHandler(albumsRepository);
 export const deleteAlbum = new DeleteAlbumCommandHandler(albumsRepository);
+export const linkUploadsToAlbum = new LinkUploadsToAlbumCommandHandler(
+  albumsRepository,
+  uploadsRepository,
+);

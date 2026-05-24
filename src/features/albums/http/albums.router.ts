@@ -6,8 +6,8 @@ const modules = await Promise.all([
   import('./[id].GET'),
   import('./[id].PATCH'),
   import('./[id].DELETE'),
-  import('./[id].uploads.GET'),
   import('./[id].uploads.POST'),
+  import('./[id].uploads.GET'),
 ]);
 
 export const albumsRouter = Router();

@@ -1,0 +1,24 @@
+meta {
+  name: linkUploads
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/albums/{{albums.createdId}}/uploads
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "uploadIds": [
+      "e6e868f5-90fa-4e8d-8a26-9680f003103b",
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
