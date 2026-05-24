@@ -1,4 +1,4 @@
-import { BaseError, type ErrorResponse } from './base.error';
+import { BaseError, type OpenapiErrorResponse } from './base.error';
 import { StatusCodes } from '../constants';
 import { z } from 'zod';
 
@@ -24,4 +24,4 @@ export const UnauthorizedErrorResponse = {
       },
     },
   },
-} satisfies ErrorResponse;
+} satisfies OpenapiErrorResponse;

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { StatusCodes } from '../constants';
-import { BaseError, type ErrorResponse } from './base.error';
+import { BaseError, type OpenapiErrorResponse } from './base.error';
 
 const message = 'Internal server error';
 const code = 'INTERNAL_SERVER_ERROR';
@@ -27,7 +27,7 @@ export const InternalServerErrorResponse = {
       },
     },
   },
-} satisfies ErrorResponse;
+} satisfies OpenapiErrorResponse;
 
 // openapiRegistry.registerComponent('responses', 'InternalServerError', {
 //   description: 'Internal server error',

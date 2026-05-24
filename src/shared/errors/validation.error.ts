@@ -1,5 +1,5 @@
 import { StatusCodes } from '../constants';
-import { BaseError, type ErrorResponse } from './base.error';
+import { BaseError, type OpenapiErrorResponse } from './base.error';
 import { z } from 'zod';
 
 export type ValidationIssue = {
@@ -41,4 +41,4 @@ export const ValidationErrorResponse = {
       },
     },
   },
-} satisfies ErrorResponse;
+} satisfies OpenapiErrorResponse;

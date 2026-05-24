@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express-serve-static-core';
 import { StatusCodes } from '../constants';
 import { z } from 'zod';
-import { UnauthorizedError, type ErrorResponse } from '../errors';
+import { UnauthorizedError, type OpenapiErrorResponse } from '../errors';
 
 export function checkApiKey(apiKey: string): RequestHandler {
   return (req, _res, next) => {
@@ -27,4 +27,4 @@ export const InvalidApiKeyResponse = {
       },
     },
   },
-} satisfies ErrorResponse;
+} satisfies OpenapiErrorResponse;
