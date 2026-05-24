@@ -3,4 +3,5 @@ onlyBuiltDependencies:
   - esbuild
 ignoredBuiltDependencies:
   - "@scarf/scarf"
+minimumReleaseAge: 20160 # 14d
 saveExact: true
