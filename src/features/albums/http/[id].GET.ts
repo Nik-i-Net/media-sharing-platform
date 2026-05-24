@@ -6,7 +6,6 @@ import {
 } from '@/shared/errors';
 import { checkJwt, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
-import { requireDefined } from '@/shared/utils';
 import type { Response } from 'express';
 import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
@@ -14,12 +13,12 @@ import { z } from 'zod';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
     '/:id', //
-    checkJwt(),
+    checkJwt({ requireAuth: false }),
     validateRequest({ params: RequestParamsSchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
       const album = await getAlbumById.execute({
         albumId: req.params.id,
-        userId: requireDefined(req.user?.id),
+        userId: req.user?.id ?? null,
       });
       const response = ResponseSchema.decode({ data: album });
       res.status(200).json(response);
@@ -53,7 +52,10 @@ openapiRegistry.registerPath({
   description: `Returns information about the album with the provided ID.`,
   request: {
     headers: z.object({
-      Authorization: z.templateLiteral(['Bearer ', z.jwt()]).meta({ description: 'Bearer `JWT`' }),
+      Authorization: z
+        .templateLiteral(['Bearer ', z.jwt()])
+        .optional()
+        .meta({ description: 'Bearer `JWT`' }),
     }),
     params: RequestParamsSchema,
   },
