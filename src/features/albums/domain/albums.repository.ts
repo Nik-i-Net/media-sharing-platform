@@ -7,6 +7,7 @@ export interface AlbumsRepository {
   existsById(id: string): Promise<boolean>;
   delete(id: string): Promise<boolean>;
 
-  addUploads(albumId: string, uploadIds: string[]): Promise<void>;
-  removeUploads(albumId: string, uploadIds: string[]): Promise<void>;
+  isOwner(userId: string, albumId: string): Promise<boolean>;
+  linkUploads(albumId: string, uploadIds: string[]): Promise<void>;
+  unlinkUploads(albumId: string, uploadIds: string[]): Promise<void>;
 }

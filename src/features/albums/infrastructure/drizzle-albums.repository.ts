@@ -59,13 +59,22 @@ export class DrizzleAlbumsRepository implements AlbumsRepository {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async addUploads(albumId: string, uploadIds: string[]) {
-    await this.db
-      .insert(albumsUploadsTable)
-      .values(uploadIds.map((id) => ({ albumId, uploadId: id })));
+  async isOwner(userId: string, albumId: string): Promise<boolean> {
+    const record = await this.db.query.albumsTable.findFirst({
+      columns: { userId: true },
+      where: eq(albumsTable.id, albumId),
+    });
+    return !!record && record.userId === userId;
   }
 
-  async removeUploads(albumId: string, uploadIds: string[]) {
+  async linkUploads(albumId: string, uploadIds: string[]) {
+    await this.db
+      .insert(albumsUploadsTable)
+      .values(uploadIds.map((id) => ({ albumId, uploadId: id })))
+      .onConflictDoNothing();
+  }
+
+  async unlinkUploads(albumId: string, uploadIds: string[]) {
     await this.db
       .delete(albumsUploadsTable)
       .where(

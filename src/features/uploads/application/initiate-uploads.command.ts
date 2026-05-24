@@ -110,7 +110,7 @@ export class InitiateUploadsCommandHandler {
       await ctx.uploadsRepository.saveMany(uploadsToSave);
 
       if (albumId) {
-        await ctx.albumsRepository.addUploads(
+        await ctx.albumsRepository.linkUploads(
           albumId,
           uploadsToSave.map((u) => u.id),
         );
