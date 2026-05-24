@@ -47,7 +47,7 @@ const ResponseSchema = z
 
 openapiRegistry.registerPath({
   method: 'get',
-  path: '/api/v1/albums/:id',
+  path: '/api/v1/albums/{id}',
   summary: 'Get album',
   description: `Returns information about the album with the provided ID.`,
   request: {

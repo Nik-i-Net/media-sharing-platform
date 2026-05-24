@@ -30,7 +30,7 @@ const RequestParamsSchema = z.object({ id: z.uuid() });
 
 openapiRegistry.registerPath({
   method: 'delete',
-  path: '/api/v1/albums/:id',
+  path: '/api/v1/albums/{id}',
   summary: 'Delete album',
   description: `Deletes the album with the provided ID.`,
   request: {

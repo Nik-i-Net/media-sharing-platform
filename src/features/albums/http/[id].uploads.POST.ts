@@ -111,7 +111,7 @@ const ResponseSchema = z
 
 openapiRegistry.registerPath({
   method: 'post',
-  path: '/api/v1/albums/:id/uploads',
+  path: '/api/v1/albums/{id}/uploads',
   summary: 'Initiate uploads to an album',
   description: `
 Receives metadata for multiple files and returns the information needed for direct uploading to a blob storage.  

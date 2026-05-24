@@ -53,7 +53,7 @@ const ResponseSchema = z
 
 openapiRegistry.registerPath({
   method: 'get',
-  path: '/api/v1/uploads/:id',
+  path: '/api/v1/uploads/{id}',
   summary: 'Get upload by ID',
   description: 'Returns  metadata for a file identified by its ID',
   request: {

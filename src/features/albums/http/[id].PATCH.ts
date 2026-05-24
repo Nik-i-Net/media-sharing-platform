@@ -44,7 +44,7 @@ const RequestBodySchema = z.object({
 
 openapiRegistry.registerPath({
   method: 'patch',
-  path: '/api/v1/albums/:id',
+  path: '/api/v1/albums/{id}',
   summary: 'Update album',
   description: `
 Partially updates an existing album identified by its ID.
