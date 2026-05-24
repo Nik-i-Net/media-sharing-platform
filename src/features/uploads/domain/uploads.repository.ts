@@ -5,4 +5,6 @@ export interface UploadsRepository {
   saveMany(uploads: Upload[]): Promise<void>;
   findById(id: string): Promise<Upload | null>;
   delete(id: string): Promise<boolean>;
+
+  findOwnershipData(ids: string[]): Promise<{ uploadId: string; userId: string }[]>;
 }

@@ -1,5 +1,5 @@
 import { uploadsTable } from '@/shared/db/drizzle/schema';
-import { eq, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
+import { eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import { Upload } from '../domain/upload';
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import type { UploadsRepository } from '../domain/uploads.repository';
@@ -47,6 +47,16 @@ export class DrizzleUploadsRepository implements UploadsRepository {
   async delete(id: string): Promise<boolean> {
     const result = await this.db.delete(uploadsTable).where(eq(uploadsTable.id, id));
     return (result.rowCount ?? 0) > 0;
+  }
+
+  async findOwnershipData(ids: string[]): Promise<{ uploadId: string; userId: string }[]> {
+    return await this.db
+      .select({
+        uploadId: uploadsTable.id,
+        userId: uploadsTable.userId,
+      })
+      .from(uploadsTable)
+      .where(inArray(uploadsTable.id, ids));
   }
 
   private toDomain(row: InferSelectModel<typeof uploadsTable>): Upload {
