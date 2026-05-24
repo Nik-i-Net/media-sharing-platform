@@ -17,11 +17,12 @@ export function registerRoute(uploadsRouter: Router) {
     validateRequest({ body: RequestBodySchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
       const userId = requireDefined(req.user?.id);
+      const albumId = req.body.albumId ?? null;
       const files = req.body.files.map((file) => ({
         ...file,
         ttl: file.ttl ? requireDuration(file.ttl) : null,
       }));
-      const result = await initiateUploads.execute({ userId, albumId: null, files });
+      const result = await initiateUploads.execute({ userId, albumId, files });
       const response = ResponseSchema.decode({ data: result });
       res.json(response);
     },
@@ -60,6 +61,7 @@ Minimum period - 1 hour, maximum - 30 days.`,
 });
 
 const RequestBodySchema = z.object({
+  albumId: z.uuid().optional(),
   files: z
     .array(FileMetadataSchema)
     .nonempty()
@@ -112,7 +114,8 @@ openapiRegistry.registerPath({
 Receives metadata for multiple files and returns the information needed for direct uploading to a blob storage.  
 For each file, the response either:
 - provides the upload URL, method and headers **required** for uploading
-- indicates that no upload is required.`,
+- indicates that no upload is required.
+Provide the \`albumId\` parameter to automatically link the files to the album.`,
   request: {
     headers: z.object({
       Authorization: z.templateLiteral(['Bearer ', z.jwt()]).meta({ description: 'Bearer `JWT`' }),
