@@ -25,7 +25,7 @@ export const ValidationErrorResponse = {
       'application/json': {
         schema: z.object({
           error: z.object({
-            message: z.literal('Validation failed'),
+            message: z.string().meta({ example: 'Validation failed' }),
             code: z.literal('VALIDATION_ERROR'),
             issues: z.array(
               z.object({

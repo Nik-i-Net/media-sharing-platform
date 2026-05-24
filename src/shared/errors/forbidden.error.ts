@@ -17,7 +17,7 @@ export const ForbiddenErrorResponse = {
       'application/json': {
         schema: z.object({
           error: z.object({
-            message: z.literal('Access forbidden'),
+            message: z.string().meta({ example: 'Access forbidden' }),
             code: z.literal('FORBIDDEN'),
           }),
         }),

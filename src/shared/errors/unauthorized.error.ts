@@ -12,12 +12,12 @@ export class UnauthorizedError extends BaseError {
 
 export const UnauthorizedErrorResponse = {
   [StatusCodes.UNAUTHORIZED]: {
-    description: 'Validation error',
+    description: 'Authorization required',
     content: {
       'application/json': {
         schema: z.object({
           error: z.object({
-            message: z.literal('Unauthorized'),
+            message: z.string().meta({ example: 'Unauthorized' }),
             code: z.literal('UNAUTHORIZED'),
           }),
         }),

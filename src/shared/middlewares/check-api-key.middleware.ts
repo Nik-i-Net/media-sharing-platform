@@ -20,7 +20,7 @@ export const InvalidApiKeyResponse = {
       'application/json': {
         schema: z.object({
           error: z.object({
-            message: z.literal('Missing or invalid API key'),
+            message: z.string().meta({ example: 'Missing or invalid API key' }),
             code: z.literal('UNAUTHORIZED'),
           }),
         }),

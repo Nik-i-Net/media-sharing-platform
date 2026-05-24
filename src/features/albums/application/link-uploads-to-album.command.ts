@@ -14,6 +14,7 @@ export class LinkUploadsToAlbumCommandHandler {
     private readonly albumsRepo: AlbumsRepository,
     private readonly uploadsRepo: UploadsRepository,
   ) {}
+
   async execute({ userId, albumId, uploadIds }: LinkUploadsToAlbumCommand): Promise<void> {
     const isAlbumOwner = await this.albumsRepo.isOwner(userId, albumId);
     if (!isAlbumOwner) throw new AlbumAccessDeniedError(userId, albumId);

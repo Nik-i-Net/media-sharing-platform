@@ -20,7 +20,7 @@ export const InternalServerErrorResponse = {
       'application/json': {
         schema: z.object({
           error: z.object({
-            message: z.literal(message),
+            message: z.string().meta({ example: message }),
             code: z.literal(code),
           }),
         }),

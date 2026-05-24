@@ -32,7 +32,7 @@ export type OpenapiErrorResponse = {
       'application/json': {
         schema: z.ZodObject<{
           error: z.ZodObject<{
-            message: z.ZodLiteral<string>;
+            message: z.ZodString;
             code: z.ZodLiteral<string>;
           }>;
         }>;
