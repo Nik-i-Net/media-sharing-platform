@@ -1,5 +1,7 @@
 import { deleteAlbum } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
 import {
+  ForbiddenErrorResponse,
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
@@ -41,8 +43,9 @@ openapiRegistry.registerPath({
   },
   tags: ['Albums'],
   responses: {
-    204: { description: 'Successfully deleted the album' },
+    [StatusCodes.NO_CONTENT]: { description: 'Successfully deleted the album' },
     ...UnauthorizedErrorResponse,
+    ...ForbiddenErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },

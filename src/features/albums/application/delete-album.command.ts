@@ -1,5 +1,5 @@
+import { ForbiddenError } from '@/shared/errors';
 import type { AlbumsRepository } from '../domain/albums.repository';
-import { AlbumNotFoundError } from '../errors/album-not-found.error';
 
 export interface DeleteAlbumCommand {
   id: string;
@@ -11,6 +11,6 @@ export class DeleteAlbumCommandHandler {
 
   async execute(cmd: DeleteAlbumCommand): Promise<void> {
     const isDeleted = await this.albumsRepo.delete(cmd.id);
-    if (!isDeleted) throw new AlbumNotFoundError();
+    if (!isDeleted) throw new ForbiddenError();
   }
 }

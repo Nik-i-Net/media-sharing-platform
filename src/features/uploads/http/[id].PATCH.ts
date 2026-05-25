@@ -1,4 +1,5 @@
 import {
+  ForbiddenErrorResponse,
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
@@ -63,6 +64,7 @@ Only provided fields are modified; unspecified fields remain unchanged.`,
   responses: {
     204: { description: 'Successfully updated the upload info' },
     ...UnauthorizedErrorResponse,
+    ...ForbiddenErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },
