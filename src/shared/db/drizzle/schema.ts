@@ -14,10 +14,6 @@ export const plansTable = t.pgTable('plans', {
 export const usersTable = t.pgTable('users', {
   id: t.uuid('id').primaryKey(),
   auth0UserId: t.varchar('auth0_user_id', { length: 50 }).notNull().unique(),
-  planId: t
-    .varchar('plan_id')
-    .references(() => plansTable.id, { onDelete: 'no action' })
-    .notNull(),
   email: t.varchar('email', { length: 255 }).unique(),
   emailVerified: t.boolean('email_verified').notNull(),
   identities: t.jsonb('identities').$type<{ provider: string; userId: string }[]>().notNull(),

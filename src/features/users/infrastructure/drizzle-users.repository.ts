@@ -1,7 +1,7 @@
 import type { UsersRepository } from '../domain/users.repository';
 import { User } from '../domain/user';
-import { usersTable } from '@/shared/db/drizzle/schema';
-import { eq } from 'drizzle-orm';
+import { subscriptionsTable, usersTable } from '@/shared/db/drizzle/schema';
+import { eq, and, type SQL } from 'drizzle-orm';
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import type { PlanProvider } from '../application/ports/plan.provider';
 
@@ -21,7 +21,6 @@ export class DrizzleUsersRepository implements UsersRepository {
         emailVerified: user.emailVerified,
         identities: user.identities,
         totalStorageBytes: user.totalStorageBytes,
-        planId: user.plan.id,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         deletedAt: user.deletedAt,
@@ -33,7 +32,6 @@ export class DrizzleUsersRepository implements UsersRepository {
           emailVerified: user.emailVerified,
           identities: user.identities,
           totalStorageBytes: user.totalStorageBytes,
-          planId: user.plan.id,
           updatedAt: user.updatedAt,
           deletedAt: user.deletedAt,
         },
@@ -41,41 +39,48 @@ export class DrizzleUsersRepository implements UsersRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    const row = await this.db.query.usersTable.findFirst({
-      where: eq(usersTable.id, id),
-    });
-    if (!row) return null;
-
-    return new User({
-      ...row,
-      externalId: row.auth0UserId,
-      plan: await this.planProvider.getPlan(row.planId),
-    });
+    return await this.findUserWithPlan(eq(usersTable.id, id));
   }
 
   async findByExternalId(id: string): Promise<User | null> {
-    const row = await this.db.query.usersTable.findFirst({
-      where: eq(usersTable.auth0UserId, id),
-    });
-    if (!row) return null;
-
-    return new User({
-      ...row,
-      externalId: row.auth0UserId,
-      plan: await this.planProvider.getPlan(row.planId),
-    });
+    return await this.findUserWithPlan(eq(usersTable.auth0UserId, id));
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const row = await this.db.query.usersTable.findFirst({
-      where: eq(usersTable.email, email),
-    });
+    return await this.findUserWithPlan(eq(usersTable.email, email));
+  }
+
+  private async findUserWithPlan(whereCondition: SQL): Promise<User | null> {
+    const [row] = await this.db
+      .select({
+        id: usersTable.id,
+        externalId: usersTable.auth0UserId,
+        email: usersTable.email,
+        emailVerified: usersTable.emailVerified,
+        identities: usersTable.identities,
+        totalStorageBytes: usersTable.totalStorageBytes,
+        createdAt: usersTable.createdAt,
+        updatedAt: usersTable.updatedAt,
+        deletedAt: usersTable.deletedAt,
+        planId: subscriptionsTable.planId,
+      })
+      .from(usersTable)
+      .leftJoin(
+        subscriptionsTable,
+        and(
+          eq(subscriptionsTable.userId, usersTable.id), //
+          eq(subscriptionsTable.status, 'active'),
+        ),
+      )
+      .where(whereCondition)
+      .limit(1);
+
     if (!row) return null;
 
-    return new User({
-      ...row,
-      externalId: row.auth0UserId,
-      plan: await this.planProvider.getPlan(row.planId),
-    });
+    const plan = row.planId
+      ? await this.planProvider.getPlan(row.planId)
+      : await this.planProvider.getDefaultPlan();
+
+    return new User({ ...row, plan });
   }
 }

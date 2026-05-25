@@ -135,13 +135,6 @@ export class User {
     this.touch();
   }
 
-  changePlan(newPlan: Plan) {
-    if (this.#plan.id === newPlan.id) throw new TodoError('Plan is already set');
-
-    this.#plan = newPlan;
-    this.touch();
-  }
-
   ensureCanUpload(
     files: { id: string; mimeType: string; sizeBytes: number; ttl: Duration | null }[],
   ) {
