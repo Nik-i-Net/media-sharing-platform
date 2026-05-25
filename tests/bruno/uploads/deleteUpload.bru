@@ -1,20 +1,13 @@
 meta {
-  name: updateUploadInfo
+  name: deleteUpload
   type: http
-  seq: 5
+  seq: 6
 }
 
-patch {
+delete {
   url: {{BASE_URL}}/uploads/{{uploads.firstListedId}}
-  body: json
+  body: none
   auth: inherit
-}
-
-body:json {
-  {
-    "fileName": "updatedName",
-    "isPublic": false
-  }
 }
 
 settings {

@@ -8,6 +8,7 @@ import { UnlinkUploadsFromAlbumCommandHandler } from '@/features/albums/applicat
 import { UpdateAlbumCommandHandler } from '@/features/albums/application/update-album.command';
 import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
 import { ConfirmUploadsCommandHandler } from '@/features/uploads/application/confirm-uploads.command';
+import { DeleteUploadCommandHandler } from '@/features/uploads/application/delete-upload.command';
 import { GetUploadByIdQueryHandler } from '@/features/uploads/application/get-upload-by-id.query';
 import { InitiateUploadsCommandHandler } from '@/features/uploads/application/initiate-uploads.command';
 import { ListUserUploadsQueryHandler } from '@/features/uploads/application/list-user-uploads.query';
@@ -52,6 +53,7 @@ export const confirmUploads = new ConfirmUploadsCommandHandler(blobsRepository);
 export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
 export const listUserUploads = new ListUserUploadsQueryHandler(db, storageProvider);
 export const updateUploadInfo = new UpdateUploadInfoCommandHandler(uploadsRepository);
+export const deleteUpload = new DeleteUploadCommandHandler(uploadsRepository);
 
 export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
 export const listUserAlbums = new ListUserAlbumsQueryHandler(db);

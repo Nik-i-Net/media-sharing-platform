@@ -1,10 +1,10 @@
-import { deleteAlbum } from '@/app/di';
+import { deleteUpload } from '@/app/di';
 import { StatusCodes } from '@/shared/constants';
 import {
-  ForbiddenErrorResponse,
-  InternalServerErrorResponse,
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
+  InternalServerErrorResponse,
+  ForbiddenErrorResponse,
 } from '@/shared/errors';
 import { checkJwt, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
@@ -19,8 +19,8 @@ export function registerRoute(uploadsRouter: Router) {
     checkJwt(),
     validateRequest({ params: RequestParamsSchema }),
     async (req, res: Response<void>) => {
-      await deleteAlbum.execute({
-        albumId: req.params.id,
+      await deleteUpload.execute({
+        uploadId: req.params.id,
         userId: requireDefined(req.user?.id),
       });
       res.sendStatus(204);
@@ -32,18 +32,18 @@ const RequestParamsSchema = z.object({ id: z.uuid() });
 
 openapiRegistry.registerPath({
   method: 'delete',
-  path: '/api/v1/albums/{id}',
-  summary: 'Delete album',
-  description: `Deletes the album with the provided ID.`,
+  path: '/api/v1/uploads/{id}',
+  summary: 'Delete upload',
+  description: `Deletes the upload with the provided ID.`,
   request: {
     headers: z.object({
       Authorization: z.templateLiteral(['Bearer ', z.jwt()]).meta({ description: 'Bearer `JWT`' }),
     }),
     params: RequestParamsSchema,
   },
-  tags: ['Albums'],
+  tags: ['Uploads'],
   responses: {
-    [StatusCodes.NO_CONTENT]: { description: 'Successfully deleted the album' },
+    [StatusCodes.NO_CONTENT]: { description: 'Successfully deleted the upload' },
     ...UnauthorizedErrorResponse,
     ...ForbiddenErrorResponse,
     ...ValidationErrorResponse,
