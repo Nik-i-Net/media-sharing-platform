@@ -39,7 +39,7 @@ Must be unique within the request.`,
   }),
   fileName: z
     .string()
-    .nonempty()
+    .regex(/^(\w|\s|-)+$/)
     .meta({ description: 'Original filename without extension', example: 'Cat' }),
   mimeType: z
     .string()

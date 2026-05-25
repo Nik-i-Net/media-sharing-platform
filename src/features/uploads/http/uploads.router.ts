@@ -4,7 +4,7 @@ const modules = await Promise.all([
   import('./POST'), //
   import('./GET'),
   import('./[id].GET'),
-  // import('./[id].PATCH'), // TODO: implement
+  import('./[id].PATCH'), // TODO: implement
   // import('./[id].DELETE'), // TODO: implement
 ]);
 

@@ -11,6 +11,7 @@ import { ConfirmUploadsCommandHandler } from '@/features/uploads/application/con
 import { GetUploadByIdQueryHandler } from '@/features/uploads/application/get-upload-by-id.query';
 import { InitiateUploadsCommandHandler } from '@/features/uploads/application/initiate-uploads.command';
 import { ListUserUploadsQueryHandler } from '@/features/uploads/application/list-user-uploads.query';
+import { UpdateUploadInfoCommandHandler } from '@/features/uploads/application/update-upload-info.command';
 import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
 import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
 import { R2StorageProvider } from '@/features/uploads/infrastructure/R2-storage.provider';
@@ -50,6 +51,7 @@ export const initiateUploads = new InitiateUploadsCommandHandler(
 export const confirmUploads = new ConfirmUploadsCommandHandler(blobsRepository);
 export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
 export const listUserUploads = new ListUserUploadsQueryHandler(db, storageProvider);
+export const updateUploadInfo = new UpdateUploadInfoCommandHandler(uploadsRepository);
 
 export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
 export const listUserAlbums = new ListUserAlbumsQueryHandler(db);

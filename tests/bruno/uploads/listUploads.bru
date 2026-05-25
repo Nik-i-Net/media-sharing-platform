@@ -1,7 +1,7 @@
 meta {
   name: listUploads
   type: http
-  seq: 3
+  seq: 4
 }
 
 get {
@@ -13,6 +13,12 @@ get {
 params:query {
   page: 1
   limit: 20
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.body.data[0]) {
+    bru.setVar('uploads.firstListedId', res.body.data[0].id)
+  }
 }
 
 settings {
