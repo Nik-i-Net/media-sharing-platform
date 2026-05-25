@@ -21,6 +21,7 @@ export interface InitiateUploadsCommand {
     sizeBytes: number;
     sha256Hex: string;
     ttl: Duration | null;
+    isPublic: boolean;
   }[];
 }
 
@@ -97,6 +98,7 @@ export class InitiateUploadsCommandHandler {
           userId: userId,
           blobId: blob.id,
           fileName: file.fileName,
+          isPublic: file.isPublic,
           expiresAt: file.ttl ? new Date(Date.now() + ms(file.ttl)) : null,
         }),
       );

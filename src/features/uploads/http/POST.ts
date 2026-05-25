@@ -47,6 +47,7 @@ Must be unique within the request.`,
     .meta({ example: 'image/png' }),
   sizeBytes: z.int().min(1).meta({ example: 1042 }),
   sha256Hex: z.hash('sha256', { enc: 'hex', error: 'Invalid hash, should be sha256 hex string' }),
+  isPublic: z.boolean(),
   ttl: z
     .string()
     .regex(/^\d+[smhd]$/)

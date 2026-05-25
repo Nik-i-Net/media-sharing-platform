@@ -16,6 +16,7 @@ export class DrizzleUploadsRepository implements UploadsRepository {
         target: uploadsTable.id,
         set: {
           fileName: upload.fileName,
+          isPublic: upload.isPublic,
           expiresAt: upload.expiresAt,
           updatedAt: upload.updatedAt,
         },
@@ -30,6 +31,7 @@ export class DrizzleUploadsRepository implements UploadsRepository {
         target: uploadsTable.id,
         set: {
           fileName: excluded(uploadsTable.fileName),
+          isPublic: excluded(uploadsTable.isPublic),
           expiresAt: excluded(uploadsTable.expiresAt),
           updatedAt: excluded(uploadsTable.updatedAt),
         },
@@ -65,6 +67,7 @@ export class DrizzleUploadsRepository implements UploadsRepository {
       row.userId,
       row.blobId,
       row.fileName,
+      row.isPublic,
       row.expiresAt,
       row.createdAt,
       row.updatedAt,
@@ -77,6 +80,7 @@ export class DrizzleUploadsRepository implements UploadsRepository {
       userId: upload.userId,
       blobId: upload.blobId,
       fileName: upload.fileName,
+      isPublic: upload.isPublic,
       expiresAt: upload.expiresAt,
       createdAt: upload.createdAt,
       updatedAt: upload.updatedAt,
