@@ -116,3 +116,54 @@ export const albumsUploadsTable = t.pgTable(
   },
   (table) => [t.primaryKey({ columns: [table.albumId, table.uploadId] })],
 );
+
+export const paymentProvider = t.pgEnum('payment_provider', ['stripe']);
+
+export const paymentProfilesTable = t.pgTable(
+  'payment_profiles',
+  {
+    id: t.uuid('id').primaryKey(),
+    userId: t
+      .uuid('user_id')
+      .references(() => usersTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    provider: paymentProvider('provider').notNull(),
+    providerCustomerId: t.varchar('provider_customer_id', { length: 50 }).notNull(),
+    createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    t
+      .uniqueIndex('unique_payment_profiles_provider_providerUserId')
+      .on(table.provider, table.providerCustomerId),
+  ],
+);
+
+// TODO: add 'past_due'
+export const subscriptionStatus = t.pgEnum('subscription_status', ['active', 'canceled']);
+
+export const subscriptionsTable = t.pgTable(
+  'subscriptions',
+  {
+    id: t.uuid('id').primaryKey(),
+    userId: t
+      .uuid('user_id')
+      .references(() => usersTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    planId: t
+      .uuid('plan_id')
+      .references(() => plansTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    provider: paymentProvider('provider').notNull(),
+    providerSubscriptionId: t.varchar('provider_subscription_id', { length: 50 }).notNull(),
+    status: subscriptionStatus('status').notNull(),
+    expiresAt: t.timestamp('expires_at', { withTimezone: true }).notNull(),
+    createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    t
+      .uniqueIndex('unique_subscriptions_provider_providerSubscriptionId')
+      .on(table.provider, table.providerSubscriptionId),
+  ],
+);
