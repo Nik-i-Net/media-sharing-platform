@@ -9,11 +9,11 @@ import { z } from 'zod';
 
 export function registerRoute(webhooksRouter: Router) {
   webhooksRouter.post(
-    '/cloudflare/r2/uploads',
+    '/cloudflare',
     checkApiKey(ENV.CLOUDFLARE_API_KEY),
     validateRequest({ body: RequestBodySchema }),
     async (req, res) => {
-      assert(req.body.event === 'upload.confirmed');
+      assert(req.body.event === 'r2.upload.confirmed');
       await confirmUploads.execute({ uploads: req.body.objects });
       res.sendStatus(200);
     },
@@ -21,7 +21,7 @@ export function registerRoute(webhooksRouter: Router) {
 }
 
 const RequestBodySchema = z.object({
-  event: z.literal('upload.confirmed'),
+  event: z.literal(['r2.upload.confirmed']),
   objects: z
     .array(
       z.object({
@@ -38,9 +38,12 @@ const RequestBodySchema = z.object({
 
 openapiRegistry.registerPath({
   method: 'post',
-  path: '/api/v1/webhooks/cloudflare.r2.uploads',
-  summary: 'Webhook for R2 upload confirmation',
-  description: 'Triggered by Cloudflare Worker after processing batch messages from a queue.',
+  path: '/api/v1/webhooks/cloudflare',
+  summary: 'Webhook for Cloudflare',
+  description: `
+Triggered by Cloudflare worker on actions:
+- r2.upload.confirmed
+`,
   request: {
     body: {
       content: {

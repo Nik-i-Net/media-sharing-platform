@@ -3,7 +3,7 @@ import { sniffMimeType } from './utils/sniff-mime-type';
 interface Env {
 	MEDIA_BUCKET: R2Bucket;
 	MEDIA_UPLOADS_QUEUE: Queue;
-	CONFIRM_UPLOADS_WEBHOOK_URL: string;
+	WEBHOOK_URL: string;
 	API_KEY: string;
 }
 
@@ -58,9 +58,9 @@ export default {
 		});
 
 		const objects = (await Promise.all(promises)).filter(Boolean);
-		const payload = { event: 'upload.confirmed', objects };
+		const payload = { event: 'r2.upload.confirmed', objects };
 
-		const response = await fetch(env.CONFIRM_UPLOADS_WEBHOOK_URL, {
+		const response = await fetch(env.WEBHOOK_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
