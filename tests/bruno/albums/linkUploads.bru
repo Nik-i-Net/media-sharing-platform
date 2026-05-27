@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}/albums/{{albums.createdId}}/uploads
+  url: {{BASE_URL}}/albums/:id/uploads
   body: json
   auth: inherit
+}
+
+params:path {
+  id: {{albums.firstListedId}}
 }
 
 body:json {

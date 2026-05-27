@@ -5,9 +5,13 @@ meta {
 }
 
 delete {
-  url: {{BASE_URL}}/albums/{{albums.createdId}}
+  url: {{BASE_URL}}/albums/:id
   body: none
   auth: inherit
+}
+
+params:path {
+  id: {{albums.firstListedId}}
 }
 
 settings {

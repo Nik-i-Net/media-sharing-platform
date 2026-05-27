@@ -17,13 +17,6 @@ body:json {
   }
 }
 
-script:post-response {
-  if (res.getStatus() === 201) {
-    const id = res.body.data.id
-    bru.setVar('albums.createdId', id)
-  }
-}
-
 settings {
   encodeUrl: true
   timeout: 0

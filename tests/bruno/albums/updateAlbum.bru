@@ -5,9 +5,13 @@ meta {
 }
 
 patch {
-  url: {{BASE_URL}}/albums/{{albums.createdId}}
+  url: {{BASE_URL}}/albums/:id
   body: json
   auth: inherit
+}
+
+params:path {
+  id: {{albums.firstListedId}}
 }
 
 body:json {
