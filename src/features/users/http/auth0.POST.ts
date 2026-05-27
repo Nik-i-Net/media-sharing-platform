@@ -18,7 +18,12 @@ export function registerRoute(usersRouter: Router) {
         externalId: req.body.userId,
         email: req.body.email ?? null,
         emailVerified: req.body.emailVerified,
-        identities: requireNotEmpty(req.body.identities),
+        identities: requireNotEmpty(
+          req.body.identities.map((i) => ({
+            provider: i.provider,
+            providerUserId: i.userId,
+          })),
+        ),
       };
       const userId = await resolveUserId.execute(cmd);
       const response = ResponseSchema.decode({ data: { userId } });

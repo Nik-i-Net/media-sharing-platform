@@ -30,13 +30,13 @@ export async function seed_plans(db: DrizzleDB) {
         id: 'free',
         allowedMimeTypes: freeMimeTypes,
         maxFileSizeBytes: 1 * MEMORY_UNITS.MiB,
-        maxStorageBytes: 100 * MEMORY_UNITS.MiB,
+        maxTotalStorageBytes: 100 * MEMORY_UNITS.MiB,
       },
       {
         id: 'pro',
         allowedMimeTypes: proMimeTypes,
         maxFileSizeBytes: 5 * MEMORY_UNITS.MiB,
-        maxStorageBytes: 1 * MEMORY_UNITS.GiB,
+        maxTotalStorageBytes: 1 * MEMORY_UNITS.GiB,
       },
     ])
     .onConflictDoUpdate({
@@ -44,7 +44,7 @@ export async function seed_plans(db: DrizzleDB) {
       set: {
         allowedMimeTypes: excluded(plansTable.allowedMimeTypes),
         maxFileSizeBytes: excluded(plansTable.maxFileSizeBytes),
-        maxStorageBytes: excluded(plansTable.maxStorageBytes),
+        maxTotalStorageBytes: excluded(plansTable.maxTotalStorageBytes),
       },
     });
   console.log('Seeded plans');

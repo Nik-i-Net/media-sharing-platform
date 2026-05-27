@@ -1,7 +1,7 @@
-import { User, type Identity } from '../domain/user';
 import { TodoError } from '@/shared/errors';
+import { User, type Identity } from '../domain/user';
 import type { UsersRepository } from '../domain/users.repository';
-import type { PlanProvider } from './ports/plan.provider';
+import type { UnitOfWork } from '@/shared/ports/unit-of-work';
 
 type Identities = [Identity, ...Identity[]];
 
@@ -16,7 +16,7 @@ export interface ResolveUserIdCommand {
 export class ResolveUserIdCommandHandler {
   constructor(
     private readonly usersRepo: UsersRepository,
-    private readonly planProvider: PlanProvider,
+    private readonly uow: UnitOfWork,
   ) {}
 
   async execute(cmd: ResolveUserIdCommand): Promise<string> {
@@ -37,9 +37,12 @@ export class ResolveUserIdCommandHandler {
       email: cmd.email,
       emailVerified: cmd.emailVerified,
       identity: cmd.identities[0],
-      plan: await this.planProvider.getDefaultPlan(),
     });
-    await this.usersRepo.save(newUser);
+
+    await this.uow.execute(async (ctx) => {
+      await ctx.usersRepository.save(newUser);
+      await ctx.userCountersRepository.initializeUserCounters(newUser.id);
+    });
 
     return newUser.id;
   }
@@ -47,7 +50,9 @@ export class ResolveUserIdCommandHandler {
   private async syncIdentities(user: User, identities: Identities) {
     const lastUpdatedAt = user.updatedAt;
     const includes = (arr: Identity[], value: Identity) => {
-      return arr.some((i) => i.provider === value.provider && i.userId === value.userId);
+      return arr.some(
+        (i) => i.provider === value.provider && i.providerUserId === value.providerUserId,
+      );
     };
 
     for (const i of user.identities) {

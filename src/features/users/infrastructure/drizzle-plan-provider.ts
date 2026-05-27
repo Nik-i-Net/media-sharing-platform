@@ -22,7 +22,7 @@ export class DrizzlePlanProvider implements PlanProvider {
     });
     if (!row) throw new TodoError('Plan not found');
 
-    const plan = new Plan(row.id, row.allowedMimeTypes, row.maxFileSizeBytes, row.maxStorageBytes);
+    const plan = new Plan(row.allowedMimeTypes, row.maxFileSizeBytes, row.maxTotalStorageBytes);
     this.cache.set(id, plan);
     setTimeout(() => this.cache.delete(id), ms('5m'));
 
