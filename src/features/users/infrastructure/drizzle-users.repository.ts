@@ -1,11 +1,42 @@
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
-import { usersTable } from '@/shared/db/drizzle/schema';
-import { eq, type SQL } from 'drizzle-orm';
+import { subscriptionsTable, userCountersTable, usersTable } from '@/shared/db/drizzle/schema';
+import { eq, and, type SQL } from 'drizzle-orm';
 import { User } from '../domain/user';
-import type { UsersRepository } from '../domain/users.repository';
+import type { UsersRepository, UserUploadContext } from '../domain/users.repository';
+import type { PlanProvider } from '../application/ports/plan.provider';
 
 export class DrizzleUsersRepository implements UsersRepository {
-  constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
+  constructor(
+    private readonly db: DrizzleDB | DrizzleTransaction,
+    private readonly planProvider: PlanProvider,
+  ) {}
+
+  async getUploadContext(userId: string): Promise<UserUploadContext | null> {
+    const [row] = await this.db
+      .select({
+        currentTotalStorageBytes: userCountersTable.totalStorageBytes,
+        planId: subscriptionsTable.planId,
+      })
+      .from(usersTable)
+      .innerJoin(userCountersTable, () => eq(usersTable.id, userCountersTable.userId))
+      .leftJoin(subscriptionsTable, () =>
+        and(
+          eq(usersTable.id, subscriptionsTable.userId), //
+          eq(subscriptionsTable.status, 'active'),
+        ),
+      )
+      .where(eq(usersTable.id, userId))
+      .limit(1);
+
+    if (!row) return null;
+
+    return {
+      currentTotalStorageBytes: row.currentTotalStorageBytes,
+      plan: row.planId
+        ? await this.planProvider.getPlan(row.planId)
+        : await this.planProvider.getDefaultPlan(),
+    };
+  }
 
   async save(user: User): Promise<void> {
     await this.db

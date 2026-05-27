@@ -46,14 +46,13 @@ export class InitiateUploadsCommandHandler {
   ) {}
 
   async execute({ userId, albumId, files }: InitiateUploadsCommand): Promise<ResultItem[]> {
-    const user = await this.usersRepo.findById(userId);
-    if (!user) throw new UserNotFoundError();
+    const uploadContext = await this.usersRepo.getUploadContext(userId);
+    if (!uploadContext) throw new UserNotFoundError();
+    uploadContext.plan.ensureCanUpload(files, uploadContext.currentTotalStorageBytes);
 
     if (albumId && !(await this.albumsRepo.existsById(albumId))) {
       throw new AlbumNotFoundError();
     }
-
-    user.ensureCanUpload(files);
 
     const result: ResultItem[] = [];
     const fileHashes = files.map((file) => HashVO.fromHex(file.sha256Hex));
