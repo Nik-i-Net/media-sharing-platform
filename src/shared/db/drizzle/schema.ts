@@ -1,26 +1,40 @@
 import { HashVO } from '@/features/uploads/domain/hash.value-object';
-import { relations } from 'drizzle-orm';
+import { desc, relations } from 'drizzle-orm';
 import * as t from 'drizzle-orm/pg-core';
 import z from 'zod';
-import { desc } from 'drizzle-orm';
-
-export const plansTable = t.pgTable('plans', {
-  id: t.varchar('id').primaryKey(),
-  allowedMimeTypes: t.jsonb('allowed_mime_types').$type<string[]>().notNull(),
-  maxFileSizeBytes: t.bigint('max_file_size_bytes', { mode: 'number' }).notNull(),
-  maxStorageBytes: t.bigint('max_storage_bytes', { mode: 'number' }).notNull(),
-});
 
 export const usersTable = t.pgTable('users', {
   id: t.uuid('id').primaryKey(),
   auth0UserId: t.varchar('auth0_user_id', { length: 50 }).notNull().unique(),
   email: t.varchar('email', { length: 255 }).unique(),
   emailVerified: t.boolean('email_verified').notNull(),
-  identities: t.jsonb('identities').$type<{ provider: string; userId: string }[]>().notNull(),
-  totalStorageBytes: t.bigint('total_storage_bytes', { mode: 'number' }).notNull(),
+  identities: t
+    .jsonb('identities')
+    .$type<{ provider: string; providerUserId: string }[]>()
+    .notNull(),
   createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   deletedAt: t.timestamp('deleted_at', { withTimezone: true }),
+});
+
+export const userCountersTable = t.pgTable('user_counters', {
+  userId: t
+    .uuid('user_id')
+    .primaryKey()
+    .references(() => usersTable.id, { onDelete: 'cascade' })
+    .notNull(),
+  totalStorageBytes: t.bigint('total_storage_bytes', { mode: 'number' }).notNull(),
+  totalUploads: t.integer('total_uploads').notNull(),
+  totalAlbums: t.integer('total_albums').notNull(),
+  createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const plansTable = t.pgTable('plans', {
+  id: t.varchar('id').primaryKey(),
+  allowedMimeTypes: t.jsonb('allowed_mime_types').$type<string[]>().notNull(),
+  maxFileSizeBytes: t.bigint('max_file_size_bytes', { mode: 'number' }).notNull(),
+  maxTotalStorageBytes: t.bigint('max_total_storage_bytes', { mode: 'number' }).notNull(),
 });
 
 const sha256 = t.customType<{
@@ -46,6 +60,7 @@ const sha256 = t.customType<{
     throw new Error('[CustomType.Sha256] Unexpected driver data type');
   },
 });
+
 export const blobStatus = t.pgEnum('blob_status', ['pending', 'ready', 'rejected']);
 
 export const blobsTable = t.pgTable('blobs', {
