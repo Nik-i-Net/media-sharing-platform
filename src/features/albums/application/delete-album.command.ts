@@ -1,5 +1,5 @@
 import { ForbiddenError } from '@/shared/errors';
-import type { AlbumsRepository } from '../domain/albums.repository';
+import type { UnitOfWork } from '@/shared/ports/unit-of-work';
 
 export interface DeleteAlbumCommand {
   albumId: string;
@@ -7,10 +7,17 @@ export interface DeleteAlbumCommand {
 }
 
 export class DeleteAlbumCommandHandler {
-  constructor(private readonly albumsRepo: AlbumsRepository) {}
+  constructor(private readonly uow: UnitOfWork) {}
 
   async execute(cmd: DeleteAlbumCommand): Promise<void> {
-    const isDeleted = await this.albumsRepo.delete(cmd.albumId);
-    if (!isDeleted) throw new ForbiddenError();
+    await this.uow.execute(async (ctx) => {
+      // NOTE: investigate is it safe to run multiple queries in the same transaction in parallel
+      const [isDeleted] = await Promise.all([
+        ctx.albumsRepository.delete(cmd.albumId),
+        ctx.userCountersRepository.decrementTotalAlbums(cmd.userId, 1),
+      ]);
+
+      if (!isDeleted) throw new ForbiddenError();
+    });
   }
 }

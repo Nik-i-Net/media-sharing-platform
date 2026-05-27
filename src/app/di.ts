@@ -62,12 +62,12 @@ export const listUserUploads = new ListUserUploadsQueryHandler(
 export const updateUploadInfo = new UpdateUploadInfoCommandHandler(uploadsRepository);
 export const deleteUpload = new DeleteUploadCommandHandler(uploadsRepository);
 
-export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
+export const createAlbum = new CreateAlbumCommandHandler(unitOfWork);
 export const listUserAlbums = new ListUserAlbumsQueryHandler(db, userCountersRepository);
 export const getAlbumById = new GetAlbumByIdQueryHandler(db);
 export const listAlbumUploads = new ListAlbumUploadsQueryHandler(db, storageProvider);
 export const updateAlbum = new UpdateAlbumCommandHandler(albumsRepository);
-export const deleteAlbum = new DeleteAlbumCommandHandler(albumsRepository);
+export const deleteAlbum = new DeleteAlbumCommandHandler(unitOfWork);
 export const linkUploadsToAlbum = new LinkUploadsToAlbumCommandHandler(
   albumsRepository,
   uploadsRepository,

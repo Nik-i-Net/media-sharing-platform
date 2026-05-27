@@ -1,5 +1,5 @@
+import type { UnitOfWork } from '@/shared/ports/unit-of-work';
 import { Album } from '../domain/album';
-import type { AlbumsRepository } from '../domain/albums.repository';
 
 export interface CreateAlbumCommand {
   userId: string;
@@ -8,7 +8,7 @@ export interface CreateAlbumCommand {
 }
 
 export class CreateAlbumCommandHandler {
-  constructor(private readonly albumsRepo: AlbumsRepository) {}
+  constructor(private readonly uow: UnitOfWork) {}
 
   async execute(cmd: CreateAlbumCommand): Promise<string> {
     const album = Album.create({
@@ -18,7 +18,13 @@ export class CreateAlbumCommandHandler {
       isPublic: cmd.isPublic,
     });
 
-    await this.albumsRepo.save(album);
+    await this.uow.execute(async (ctx) => {
+      await Promise.all([
+        ctx.albumsRepository.save(album),
+        ctx.userCountersRepository.incrementTotalAlbums(cmd.userId, 1),
+      ]);
+    });
+
     return album.id;
   }
 }
