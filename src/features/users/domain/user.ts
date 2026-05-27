@@ -1,10 +1,9 @@
 import { TodoError } from '@/shared/errors';
-import { Plan } from './plan';
-import { duration, type Duration } from '@/shared/utils';
+import { UserHasNoIdentityError } from '../errors/user-has-no-identity.error';
 
 export interface Identity {
   provider: string;
-  userId: string;
+  providerUserId: string;
 }
 
 interface UserProps {
@@ -13,8 +12,6 @@ interface UserProps {
   email: string | null;
   emailVerified: boolean;
   identities: Identity[];
-  totalStorageBytes: number;
-  plan: Plan;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
@@ -26,7 +23,6 @@ interface RegisterUserProps {
   email: string | null;
   emailVerified: boolean;
   identity: Identity;
-  plan: Plan;
 }
 
 export class User {
@@ -37,8 +33,6 @@ export class User {
       email: props.email,
       emailVerified: props.emailVerified,
       identities: [props.identity],
-      totalStorageBytes: 0,
-      plan: props.plan,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
@@ -50,8 +44,6 @@ export class User {
   #email: string | null;
   #emailVerified: boolean;
   #identities: Identity[];
-  #totalStorageBytes: number;
-  #plan: Plan;
   readonly createdAt: Date;
   #updatedAt: Date;
   #deletedAt: Date | null;
@@ -62,10 +54,8 @@ export class User {
     this.#email = props.email;
     this.#emailVerified = props.emailVerified;
 
-    if (props.identities.length === 0) throw new TodoError('User must have at least one identity');
+    if (props.identities.length === 0) throw new UserHasNoIdentityError();
     this.#identities = props.identities;
-    this.#totalStorageBytes = props.totalStorageBytes;
-    this.#plan = props.plan;
     this.createdAt = props.createdAt;
     this.#updatedAt = props.updatedAt;
     this.#deletedAt = props.deletedAt;
@@ -80,12 +70,6 @@ export class User {
   get identities() {
     return this.#identities;
   }
-  get totalStorageBytes() {
-    return this.#totalStorageBytes;
-  }
-  get plan() {
-    return this.#plan;
-  }
   get updatedAt() {
     return this.#updatedAt;
   }
@@ -94,7 +78,6 @@ export class User {
   }
 
   changeEmail(newEmail: string) {
-    if (!newEmail.includes('@')) throw new TodoError('Invalid email');
     if (this.#email === newEmail) throw new TodoError('Email is already set');
 
     this.#email = newEmail;
@@ -125,36 +108,16 @@ export class User {
     this.touch();
   }
 
-  removeIdentity({ provider, userId }: Identity) {
+  removeIdentity({ provider, providerUserId }: Identity) {
     if (this.#identities.length === 1) throw new TodoError('Cannot remove last identity');
 
-    const idx = this.#identities.findIndex((i) => i.provider === provider && i.userId === userId);
+    const idx = this.#identities.findIndex(
+      (i) => i.provider === provider && i.providerUserId === providerUserId,
+    );
     if (idx === -1) throw new TodoError('Identity not found');
 
     this.#identities.splice(idx, 1);
     this.touch();
-  }
-
-  ensureCanUpload(
-    files: { id: string; mimeType: string; sizeBytes: number; ttl: Duration | null }[],
-  ) {
-    let totalBytes = 0;
-
-    files.forEach(({ id, mimeType, sizeBytes, ttl }) => {
-      if (!this.#plan.allowedMimeTypes.includes(mimeType)) {
-        throw new TodoError(`Mime type ${mimeType} not allowed. Id: ${id}`);
-      }
-
-      if (ttl !== null && (duration(ttl).lt('1h') || duration(ttl).gt('30d'))) {
-        throw new TodoError(`TTL ${ttl} not allowed. Id: ${id}`);
-      }
-
-      totalBytes += sizeBytes;
-    });
-
-    if (totalBytes > this.#plan.maxFileSizeBytes) {
-      throw new TodoError('Not enough storage space');
-    }
   }
 
   suspendAccount() {
