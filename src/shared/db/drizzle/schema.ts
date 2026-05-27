@@ -1,5 +1,5 @@
 import { HashVO } from '@/features/uploads/domain/hash.value-object';
-import { desc, relations } from 'drizzle-orm';
+import { desc, relations, sql } from 'drizzle-orm';
 import * as t from 'drizzle-orm/pg-core';
 import z from 'zod';
 
@@ -17,18 +17,26 @@ export const usersTable = t.pgTable('users', {
   deletedAt: t.timestamp('deleted_at', { withTimezone: true }),
 });
 
-export const userCountersTable = t.pgTable('user_counters', {
-  userId: t
-    .uuid('user_id')
-    .primaryKey()
-    .references(() => usersTable.id, { onDelete: 'cascade' })
-    .notNull(),
-  totalStorageBytes: t.bigint('total_storage_bytes', { mode: 'number' }).notNull(),
-  totalUploads: t.integer('total_uploads').notNull(),
-  totalAlbums: t.integer('total_albums').notNull(),
-  createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-});
+export const userCountersTable = t.pgTable(
+  'user_counters',
+  {
+    userId: t
+      .uuid('user_id')
+      .primaryKey()
+      .references(() => usersTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    totalStorageBytes: t.bigint('total_storage_bytes', { mode: 'number' }).notNull(),
+    totalUploads: t.integer('total_uploads').notNull(),
+    totalAlbums: t.integer('total_albums').notNull(),
+    createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    t.check('total_storage_bytes_not_negative', sql`${table.totalStorageBytes} >= 0`),
+    t.check('total_uploads_not_negative', sql`${table.totalUploads} >= 0`),
+    t.check('total_albums_not_negative', sql`${table.totalAlbums} >= 0`),
+  ],
+);
 
 export const planId = t.pgEnum('plan_id', ['free', 'pro']);
 
