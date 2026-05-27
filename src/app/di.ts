@@ -29,7 +29,6 @@ const unitOfWork = new DrizzleUnitOfWork(db);
 export const plansProvider = new DrizzlePlanProvider(db);
 
 const usersRepository = new DrizzleUsersRepository(db, plansProvider);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const userCountersRepository = new DrizzleUserCountersRepository(db);
 const blobsRepository = new DrizzleBlobsRepository(db);
 const uploadsRepository = new DrizzleUploadsRepository(db);
@@ -55,12 +54,16 @@ export const initiateUploads = new InitiateUploadsCommandHandler(
 
 export const confirmUploads = new ConfirmUploadsCommandHandler(blobsRepository);
 export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
-export const listUserUploads = new ListUserUploadsQueryHandler(db, storageProvider);
+export const listUserUploads = new ListUserUploadsQueryHandler(
+  db,
+  userCountersRepository,
+  storageProvider,
+);
 export const updateUploadInfo = new UpdateUploadInfoCommandHandler(uploadsRepository);
 export const deleteUpload = new DeleteUploadCommandHandler(uploadsRepository);
 
 export const createAlbum = new CreateAlbumCommandHandler(albumsRepository);
-export const listUserAlbums = new ListUserAlbumsQueryHandler(db);
+export const listUserAlbums = new ListUserAlbumsQueryHandler(db, userCountersRepository);
 export const getAlbumById = new GetAlbumByIdQueryHandler(db);
 export const listAlbumUploads = new ListAlbumUploadsQueryHandler(db, storageProvider);
 export const updateAlbum = new UpdateAlbumCommandHandler(albumsRepository);

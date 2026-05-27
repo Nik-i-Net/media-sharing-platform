@@ -41,7 +41,7 @@ export class ResolveUserIdCommandHandler {
 
     await this.uow.execute(async (ctx) => {
       await ctx.usersRepository.save(newUser);
-      await ctx.userCountersRepository.initializeUserCounters(newUser.id);
+      await ctx.userCountersRepository.initializeCounters(newUser.id);
     });
 
     return newUser.id;

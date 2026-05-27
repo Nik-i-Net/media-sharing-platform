@@ -1,6 +1,6 @@
 export interface UserCountersRepository {
-  initializeUserCounters(userId: string): Promise<void>;
-  getUserCounters(userId: string): Promise<UserCounters | null>;
+  initializeCounters(userId: string): Promise<void>;
+  findCounters(userId: string): Promise<UserCounters | null>;
 
   setTotalStorageBytes(userId: string, totalBytes: number): Promise<void>;
   setTotalUploads(userId: string, totalUploads: number): Promise<void>;

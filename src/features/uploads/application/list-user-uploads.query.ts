@@ -2,6 +2,8 @@ import { blobsTable, uploadsTable } from '@/shared/db/drizzle/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import type { StorageProvider } from './ports/storage.provider';
+import type { UserCountersRepository } from '@/features/users/domain/user-counters.repository';
+import assert from 'assert';
 
 export interface ListUserUploadsQuery {
   userId: string;
@@ -12,6 +14,7 @@ export interface ListUserUploadsQuery {
 export class ListUserUploadsQueryHandler {
   constructor(
     private readonly db: DrizzleDB,
+    private readonly userCountersRepo: UserCountersRepository,
     private readonly storageProvider: StorageProvider,
   ) {}
 
@@ -39,11 +42,11 @@ export class ListUserUploadsQueryHandler {
       .limit(limit)
       .offset((page - 1) * limit);
 
-    // TODO: fetch total items from `user_counters`
-    const [uploads, totalItems] = await Promise.all([
+    const [uploads, counters] = await Promise.all([
       uploadsPromise,
-      this.db.$count(uploadsTable, eq(uploadsTable.userId, userId)),
+      this.userCountersRepo.findCounters(userId),
     ]);
+    assert(counters !== null);
 
     return {
       data: uploads.map((upload) => ({
@@ -59,8 +62,8 @@ export class ListUserUploadsQueryHandler {
       meta: {
         page,
         limit,
-        totalItems,
-        totalPages: Math.ceil(totalItems / limit) || 1,
+        totalItems: counters.totalUploads,
+        totalPages: Math.ceil(counters.totalUploads / limit) || 1,
       },
     };
   }

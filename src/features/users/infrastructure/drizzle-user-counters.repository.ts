@@ -7,7 +7,7 @@ import type { UserCounters, UserCountersRepository } from '../domain/user-counte
 export class DrizzleUserCountersRepository implements UserCountersRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
 
-  async initializeUserCounters(userId: string): Promise<void> {
+  async initializeCounters(userId: string): Promise<void> {
     await this.db.insert(userCountersTable).values({
       userId,
       totalStorageBytes: 0,
@@ -16,7 +16,7 @@ export class DrizzleUserCountersRepository implements UserCountersRepository {
     });
   }
 
-  async getUserCounters(userId: string): Promise<UserCounters | null> {
+  async findCounters(userId: string): Promise<UserCounters | null> {
     const row = await this.db.query.userCountersTable.findFirst({
       where: eq(userCountersTable.userId, userId),
     });

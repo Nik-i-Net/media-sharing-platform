@@ -1,5 +1,7 @@
+import type { UserCountersRepository } from '@/features/users/domain/user-counters.repository';
 import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import { albumsTable, albumsUploadsTable } from '@/shared/db/drizzle/schema';
+import assert from 'assert';
 import { desc, eq } from 'drizzle-orm';
 
 export interface ListUserAlbumsQuery {
@@ -9,7 +11,10 @@ export interface ListUserAlbumsQuery {
 }
 
 export class ListUserAlbumsQueryHandler {
-  constructor(private readonly db: DrizzleDB) {}
+  constructor(
+    private readonly db: DrizzleDB,
+    private readonly userCountersRepo: UserCountersRepository,
+  ) {}
 
   async execute({ userId, page = 1, limit = 20 }: ListUserAlbumsQuery): Promise<PaginatedResult> {
     if (limit > 50) throw new Error('Max limit is 50');
@@ -32,19 +37,19 @@ export class ListUserAlbumsQueryHandler {
       .limit(limit)
       .offset((page - 1) * limit);
 
-    // TODO: fetch total items from `user_counters`
-    const [albums, totalAlbums] = await Promise.all([
+    const [albums, counters] = await Promise.all([
       albumsPromise,
-      this.db.$count(albumsTable, eq(albumsTable.userId, userId)),
+      this.userCountersRepo.findCounters(userId),
     ]);
+    assert(counters !== null);
 
     return {
       data: albums,
       meta: {
         page,
         limit,
-        totalItems: totalAlbums,
-        totalPages: Math.ceil(totalAlbums / limit) || 1,
+        totalItems: counters.totalAlbums,
+        totalPages: Math.ceil(counters.totalAlbums / limit) || 1,
       },
     };
   }
