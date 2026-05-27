@@ -1,7 +1,7 @@
 import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { userCountersTable } from '@/shared/db/drizzle/schema';
 import assert from 'assert';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import type { UserCounters, UserCountersRepository } from '../domain/user-counters.repository';
 
 export class DrizzleUserCountersRepository implements UserCountersRepository {
@@ -29,39 +29,43 @@ export class DrizzleUserCountersRepository implements UserCountersRepository {
     };
   }
 
-  async setTotalStorageBytes(userId: string, totalBytes: number): Promise<void> {
-    const result = await this.db
-      .update(userCountersTable)
-      .set({ totalStorageBytes: totalBytes })
-      .where(eq(userCountersTable.userId, userId));
-
-    assert(
-      result.rowCount === 1,
-      `[DrizzleUserCountersRepository.setTotalStorageBytes] Unexpected row count: ${result.rowCount}`,
-    );
+  async incrementTotalStorageBytes(userId: string, amountBytes: number): Promise<void> {
+    assert(amountBytes > 0);
+    await this.updateColumn(userId, 'totalStorageBytes', amountBytes);
+  }
+  async decrementTotalStorageBytes(userId: string, amountBytes: number): Promise<void> {
+    assert(amountBytes > 0);
+    await this.updateColumn(userId, 'totalStorageBytes', -1 * amountBytes);
   }
 
-  async setTotalUploads(userId: string, totalUploads: number): Promise<void> {
-    const result = await this.db
-      .update(userCountersTable)
-      .set({ totalUploads: totalUploads })
-      .where(eq(userCountersTable.userId, userId));
-
-    assert(
-      result.rowCount === 1,
-      `[DrizzleUserCountersRepository.setTotalUploads] Unexpected row count: ${result.rowCount}`,
-    );
+  async incrementTotalUploads(userId: string, amount: number): Promise<void> {
+    assert(amount > 0);
+    await this.updateColumn(userId, 'totalUploads', amount);
+  }
+  async decrementTotalUploads(userId: string, amount: number): Promise<void> {
+    assert(amount > 0);
+    await this.updateColumn(userId, 'totalUploads', -1 * amount);
   }
 
-  async setTotalAlbums(userId: string, totalAlbums: number): Promise<void> {
-    const result = await this.db
-      .update(userCountersTable)
-      .set({ totalAlbums: totalAlbums })
-      .where(eq(userCountersTable.userId, userId));
+  async incrementTotalAlbums(userId: string, amount: number): Promise<void> {
+    assert(amount > 0);
+    await this.updateColumn(userId, 'totalAlbums', amount);
+  }
+  async decrementTotalAlbums(userId: string, amount: number): Promise<void> {
+    assert(amount > 0);
+    await this.updateColumn(userId, 'totalAlbums', -1 * amount);
+  }
 
-    assert(
-      result.rowCount === 1,
-      `[DrizzleUserCountersRepository.setTotalAlbums] Unexpected row count: ${result.rowCount}`,
-    );
+  private async updateColumn(
+    userId: string,
+    columnName: 'totalStorageBytes' | 'totalUploads' | 'totalAlbums',
+    amount: number,
+  ) {
+    await this.db
+      .update(userCountersTable)
+      .set({
+        [columnName]: sql`${userCountersTable[columnName]} + ${amount}`,
+      })
+      .where(eq(userCountersTable.userId, userId));
   }
 }

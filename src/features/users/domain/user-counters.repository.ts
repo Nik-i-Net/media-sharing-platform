@@ -2,9 +2,14 @@ export interface UserCountersRepository {
   initializeCounters(userId: string): Promise<void>;
   findCounters(userId: string): Promise<UserCounters | null>;
 
-  setTotalStorageBytes(userId: string, totalBytes: number): Promise<void>;
-  setTotalUploads(userId: string, totalUploads: number): Promise<void>;
-  setTotalAlbums(userId: string, totalAlbums: number): Promise<void>;
+  incrementTotalStorageBytes(userId: string, amountBytes: number): Promise<void>;
+  decrementTotalStorageBytes(userId: string, amountBytes: number): Promise<void>;
+
+  incrementTotalUploads(userId: string, amount: number): Promise<void>;
+  decrementTotalUploads(userId: string, amount: number): Promise<void>;
+
+  incrementTotalAlbums(userId: string, amount: number): Promise<void>;
+  decrementTotalAlbums(userId: string, amount: number): Promise<void>;
 }
 
 export type UserCounters = {
