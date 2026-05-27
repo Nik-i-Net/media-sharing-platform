@@ -30,8 +30,10 @@ export const userCountersTable = t.pgTable('user_counters', {
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const planId = t.pgEnum('plan_id', ['free', 'pro']);
+
 export const plansTable = t.pgTable('plans', {
-  id: t.varchar('id').primaryKey(),
+  id: planId('id').primaryKey(),
   allowedMimeTypes: t.jsonb('allowed_mime_types').$type<string[]>().notNull(),
   maxFileSizeBytes: t.bigint('max_file_size_bytes', { mode: 'number' }).notNull(),
   maxTotalStorageBytes: t.bigint('max_total_storage_bytes', { mode: 'number' }).notNull(),
@@ -161,8 +163,7 @@ export const subscriptionsTable = t.pgTable(
       .uuid('user_id')
       .references(() => usersTable.id, { onDelete: 'cascade' })
       .notNull(),
-    planId: t
-      .uuid('plan_id')
+    planId: planId('plan_id')
       .references(() => plansTable.id, { onDelete: 'cascade' })
       .notNull(),
     provider: paymentProvider('provider').notNull(),

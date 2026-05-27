@@ -7,14 +7,12 @@ import { ms } from '@/shared/utils';
 import type { PlanProvider } from '../application/ports/plan.provider';
 
 export class DrizzlePlanProvider implements PlanProvider {
+  private readonly defaultPlanId = 'free';
   private readonly cache = new Map<string, Plan>();
 
-  constructor(
-    private readonly db: DrizzleDB,
-    private readonly defaultPlanId: string = 'free',
-  ) {}
+  constructor(private readonly db: DrizzleDB) {}
 
-  async getPlan(id: string): Promise<Plan> {
+  async getPlan(id: 'free' | 'pro'): Promise<Plan> {
     if (this.cache.has(id)) return this.cache.get(id)!;
 
     const row = await this.db.query.plansTable.findFirst({
