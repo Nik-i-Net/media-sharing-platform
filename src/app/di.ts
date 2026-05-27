@@ -18,6 +18,7 @@ import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/driz
 import { R2StorageProvider } from '@/features/uploads/infrastructure/R2-storage.provider';
 import { ResolveUserIdCommandHandler } from '@/features/users/application/resolve-user-id';
 import { DrizzlePlanProvider } from '@/features/users/infrastructure/drizzle-plan-provider';
+import { DrizzleUserCountersRepository } from '@/features/users/infrastructure/drizzle-user-counters.repository';
 import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
 import { db } from '@/shared/db/drizzle/client';
 import { DrizzleUnitOfWork } from '@/shared/db/drizzle/drizzle-unit-of-work';
@@ -26,8 +27,15 @@ import { ENV } from '@/shared/env.loader';
 const unitOfWork = new DrizzleUnitOfWork(db);
 
 export const plansProvider = new DrizzlePlanProvider(db);
+
 const usersRepository = new DrizzleUsersRepository(db, plansProvider);
-export const resolveUserId = new ResolveUserIdCommandHandler(usersRepository, plansProvider);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const userCountersRepository = new DrizzleUserCountersRepository(db);
+const blobsRepository = new DrizzleBlobsRepository(db);
+const uploadsRepository = new DrizzleUploadsRepository(db);
+const albumsRepository = new DrizzleAlbumsRepository(db);
+
+export const resolveUserId = new ResolveUserIdCommandHandler(usersRepository, unitOfWork);
 
 const storageProvider = new R2StorageProvider({
   accountId: ENV.CLOUDFLARE_ACCOUNT_ID,
@@ -36,10 +44,6 @@ const storageProvider = new R2StorageProvider({
   bucket: ENV.CLOUDFLARE_BUCKET,
   downloadBaseUrl: ENV.MEDIA_BASE_URL,
 });
-
-const blobsRepository = new DrizzleBlobsRepository(db);
-const uploadsRepository = new DrizzleUploadsRepository(db);
-const albumsRepository = new DrizzleAlbumsRepository(db);
 
 export const initiateUploads = new InitiateUploadsCommandHandler(
   usersRepository,

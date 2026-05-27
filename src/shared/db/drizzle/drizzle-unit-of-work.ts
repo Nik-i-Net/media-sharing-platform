@@ -4,6 +4,7 @@ import type { DrizzleDB, DrizzleTransaction } from './client';
 import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
 import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
 import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
+import { DrizzleUserCountersRepository } from '@/features/users/infrastructure/drizzle-user-counters.repository';
 import { plansProvider } from '@/app/di';
 
 export class DrizzleUnitOfWork implements UnitOfWork {
@@ -19,6 +20,7 @@ export class DrizzleUnitOfWork implements UnitOfWork {
 
 export class DrizzleUnitOfWorkContext implements UnitOfWorkContext {
   private _usersRepository?: DrizzleUsersRepository;
+  private _userCountersRepository?: DrizzleUserCountersRepository;
   private _blobsRepository?: DrizzleBlobsRepository;
   private _uploadsRepository?: DrizzleUploadsRepository;
   private _albumsRepository?: DrizzleAlbumsRepository;
@@ -27,6 +29,9 @@ export class DrizzleUnitOfWorkContext implements UnitOfWorkContext {
 
   get usersRepository(): DrizzleUsersRepository {
     return (this._usersRepository ??= new DrizzleUsersRepository(this.trx, plansProvider));
+  }
+  get userCountersRepository(): DrizzleUserCountersRepository {
+    return (this._userCountersRepository ??= new DrizzleUserCountersRepository(this.trx));
   }
   get blobsRepository(): DrizzleBlobsRepository {
     return (this._blobsRepository ??= new DrizzleBlobsRepository(this.trx));

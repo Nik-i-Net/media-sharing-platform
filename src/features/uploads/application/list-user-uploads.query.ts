@@ -39,6 +39,7 @@ export class ListUserUploadsQueryHandler {
       .limit(limit)
       .offset((page - 1) * limit);
 
+    // TODO: fetch total items from `user_counters`
     const [uploads, totalItems] = await Promise.all([
       uploadsPromise,
       this.db.$count(uploadsTable, eq(uploadsTable.userId, userId)),

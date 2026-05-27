@@ -32,6 +32,7 @@ export class ListUserAlbumsQueryHandler {
       .limit(limit)
       .offset((page - 1) * limit);
 
+    // TODO: fetch total items from `user_counters`
     const [albums, totalAlbums] = await Promise.all([
       albumsPromise,
       this.db.$count(albumsTable, eq(albumsTable.userId, userId)),
