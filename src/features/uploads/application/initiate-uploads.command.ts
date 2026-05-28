@@ -51,7 +51,7 @@ export class InitiateUploadsCommandHandler {
   ) {}
 
   async execute({ userId, albumId, files }: InitiateUploadsCommand): Promise<ResultItem[]> {
-    const uploadContext = await this.usersRepo.getUploadContext(userId);
+    const uploadContext = await this.usersRepo.findUploadContext(userId);
     if (!uploadContext) throw new UserNotFoundError();
     uploadContext.plan.ensureCanUpload(files, uploadContext.currentTotalStorageBytes);
 

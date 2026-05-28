@@ -7,7 +7,8 @@ export interface UsersRepository {
   findByExternalId(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
 
-  getUploadContext(userId: string): Promise<UserUploadContext | null>;
+  findUploadContext(userId: string): Promise<UserUploadContext | null>;
+  findEmailById(userId: string): Promise<string | null>;
 }
 
 export interface UserUploadContext {
