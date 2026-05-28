@@ -41,7 +41,7 @@ openapiRegistry.registerPath({
   path: '/api/v1/webhooks/cloudflare',
   summary: 'Webhook for Cloudflare',
   description: `
-Triggered by Cloudflare worker on actions:
+Triggered by Cloudflare worker on events:
 - r2.upload.confirmed
 `,
   request: {
@@ -53,7 +53,7 @@ Triggered by Cloudflare worker on actions:
       },
     },
   },
-  tags: ['Uploads', 'R2', 'Webhooks', 'Integrations'],
+  tags: ['Uploads', 'R2', 'Webhooks'],
   responses: {
     204: { description: 'OK' },
     ...InvalidApiKeyResponse,
