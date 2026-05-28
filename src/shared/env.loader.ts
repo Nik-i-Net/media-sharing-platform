@@ -22,6 +22,10 @@ const vars = [
 
   'CLIENT_BASE_URL',
   'MEDIA_BASE_URL',
+
+  'STRIPE_API_KEY',
+  'STRIPE_WEBHOOK_SECRET',
+  'STRIPE_PRO_PLAN_PRICE_ID',
 ] as const;
 
 const ENV = {} as Record<(typeof vars)[number], string>;
