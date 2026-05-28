@@ -6,6 +6,8 @@ import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzl
 import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
 import { DrizzleUserCountersRepository } from '@/features/users/infrastructure/drizzle-user-counters.repository';
 import { plansProvider } from '@/app/di';
+import { DrizzlePaymentProfilesRepository } from '@/features/subscriptions/infrastructure/drizzle-payment-profiles.repository';
+import { DrizzleSubscriptionsRepository } from '@/features/subscriptions/infrastructure/drizzle-subscriptions.repository';
 
 export class DrizzleUnitOfWork implements UnitOfWork {
   constructor(private readonly db: DrizzleDB) {}
@@ -24,6 +26,8 @@ export class DrizzleUnitOfWorkContext implements UnitOfWorkContext {
   private _blobsRepository?: DrizzleBlobsRepository;
   private _uploadsRepository?: DrizzleUploadsRepository;
   private _albumsRepository?: DrizzleAlbumsRepository;
+  private _subscriptionsRepository?: DrizzleSubscriptionsRepository;
+  private _paymentProfilesRepository?: DrizzlePaymentProfilesRepository;
 
   constructor(private readonly trx: DrizzleTransaction) {}
 
@@ -41,5 +45,11 @@ export class DrizzleUnitOfWorkContext implements UnitOfWorkContext {
   }
   get albumsRepository(): DrizzleAlbumsRepository {
     return (this._albumsRepository ??= new DrizzleAlbumsRepository(this.trx));
+  }
+  get subscriptionsRepository(): DrizzleSubscriptionsRepository {
+    return (this._subscriptionsRepository ??= new DrizzleSubscriptionsRepository(this.trx));
+  }
+  get paymentProfilesRepository(): DrizzlePaymentProfilesRepository {
+    return (this._paymentProfilesRepository ??= new DrizzlePaymentProfilesRepository(this.trx));
   }
 }
