@@ -1,5 +1,5 @@
-import { ForbiddenError } from '@/shared/errors';
 import type { UnitOfWork } from '@/shared/ports/unit-of-work';
+import { AlbumAccessDeniedError } from '../errors/album-access-denied.error';
 
 export interface DeleteAlbumCommand {
   albumId: string;
@@ -11,13 +11,10 @@ export class DeleteAlbumCommandHandler {
 
   async execute(cmd: DeleteAlbumCommand): Promise<void> {
     await this.uow.execute(async (ctx) => {
-      // NOTE: investigate is it safe to run multiple queries in the same transaction in parallel
-      const [isDeleted] = await Promise.all([
-        ctx.albumsRepository.delete(cmd.albumId),
-        ctx.userCountersRepository.decrementTotalAlbums(cmd.userId, 1),
-      ]);
+      const isDeleted = await ctx.albumsRepository.delete(cmd.albumId);
+      if (!isDeleted) throw new AlbumAccessDeniedError(cmd.userId, cmd.albumId);
 
-      if (!isDeleted) throw new ForbiddenError();
+      await ctx.userCountersRepository.decrementTotalAlbums(cmd.userId, 1);
     });
   }
 }
