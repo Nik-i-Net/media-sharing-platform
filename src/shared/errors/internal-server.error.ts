@@ -18,7 +18,7 @@ export const InternalServerErrorResponse = {
         schema: z.object({
           error: z.object({
             message: z.string().meta({ example: 'Internal server error' }),
-            code: z.literal('INternalServerError'),
+            code: z.literal('INTERNAL_SERVER_ERROR'),
           }),
         }),
       },

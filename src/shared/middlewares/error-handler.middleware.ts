@@ -1,5 +1,12 @@
 import type { Request, Response, NextFunction } from 'express';
-import { ForbiddenError, NotFoundError, UnauthorizedError, ValidationError } from '../errors';
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} from '../errors';
 import { BaseError } from '../errors/base.error';
 import { z } from 'zod';
 
@@ -34,10 +41,18 @@ export function errorHandler(
   try {
     if (!(err instanceof BaseError)) throw err;
 
+    console.error(err.name);
+    console.error('Code:', err.code);
+    console.error('Message:', err.message);
+    console.error('Stack:', err.stack);
+    console.error('Cause:', err.cause);
+
     if (
-      err instanceof NotFoundError || //
+      err instanceof BadRequestError || //
       err instanceof UnauthorizedError ||
-      err instanceof ForbiddenError
+      err instanceof ForbiddenError ||
+      err instanceof NotFoundError ||
+      err instanceof ConflictError
     ) {
       return res.status(err.httpStatusCode).json(errorEnvelope(err));
     }
