@@ -7,6 +7,13 @@ import { ListUserAlbumsQueryHandler } from '@/features/albums/application/list-u
 import { UnlinkUploadsFromAlbumCommandHandler } from '@/features/albums/application/unlink-uploads-from-album.command';
 import { UpdateAlbumCommandHandler } from '@/features/albums/application/update-album.command';
 import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
+import { CreateCustomerPortalUrlCommandHandler } from '@/features/subscriptions/application/create-customer-portal-url.command';
+import { CreateSubscriptionCheckoutUrlCommandHandler } from '@/features/subscriptions/application/create-subscription-checkout-url.command';
+import { HandleSubscriptionCanceledCommandHandler } from '@/features/subscriptions/application/handle-subscription-canceled.command';
+import { HandleSubscriptionCreatedCommandHandler } from '@/features/subscriptions/application/handle-subscription-created.command';
+import { HandleSubscriptionUpdatedCommandHandler } from '@/features/subscriptions/application/handle-subscription-updated.command';
+import { DrizzlePaymentProfilesRepository } from '@/features/subscriptions/infrastructure/drizzle-payment-profiles.repository';
+import { DrizzleSubscriptionsRepository } from '@/features/subscriptions/infrastructure/drizzle-subscriptions.repository';
 import { StripePaymentProvider } from '@/features/subscriptions/infrastructure/stripe-payment.provider';
 import { ConfirmUploadsCommandHandler } from '@/features/uploads/application/confirm-uploads.command';
 import { DeleteUploadCommandHandler } from '@/features/uploads/application/delete-upload.command';
@@ -18,7 +25,7 @@ import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzl
 import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
 import { R2StorageProvider } from '@/features/uploads/infrastructure/R2-storage.provider';
 import { ResolveUserIdCommandHandler } from '@/features/users/application/resolve-user-id';
-import { DrizzlePlanProvider } from '@/features/users/infrastructure/drizzle-plan-provider';
+import { DrizzlePlanProvider } from '@/features/users/infrastructure/drizzle-plan.provider';
 import { DrizzleUserCountersRepository } from '@/features/users/infrastructure/drizzle-user-counters.repository';
 import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
 import { db } from '@/shared/db/drizzle/client';
@@ -35,6 +42,8 @@ const userCountersRepository = new DrizzleUserCountersRepository(db);
 const blobsRepository = new DrizzleBlobsRepository(db);
 const uploadsRepository = new DrizzleUploadsRepository(db);
 const albumsRepository = new DrizzleAlbumsRepository(db);
+const subscriptionsRepository = new DrizzleSubscriptionsRepository(db);
+const paymentProfilesRepository = new DrizzlePaymentProfilesRepository(db);
 
 export const resolveUserId = new ResolveUserIdCommandHandler(usersRepository, unitOfWork);
 
@@ -78,3 +87,25 @@ export const unlinkUploadsFromAlbum = new UnlinkUploadsFromAlbumCommandHandler(a
 
 export const stripeClient = new Stripe(ENV.STRIPE_API_KEY);
 const paymentProvider = new StripePaymentProvider(stripeClient, ENV.STRIPE_PRO_PLAN_PRICE_ID);
+
+export const createSubscriptionCheckoutUrl = new CreateSubscriptionCheckoutUrlCommandHandler(
+  subscriptionsRepository,
+  paymentProfilesRepository,
+  usersRepository,
+  paymentProvider,
+);
+export const createCustomerPortalUrl = new CreateCustomerPortalUrlCommandHandler(
+  paymentProfilesRepository,
+  paymentProvider,
+);
+
+export const handleSubscriptionCreated = new HandleSubscriptionCreatedCommandHandler(
+  subscriptionsRepository,
+  paymentProfilesRepository,
+);
+export const handleSubscriptionUpdated = new HandleSubscriptionUpdatedCommandHandler(
+  subscriptionsRepository,
+);
+export const handleSubscriptionCanceled = new HandleSubscriptionCanceledCommandHandler(
+  subscriptionsRepository,
+);

@@ -1,4 +1,5 @@
 import { albumsRouter } from '@/features/albums/http/albums.router';
+import { subscriptionsRouter } from '@/features/subscriptions/http/subscriptions.router';
 import { uploadsRouter } from '@/features/uploads/http/uploads.router';
 import { usersRouter } from '@/features/users/http/users.router';
 import { ENV } from '@/shared/env.loader';
@@ -7,7 +8,7 @@ import { openapiRegistry } from '@/shared/openapi-registry';
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { Router } from 'express';
+import express, { Router, type Request } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import { webhooksRouter } from './webhooks.router';
 
@@ -15,6 +16,7 @@ const router = Router();
 router.use('/users', usersRouter);
 router.use('/uploads', uploadsRouter);
 router.use('/albums', albumsRouter);
+router.use('/subscriptions', subscriptionsRouter);
 router.use('/webhooks', webhooksRouter);
 
 const generator = new OpenApiGeneratorV31(openapiRegistry.definitions);
@@ -25,7 +27,15 @@ export const openapiDocument = generator.generateDocument({
 
 export const app = express();
 app.use(cors({ origin: ENV.CLIENT_BASE_URL }));
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req: Request, _res, buf) => {
+      if (req.originalUrl === '/api/v1/webhooks/stripe') {
+        req.rawBody = buf;
+      }
+    },
+  }),
+);
 app.use(cookieParser());
 
 app.use('/api/v1', router);
