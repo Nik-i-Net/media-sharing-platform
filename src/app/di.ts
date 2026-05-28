@@ -7,6 +7,7 @@ import { ListUserAlbumsQueryHandler } from '@/features/albums/application/list-u
 import { UnlinkUploadsFromAlbumCommandHandler } from '@/features/albums/application/unlink-uploads-from-album.command';
 import { UpdateAlbumCommandHandler } from '@/features/albums/application/update-album.command';
 import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
+import { StripePaymentProvider } from '@/features/subscriptions/infrastructure/stripe-payment.provider';
 import { ConfirmUploadsCommandHandler } from '@/features/uploads/application/confirm-uploads.command';
 import { DeleteUploadCommandHandler } from '@/features/uploads/application/delete-upload.command';
 import { GetUploadByIdQueryHandler } from '@/features/uploads/application/get-upload-by-id.query';
@@ -23,6 +24,7 @@ import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-
 import { db } from '@/shared/db/drizzle/client';
 import { DrizzleUnitOfWork } from '@/shared/db/drizzle/drizzle-unit-of-work';
 import { ENV } from '@/shared/env.loader';
+import Stripe from 'stripe';
 
 const unitOfWork = new DrizzleUnitOfWork(db);
 
@@ -73,3 +75,6 @@ export const linkUploadsToAlbum = new LinkUploadsToAlbumCommandHandler(
   uploadsRepository,
 );
 export const unlinkUploadsFromAlbum = new UnlinkUploadsFromAlbumCommandHandler(albumsRepository);
+
+export const stripeClient = new Stripe(ENV.STRIPE_API_KEY);
+const paymentProvider = new StripePaymentProvider(stripeClient, ENV.STRIPE_PRO_PLAN_PRICE_ID);
