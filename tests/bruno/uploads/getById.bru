@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/uploads/3bb1dc66-13e1-4004-82c9-e9e3ce898967
+  url: {{BASE_URL}}/uploads/:id
   body: none
   auth: inherit
+}
+
+params:path {
+  id: {{uploads.firstListedId}}
 }
 
 settings {

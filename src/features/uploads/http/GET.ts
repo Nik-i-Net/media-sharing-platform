@@ -56,7 +56,7 @@ const ResponseSchema = z
     meta: z.object({
       page: z.int().positive(),
       limit: z.int().positive().meta({ example: 20 }),
-      totalItems: z.int().positive().meta({ example: 42 }),
+      totalItems: z.int().nonnegative().meta({ example: 42 }),
       totalPages: z.int().positive().meta({ example: 3 }),
     }),
   })

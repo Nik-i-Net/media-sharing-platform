@@ -63,6 +63,16 @@ export class DrizzleBlobsRepository implements BlobsRepository {
     return records.map((record) => this.toDomain(record));
   }
 
+  async findSizeById(id: string): Promise<number | null> {
+    const [row] = await this.db
+      .select({ sizeBytes: blobsTable.sizeBytes })
+      .from(blobsTable)
+      .where(eq(blobsTable.id, id));
+
+    if (!row) return null;
+    return row.sizeBytes;
+  }
+
   private toDomain(record: InferSelectModel<typeof blobsTable>): BlobEntity {
     return new BlobEntity(
       record.id,

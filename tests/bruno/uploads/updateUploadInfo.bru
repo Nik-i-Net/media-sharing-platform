@@ -5,9 +5,13 @@ meta {
 }
 
 patch {
-  url: {{BASE_URL}}/uploads/{{uploads.firstListedId}}
+  url: {{BASE_URL}}/uploads/:id
   body: json
   auth: inherit
+}
+
+params:path {
+  id: {{uploads.firstListedId}}
 }
 
 body:json {

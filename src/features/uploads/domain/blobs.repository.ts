@@ -7,4 +7,6 @@ export interface BlobsRepository {
   findById(id: string): Promise<BlobEntity | null>;
   findByHash(hash: HashVO): Promise<BlobEntity | null>;
   findManyByHashes(hashes: HashVO[]): Promise<BlobEntity[]>;
+
+  findSizeById(id: string): Promise<number | null>;
 }

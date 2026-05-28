@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { NotFoundError, UnauthorizedError, ValidationError } from '../errors';
+import { ForbiddenError, NotFoundError, UnauthorizedError, ValidationError } from '../errors';
 import { BaseError } from '../errors/base.error';
 import { z } from 'zod';
 
@@ -36,7 +36,8 @@ export function errorHandler(
 
     if (
       err instanceof NotFoundError || //
-      err instanceof UnauthorizedError
+      err instanceof UnauthorizedError ||
+      err instanceof ForbiddenError
     ) {
       return res.status(err.httpStatusCode).json(errorEnvelope(err));
     }

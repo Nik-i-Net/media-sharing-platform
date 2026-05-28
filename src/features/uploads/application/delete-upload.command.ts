@@ -1,5 +1,6 @@
 import { ForbiddenError } from '@/shared/errors';
-import type { UploadsRepository } from '../domain/uploads.repository';
+import type { UnitOfWork } from '@/shared/ports/unit-of-work';
+import assert from 'assert';
 
 export interface DeleteUploadCommand {
   uploadId: string;
@@ -7,10 +8,20 @@ export interface DeleteUploadCommand {
 }
 
 export class DeleteUploadCommandHandler {
-  constructor(private readonly uploadsRepo: UploadsRepository) {}
+  constructor(private readonly uow: UnitOfWork) {}
 
   async execute(cmd: DeleteUploadCommand): Promise<void> {
-    const isDeleted = await this.uploadsRepo.delete(cmd.uploadId);
-    if (!isDeleted) throw new ForbiddenError();
+    await this.uow.execute(async (ctx) => {
+      const result = await ctx.uploadsRepository.delete(cmd.uploadId);
+      if (!result.isDeleted) throw new ForbiddenError();
+
+      const sizeBytes = await ctx.blobsRepository.findSizeById(result.blobId);
+      assert(sizeBytes);
+
+      await Promise.all([
+        ctx.userCountersRepository.decrementTotalUploads(cmd.userId, 1),
+        ctx.userCountersRepository.decrementTotalStorageBytes(cmd.userId, sizeBytes),
+      ]);
+    });
   }
 }

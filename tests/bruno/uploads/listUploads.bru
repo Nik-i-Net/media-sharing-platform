@@ -16,8 +16,11 @@ params:query {
 }
 
 script:post-response {
-  if (res.getStatus() === 200 && res.body.data[0]) {
-    bru.setVar('uploads.firstListedId', res.body.data[0].id)
+  if (res.getStatus() === 200) {
+    const first = res.body.data[0]
+    if (first) {
+      bru.setVar('uploads.firstListedId', first.id)
+    }
   }
 }
 

@@ -5,9 +5,13 @@ meta {
 }
 
 delete {
-  url: {{BASE_URL}}/uploads/{{uploads.firstListedId}}
+  url: {{BASE_URL}}/uploads/:id
   body: none
   auth: inherit
+}
+
+params:path {
+  id: {{uploads.firstListedId}}
 }
 
 settings {

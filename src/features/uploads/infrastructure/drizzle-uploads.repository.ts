@@ -1,9 +1,9 @@
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { uploadsTable } from '@/shared/db/drizzle/schema';
+import { excluded } from '@/shared/db/drizzle/utils';
 import { eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import { Upload } from '../domain/upload';
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import type { UploadsRepository } from '../domain/uploads.repository';
-import { excluded } from '@/shared/db/drizzle/utils';
 
 export class DrizzleUploadsRepository implements UploadsRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
@@ -46,9 +46,11 @@ export class DrizzleUploadsRepository implements UploadsRepository {
     return this.toDomain(row);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await this.db.delete(uploadsTable).where(eq(uploadsTable.id, id));
-    return (result.rowCount ?? 0) > 0;
+  async delete(id: string): Promise<{ isDeleted: true; blobId: string } | { isDeleted: false }> {
+    const [result] = await this.db.delete(uploadsTable).where(eq(uploadsTable.id, id)).returning();
+    if (!result) return { isDeleted: false };
+
+    return { isDeleted: true, blobId: result.blobId };
   }
 
   async findOwnershipData(ids: string[]): Promise<{ uploadId: string; userId: string }[]> {

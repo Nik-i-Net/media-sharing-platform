@@ -11,6 +11,11 @@ import type { AlbumsRepository } from '@/features/albums/domain/albums.repositor
 import { HashVO } from '../domain/hash.value-object';
 import { TodoError } from '@/shared/errors';
 
+// NOTE: providing incorrect `sizeBytes` for files which are not stored yet will
+//    cause `user_counters.total_storage_bytes` to be incorrect.
+// Possible solutions:
+// - check in `confirm-uploads` and update all dependent user counters
+// - periodically recalculate in a cron job
 export interface InitiateUploadsCommand {
   userId: string;
   albumId: string | null;
@@ -62,6 +67,7 @@ export class InitiateUploadsCommandHandler {
 
     const blobsToSave: BlobEntity[] = [];
     const uploadsToSave: Upload[] = [];
+    let totalSizeBytes = 0;
 
     for (const file of files) {
       let blob = blobsByHashHex.get(file.sha256Hex);
@@ -75,6 +81,8 @@ export class InitiateUploadsCommandHandler {
         blobsToSave.push(blob);
         blobsByHashHex.set(file.sha256Hex, blob);
       }
+
+      totalSizeBytes += blob.sizeBytes;
 
       switch (blob.status) {
         case 'pending': {
@@ -108,7 +116,11 @@ export class InitiateUploadsCommandHandler {
         await ctx.blobsRepository.saveMany(blobsToSave);
       }
 
-      await ctx.uploadsRepository.saveMany(uploadsToSave);
+      await Promise.all([
+        ctx.uploadsRepository.saveMany(uploadsToSave),
+        ctx.userCountersRepository.incrementTotalUploads(userId, uploadsToSave.length),
+        ctx.userCountersRepository.incrementTotalStorageBytes(userId, totalSizeBytes),
+      ]);
 
       if (albumId) {
         await ctx.albumsRepository.linkUploads(

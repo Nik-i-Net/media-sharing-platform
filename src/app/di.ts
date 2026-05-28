@@ -60,7 +60,7 @@ export const listUserUploads = new ListUserUploadsQueryHandler(
   storageProvider,
 );
 export const updateUploadInfo = new UpdateUploadInfoCommandHandler(uploadsRepository);
-export const deleteUpload = new DeleteUploadCommandHandler(uploadsRepository);
+export const deleteUpload = new DeleteUploadCommandHandler(unitOfWork);
 
 export const createAlbum = new CreateAlbumCommandHandler(unitOfWork);
 export const listUserAlbums = new ListUserAlbumsQueryHandler(db, userCountersRepository);
