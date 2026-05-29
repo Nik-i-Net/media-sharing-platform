@@ -4,7 +4,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Router } from 'express-serve-static-core';
@@ -16,7 +16,7 @@ import { updateAlbum } from '@/app/di';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.patch(
     '/:id', //
-    checkJwt(),
+    requireAuth,
     validateRequest({ params: RequestParamsSchema, body: RequestBodySchema }),
     async (req, res: Response<void>) => {
       const cmd: UpdateAlbumCommand = {

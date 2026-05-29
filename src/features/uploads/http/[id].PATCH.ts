@@ -4,7 +4,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import type { Response, Router } from 'express';
 import { z } from 'zod';
@@ -15,7 +15,7 @@ import { updateUploadInfo } from '@/app/di';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.patch(
     '/:id', //
-    checkJwt(),
+    requireAuth,
     validateRequest({ params: RequestParamsSchema, body: RequestBodySchema }),
     async (req, res: Response<void>) => {
       const cmd: UpdateUploadInfoCommand = {

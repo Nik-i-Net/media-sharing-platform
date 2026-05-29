@@ -6,7 +6,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Response } from 'express';
@@ -16,7 +16,7 @@ import { z } from 'zod';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.delete(
     '/:id', //
-    checkJwt(),
+    requireAuth,
     validateRequest({ params: RequestParamsSchema }),
     async (req, res: Response<void>) => {
       await deleteAlbum.execute({

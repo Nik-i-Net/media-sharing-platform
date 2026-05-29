@@ -4,7 +4,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt } from '@/shared/middlewares';
+import { requireAuth } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Request, Response } from 'express';
@@ -14,7 +14,7 @@ import z from 'zod';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
     '/', //
-    checkJwt(),
+    requireAuth,
     async (req: Request, res: Response<z.infer<typeof ResponseSchema>>) => {
       const result = await listUserAlbums.execute({
         userId: requireDefined(req.user?.id),

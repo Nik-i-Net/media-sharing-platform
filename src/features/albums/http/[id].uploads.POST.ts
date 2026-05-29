@@ -6,7 +6,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Router } from 'express';
@@ -15,7 +15,7 @@ import { z } from 'zod';
 export function registerRoute(albumsRouter: Router) {
   albumsRouter.post(
     '/:id/uploads', //
-    checkJwt(),
+    requireAuth,
     validateRequest({ params: RequestParamsSchema, body: RequestBodySchema }),
     async (req, res) => {
       const userId = requireDefined(req.user?.id);

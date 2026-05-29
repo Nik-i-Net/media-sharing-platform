@@ -4,7 +4,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import type { Response } from 'express';
 import type { Router } from 'express-serve-static-core';
@@ -13,7 +13,6 @@ import { z } from 'zod';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
     '/:id', //
-    checkJwt({ requireAuth: false }),
     validateRequest({ params: RequestParamsSchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
       const album = await getAlbumById.execute({

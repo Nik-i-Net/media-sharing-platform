@@ -3,7 +3,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Router } from 'express-serve-static-core';
@@ -15,7 +15,7 @@ import { createAlbum } from '@/app/di';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.post(
     '/', //
-    checkJwt(),
+    requireAuth,
     validateRequest({ body: RequestBodySchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
       const cmd: CreateAlbumCommand = {

@@ -3,7 +3,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt } from '@/shared/middlewares';
+import { requireAuth } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Request, Response, Router } from 'express';
@@ -15,7 +15,7 @@ import { listUserUploads } from '@/app/di';
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
     '/', //
-    checkJwt(),
+    requireAuth,
     async (req: UnknownRequest, res: Response<z.infer<typeof ResponseSchema>>) => {
       const validated = validateRequest(req.query, RequestQueriesSchema, 'query');
 

@@ -3,7 +3,7 @@ import { subscriptionsRouter } from '@/features/subscriptions/http/subscriptions
 import { uploadsRouter } from '@/features/uploads/http/uploads.router';
 import { usersRouter } from '@/features/users/http/users.router';
 import { ENV } from '@/shared/env.loader';
-import { errorHandler, unknownRouteHandler } from '@/shared/middlewares';
+import { errorHandler, parseJwt, unknownRouteHandler } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
 import cookieParser from 'cookie-parser';
@@ -37,6 +37,7 @@ app.use(
   }),
 );
 app.use(cookieParser());
+app.use(parseJwt);
 
 app.use('/api/v1', router);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
@@ -44,5 +45,6 @@ app.use('/api-docs.json', (_req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.json(openapiDocument);
 });
+
 app.use(unknownRouteHandler);
 app.use(errorHandler);

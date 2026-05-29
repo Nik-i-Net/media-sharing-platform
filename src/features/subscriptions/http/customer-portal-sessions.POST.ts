@@ -4,7 +4,7 @@ import {
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
 } from '@/shared/errors';
-import { checkJwt, validateRequest } from '@/shared/middlewares';
+import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
 import type { Response, Router } from 'express';
@@ -15,7 +15,7 @@ import { StatusCodes } from '@/shared/constants';
 export function registerRoute(subscriptionsRouter: Router) {
   subscriptionsRouter.post(
     '/customer-portal-sessions', //
-    checkJwt(),
+    requireAuth,
     validateRequest({ body: RequestBodySchema }),
     async (req, res: Response<z.infer<typeof ResponseSchema>>) => {
       const checkoutUrl = await createCustomerPortalUrl.execute({
