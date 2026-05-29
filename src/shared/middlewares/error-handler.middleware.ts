@@ -4,6 +4,7 @@ import {
   ConflictError,
   ForbiddenError,
   NotFoundError,
+  TooManyRequestsError,
   UnauthorizedError,
   ValidationError,
 } from '../errors';
@@ -52,7 +53,8 @@ export function errorHandler(
       err instanceof UnauthorizedError ||
       err instanceof ForbiddenError ||
       err instanceof NotFoundError ||
-      err instanceof ConflictError
+      err instanceof ConflictError ||
+      err instanceof TooManyRequestsError
     ) {
       return res.status(err.httpStatusCode).json(errorEnvelope(err));
     }
