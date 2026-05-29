@@ -13,6 +13,14 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:8.8.0
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - backend
+
 volumes:
   pgdata:
 

@@ -26,6 +26,9 @@ const vars = [
   'STRIPE_API_KEY',
   'STRIPE_WEBHOOK_SECRET',
   'STRIPE_PRO_PLAN_PRICE_ID',
+
+  'REDIS_HOST',
+  'REDIS_PORT',
 ] as const;
 
 const ENV = {} as Record<(typeof vars)[number], string>;
