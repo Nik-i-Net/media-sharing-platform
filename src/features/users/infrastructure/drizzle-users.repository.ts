@@ -1,9 +1,9 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { subscriptionsTable, userCountersTable, usersTable } from '@/shared/db/drizzle/schema';
-import { eq, and, type SQL } from 'drizzle-orm';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/types';
+import { and, eq, type SQL } from 'drizzle-orm';
+import type { PlanProvider } from '../application/ports/plan.provider';
 import { User } from '../domain/user';
 import type { UsersRepository, UserUploadContext } from '../domain/users.repository';
-import type { PlanProvider } from '../application/ports/plan.provider';
 
 export class DrizzleUsersRepository implements UsersRepository {
   constructor(

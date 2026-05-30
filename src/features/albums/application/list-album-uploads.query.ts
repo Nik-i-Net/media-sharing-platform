@@ -1,11 +1,11 @@
 import type { StorageProvider } from '@/features/uploads/application/ports/storage.provider';
-import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import {
   albumsTable,
   albumsUploadsTable,
   blobsTable,
   uploadsTable,
 } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB } from '@/shared/db/drizzle/types';
 import { and, desc, eq } from 'drizzle-orm';
 import { AlbumNotFoundError } from '../errors/album-not-found.error';
 

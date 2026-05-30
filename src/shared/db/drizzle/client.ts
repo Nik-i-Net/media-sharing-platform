@@ -1,9 +1,7 @@
-import { Pool } from 'pg';
-import { drizzle, NodePgDatabase, type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
-import * as schema from './schema';
-import type { PgTransaction } from 'drizzle-orm/pg-core';
-import type { ExtractTablesWithRelations } from 'drizzle-orm';
 import { ENV } from '@/shared/env.loader';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
+import * as schema from './schema';
 
 const pool = new Pool({
   user: ENV.POSTGRES_USER,
@@ -18,10 +16,3 @@ export const db = drizzle(pool, {
   casing: 'snake_case',
   // logger: true,
 });
-
-export type DrizzleDB = NodePgDatabase<typeof schema>;
-export type DrizzleTransaction = PgTransaction<
-  NodePgQueryResultHKT,
-  typeof schema,
-  ExtractTablesWithRelations<typeof schema>
->;

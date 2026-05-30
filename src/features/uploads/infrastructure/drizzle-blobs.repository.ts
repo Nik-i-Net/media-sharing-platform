@@ -1,10 +1,10 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { blobsTable } from '@/shared/db/drizzle/schema';
-import { eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
-import type { BlobsRepository } from '../domain/blobs.repository';
-import { BlobEntity } from '../domain/blob';
-import { HashVO } from '../domain/hash.value-object';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/types';
 import { excluded } from '@/shared/db/drizzle/utils';
+import { eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
+import { BlobEntity } from '../domain/blob';
+import type { BlobsRepository } from '../domain/blobs.repository';
+import { HashVO } from '../domain/hash.value-object';
 
 export class DrizzleBlobsRepository implements BlobsRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}

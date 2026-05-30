@@ -1,9 +1,9 @@
-import { blobsTable, uploadsTable } from '@/shared/db/drizzle/schema';
-import { and, desc, eq } from 'drizzle-orm';
-import type { DrizzleDB } from '@/shared/db/drizzle/client';
-import type { StorageProvider } from './ports/storage.provider';
 import type { UserCountersRepository } from '@/features/users/domain/user-counters.repository';
+import { blobsTable, uploadsTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB } from '@/shared/db/drizzle/types';
 import assert from 'assert';
+import { and, desc, eq } from 'drizzle-orm';
+import type { StorageProvider } from './ports/storage.provider';
 
 export interface ListUserUploadsQuery {
   userId: string;

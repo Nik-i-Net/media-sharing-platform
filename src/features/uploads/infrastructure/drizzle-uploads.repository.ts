@@ -1,5 +1,5 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { uploadsTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/types';
 import { excluded } from '@/shared/db/drizzle/utils';
 import { eq, inArray, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import { Upload } from '../domain/upload';

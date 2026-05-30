@@ -27,10 +27,10 @@ export class R2StorageProvider implements StorageProvider {
     this.downloadBaseUrl = downloadBaseUrl;
   }
 
-  async getDirectUploadInfo(key: string, blob: BlobEntity): Promise<UploadInfo> {
+  async getDirectUploadInfo(blob: BlobEntity): Promise<UploadInfo> {
     const command = new PutObjectCommand({
       Bucket: this.bucket,
-      Key: key,
+      Key: blob.hash.hex,
       ContentType: blob.mimeType,
       ContentLength: blob.sizeBytes,
       ChecksumSHA256: blob.hash.base64,

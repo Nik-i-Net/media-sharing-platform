@@ -1,13 +1,13 @@
-import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
-import type { UnitOfWork, UnitOfWorkContext } from '@/shared/ports/unit-of-work';
-import type { DrizzleDB, DrizzleTransaction } from './client';
+import { plansProvider } from '@/app/di';
 import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
+import { DrizzlePaymentProfilesRepository } from '@/features/subscriptions/infrastructure/drizzle-payment-profiles.repository';
+import { DrizzleSubscriptionsRepository } from '@/features/subscriptions/infrastructure/drizzle-subscriptions.repository';
 import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
 import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
 import { DrizzleUserCountersRepository } from '@/features/users/infrastructure/drizzle-user-counters.repository';
-import { plansProvider } from '@/app/di';
-import { DrizzlePaymentProfilesRepository } from '@/features/subscriptions/infrastructure/drizzle-payment-profiles.repository';
-import { DrizzleSubscriptionsRepository } from '@/features/subscriptions/infrastructure/drizzle-subscriptions.repository';
+import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
+import type { UnitOfWork, UnitOfWorkContext } from '@/shared/ports/unit-of-work';
+import type { DrizzleDB, DrizzleTransaction } from './types';
 
 export class DrizzleUnitOfWork implements UnitOfWork {
   constructor(private readonly db: DrizzleDB) {}

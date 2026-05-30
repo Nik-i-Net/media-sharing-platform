@@ -1,7 +1,7 @@
 import { MEMORY_UNITS } from '@/shared/constants';
 import { plansTable } from '../schema';
+import type { DrizzleDB } from '../types';
 import { excluded } from '../utils';
-import { type DrizzleDB } from '../client';
 
 const freeMimeTypes = [
   'image/jpeg', //

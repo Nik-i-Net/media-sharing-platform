@@ -1,8 +1,8 @@
-import type { DrizzleDB } from '@/shared/db/drizzle/client';
-import type { StorageProvider } from './ports/storage.provider';
-import { eq } from 'drizzle-orm';
 import { uploadsTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB } from '@/shared/db/drizzle/types';
+import { eq } from 'drizzle-orm';
 import { UploadNotFoundError } from '../errors/upload-not-found.error';
+import type { StorageProvider } from './ports/storage.provider';
 
 export interface GetUploadByIdQuery {
   uploadId: string;

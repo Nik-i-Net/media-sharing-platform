@@ -1,5 +1,5 @@
-import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import { albumsTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB } from '@/shared/db/drizzle/types';
 import { eq } from 'drizzle-orm';
 import { AlbumNotFoundError } from '../errors/album-not-found.error';
 

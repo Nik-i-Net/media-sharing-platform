@@ -1,5 +1,5 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { userCountersTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/types';
 import assert from 'assert';
 import { eq, sql } from 'drizzle-orm';
 import type { UserCounters, UserCountersRepository } from '../domain/user-counters.repository';

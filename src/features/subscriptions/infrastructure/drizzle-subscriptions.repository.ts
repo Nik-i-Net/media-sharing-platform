@@ -1,9 +1,9 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { subscriptionsTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/types';
+import assert from 'assert';
 import { and, eq, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import { Subscription } from '../domain/subscription';
 import type { SubscriptionsRepository } from '../domain/subscriptions.repository';
-import assert from 'assert';
 
 export class DrizzleSubscriptionsRepository implements SubscriptionsRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}

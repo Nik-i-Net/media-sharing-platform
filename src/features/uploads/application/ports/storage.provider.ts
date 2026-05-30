@@ -8,7 +8,7 @@ export type UploadInfo = {
 };
 
 export interface StorageProvider {
-  getDirectUploadInfo(key: string, blob: BlobEntity): Promise<UploadInfo>;
+  getDirectUploadInfo(blob: BlobEntity): Promise<UploadInfo>;
   getDownloadUrl(hash: HashVO): string;
   getPreviewUrl(hash: HashVO): string;
 }

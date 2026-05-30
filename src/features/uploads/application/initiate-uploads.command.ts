@@ -86,7 +86,7 @@ export class InitiateUploadsCommandHandler {
 
       switch (blob.status) {
         case 'pending': {
-          const uploadInfo = await this.storageProvider.getDirectUploadInfo(file.sha256Hex, blob);
+          const uploadInfo = await this.storageProvider.getDirectUploadInfo(blob);
           result.push({ id: file.id, status: 'upload_required', ...uploadInfo });
           break;
         }

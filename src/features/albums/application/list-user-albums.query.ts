@@ -1,6 +1,6 @@
 import type { UserCountersRepository } from '@/features/users/domain/user-counters.repository';
-import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import { albumsTable, albumsUploadsTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB } from '@/shared/db/drizzle/types';
 import assert from 'assert';
 import { desc, eq } from 'drizzle-orm';
 

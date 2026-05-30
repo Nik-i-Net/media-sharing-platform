@@ -1,5 +1,5 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
 import { paymentProfilesTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/types';
 import { and, eq, type InferInsertModel, type InferSelectModel } from 'drizzle-orm';
 import { PaymentProfile } from '../domain/payment-profile';
 import type { PaymentProfilesRepository } from '../domain/payment-profiles.repository';

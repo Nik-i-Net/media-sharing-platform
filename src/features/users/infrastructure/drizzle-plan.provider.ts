@@ -1,10 +1,10 @@
-import { TodoError } from '@/shared/errors';
-import type { DrizzleDB } from '@/shared/db/drizzle/client';
 import { plansTable } from '@/shared/db/drizzle/schema';
-import { eq } from 'drizzle-orm';
-import { Plan } from '../domain/plan';
+import type { DrizzleDB } from '@/shared/db/drizzle/types';
+import { TodoError } from '@/shared/errors';
 import { ms } from '@/shared/utils';
+import { eq } from 'drizzle-orm';
 import type { PlanProvider } from '../application/ports/plan.provider';
+import { Plan } from '../domain/plan';
 
 export class DrizzlePlanProvider implements PlanProvider {
   private readonly defaultPlanId = 'free';

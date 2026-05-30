@@ -1,8 +1,8 @@
-import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/client';
-import type { AlbumsRepository } from '../domain/albums.repository';
+import { albumsTable, albumsUploadsTable } from '@/shared/db/drizzle/schema';
+import type { DrizzleDB, DrizzleTransaction } from '@/shared/db/drizzle/types';
 import { and, asc, eq, inArray, type InferSelectModel } from 'drizzle-orm';
-import { albumsUploadsTable, albumsTable } from '@/shared/db/drizzle/schema';
 import { Album } from '../domain/album';
+import type { AlbumsRepository } from '../domain/albums.repository';
 
 export class DrizzleAlbumsRepository implements AlbumsRepository {
   constructor(private readonly db: DrizzleDB | DrizzleTransaction) {}
