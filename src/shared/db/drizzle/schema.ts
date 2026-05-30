@@ -83,22 +83,26 @@ export const blobsTable = t.pgTable('blobs', {
   updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const uploadsTable = t.pgTable('uploads', {
-  id: t.uuid('id').primaryKey(),
-  userId: t
-    .uuid('user_id')
-    .references(() => usersTable.id, { onDelete: 'cascade' })
-    .notNull(),
-  blobId: t
-    .uuid('blob_id')
-    .references(() => blobsTable.id, { onDelete: 'cascade' })
-    .notNull(),
-  fileName: t.varchar('file_name', { length: 50 }).notNull(),
-  isPublic: t.boolean('is_public').notNull().default(true),
-  expiresAt: t.timestamp('expires_at', { withTimezone: true }),
-  createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-});
+export const uploadsTable = t.pgTable(
+  'uploads',
+  {
+    id: t.uuid('id').primaryKey(),
+    userId: t
+      .uuid('user_id')
+      .references(() => usersTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    blobId: t
+      .uuid('blob_id')
+      .references(() => blobsTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    fileName: t.varchar('file_name', { length: 50 }).notNull(),
+    isPublic: t.boolean('is_public').notNull().default(true),
+    expiresAt: t.timestamp('expires_at', { withTimezone: true }),
+    createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [t.index().on(table.expiresAt)],
+);
 
 export const uploadsRelations = relations(uploadsTable, ({ one }) => ({
   blob: one(blobsTable, {

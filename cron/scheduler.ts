@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { schedule } from 'node-cron';
 import { Pool } from 'pg';
 import pino from 'pino';
+import { deleteExpiredUploadsJob } from './jobs/delete-expired-uploads.job';
 import { deletePendingBlobsJob } from './jobs/delete-pending-blobs.job';
 import { deleteRejectedBlobsJob } from './jobs/delete-rejected-blobs.job';
 import { deleteUnusedBlobsJob } from './jobs/delete-unused-blobs.job';
@@ -32,6 +33,25 @@ const storageProvider = new R2StorageProvider({
 });
 
 const cronLogger = pino({}, pino.destination('cron/cron.log'));
+
+// ┌────────────── second (optional, 0-59)
+// │ ┌──────────── minute (0-59)
+// │ │ ┌────────── hour (0-23)
+// │ │ │ ┌──────── day of month (1-31)
+// │ │ │ │ ┌────── month (1-12)
+// │ │ │ │ │ ┌──── day of week (0-7, 0 or 7 is Sunday)
+// │ │ │ │ │ │
+// │ │ │ │ │ │
+// * * * * * *
+
+// Every hour at minute 30
+schedule('0 30 * * * *', async () => {
+  const job = 'delete-expired-uploads';
+  cronLogger.info(`Running cron job: ${job}`);
+
+  await deleteExpiredUploadsJob(db, cronLogger.child({ job }));
+  cronLogger.info(`Finished job: ${job}`);
+});
 
 // Every day at 10:00
 schedule('0 0 10 * * *', async () => {
