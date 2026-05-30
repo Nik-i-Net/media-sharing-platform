@@ -11,4 +11,7 @@ export interface StorageProvider {
   getDirectUploadInfo(blob: BlobEntity): Promise<UploadInfo>;
   getDownloadUrl(hash: HashVO): string;
   getPreviewUrl(hash: HashVO): string;
+  batchDelete(
+    blobs: { id: string; hash: HashVO }[],
+  ): Promise<{ deletedIds: string[]; errors?: unknown[] }>;
 }

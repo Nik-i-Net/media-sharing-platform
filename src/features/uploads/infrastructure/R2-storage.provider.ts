@@ -1,4 +1,4 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectsCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { StorageProvider, UploadInfo } from '../application/ports/storage.provider';
 import type { BlobEntity } from '../domain/blob';
@@ -59,5 +59,40 @@ export class R2StorageProvider implements StorageProvider {
 
   getPreviewUrl(hash: HashVO): string {
     return `${this.downloadBaseUrl}/${hash.hex}`;
+  }
+
+  async batchDelete(
+    blobs: { id: string; hash: HashVO }[],
+  ): Promise<{ deletedIds: string[]; errors?: unknown[] }> {
+    if (blobs.length > 1000) throw new Error('Too many blobs to delete at once');
+
+    const blobIdByKey = new Map<string, string>();
+    const objects: { Key: string }[] = Array(blobs.length);
+
+    for (let i = 0; i < blobs.length; i++) {
+      const blob = blobs[i]!;
+      const key = blob.hash.hex;
+      blobIdByKey.set(key, blob.id);
+      objects[i] = { Key: key };
+    }
+
+    const command = new DeleteObjectsCommand({
+      Bucket: this.bucket,
+      Delete: {
+        Objects: objects,
+      },
+    });
+    const commandOutput = await this.S3.send(command);
+
+    const deletedIds: string[] = [];
+    for (const obj of commandOutput.Deleted ?? []) {
+      const id = blobIdByKey.get(obj.Key!);
+      if (id) deletedIds.push(id);
+    }
+
+    return {
+      deletedIds,
+      ...(commandOutput.Errors && { errors: commandOutput.Errors }),
+    };
   }
 }
