@@ -16,7 +16,8 @@
     "psql": "node --env-file=.env.development scripts/psql.js",
     "redis-cli": "node --env-file=.env.development scripts/redis-cli.js",
     "db:push": "drizzle-kit push --config=drizzle-dev.config.ts",
-    "db:seed": "tsx --env-file=.env.development src/shared/db/drizzle/seeds/index.ts"
+    "db:seed": "tsx --env-file=.env.development src/shared/db/drizzle/seeds/index.ts",
+    "cron:start": "tsx --env-file=.env.development cron/scheduler.ts"
   },
   "keywords": [],
   "author": "nikinet",
@@ -33,7 +34,9 @@
     "drizzle-orm": "0.45.2",
     "express": "5.1.0",
     "jose": "6.1.3",
+    "node-cron": "4.2.1",
     "pg": "8.16.3",
+    "pino": "10.3.1",
     "stripe": "22.1.1",
     "swagger-ui-express": "5.0.1",
     "zod": "4.3.5"

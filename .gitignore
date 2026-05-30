@@ -8,3 +8,5 @@ tests/bruno/assets/**
 !tests/bruno/assets/gen-assets.sh
 
 .ignore
+
+cron/cron.log
