@@ -189,5 +189,6 @@ export const subscriptionsTable = t.pgTable(
     t
       .uniqueIndex('unique_subscriptions_provider_providerSubscriptionId')
       .on(table.provider, table.providerSubscriptionId),
+    t.index().on(table.status, table.expiresAt),
   ],
 );

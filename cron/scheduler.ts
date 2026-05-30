@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { schedule } from 'node-cron';
 import { Pool } from 'pg';
 import pino from 'pino';
+import { cancelExpiredSubscriptionsJob } from './jobs/cancel-expired-subscriptions.job';
 import { deleteExpiredUploadsJob } from './jobs/delete-expired-uploads.job';
 import { deletePendingBlobsJob } from './jobs/delete-pending-blobs.job';
 import { deleteRejectedBlobsJob } from './jobs/delete-rejected-blobs.job';
@@ -62,8 +63,17 @@ schedule('0 0 10 * * *', async () => {
   cronLogger.info(`Finished job: ${job}`);
 });
 
-// First day of every month at 10:00
-schedule('0 0 10 1 * *', async () => {
+// Every Monday at 11:00
+schedule('0 0 11 * * 1', async () => {
+  const job = 'cancel-expired-subscriptions';
+  cronLogger.info(`Running cron job: ${job}`);
+
+  await cancelExpiredSubscriptionsJob(db, cronLogger.child({ job }));
+  cronLogger.info(`Finished job: ${job}`);
+});
+
+// First day of every month at 12:00
+schedule('0 0 12 1 * *', async () => {
   const job = 'delete-rejected-blobs';
   cronLogger.info(`Running cron job: ${job}`);
 
@@ -71,8 +81,8 @@ schedule('0 0 10 1 * *', async () => {
   cronLogger.info(`Finished job: ${job}`);
 });
 
-// First day of every month at 11:00
-schedule('0 0 11 1 * *', async () => {
+// First day of every month at 13:00
+schedule('0 0 13 1 * *', async () => {
   const job = 'delete-unused-blobs';
   cronLogger.info(`Running cron job: ${job}`);
 
