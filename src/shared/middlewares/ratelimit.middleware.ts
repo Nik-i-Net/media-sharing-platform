@@ -19,7 +19,6 @@ export function ratelimit(opts: {
   guestLimit?: number;
 }): RequestHandler {
   return async (req, res, next) => {
-    console.log('RATE LIMIT MIDDLEWARE');
     const userId = req.user?.id;
     const isGuest = !userId;
 

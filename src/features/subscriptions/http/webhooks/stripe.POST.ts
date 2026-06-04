@@ -17,6 +17,7 @@ import type { HandleSubscriptionCreatedCommand } from '../../application/handle-
 import { requireDefined } from '@/shared/utils';
 import type { HandleSubscriptionUpdatedCommand } from '../../application/handle-subscription-updated.command';
 
+// TODO: save events to db and process them in a separate worker
 export function registerRoute(webhooksRouter: Router) {
   webhooksRouter.post(
     '/stripe', //
