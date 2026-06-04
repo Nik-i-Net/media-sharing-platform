@@ -39,11 +39,12 @@ app.use(
 app.use(cookieParser());
 app.use(parseJwt);
 app.use(
+  '/api/v1',
   ratelimit({
     scope: 'global',
     windowSec: 60,
     limit: 10, // NOTE: test value
-    guestLimit: 2, // NOTE: test value
+    guestLimit: 5, // NOTE: test value
   }),
 );
 
