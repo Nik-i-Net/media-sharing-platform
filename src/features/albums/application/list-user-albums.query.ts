@@ -6,8 +6,8 @@ import { desc, eq } from 'drizzle-orm';
 
 export interface ListUserAlbumsQuery {
   userId: string;
-  page?: number;
-  limit?: number;
+  page?: number | undefined;
+  limit?: number | undefined;
 }
 
 export class ListUserAlbumsQueryHandler {

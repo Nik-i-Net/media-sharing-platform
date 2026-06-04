@@ -42,11 +42,11 @@ export function errorHandler(
   try {
     if (!(err instanceof BaseError)) throw err;
 
-    console.error(err.name);
-    console.error('Code:', err.code);
-    console.error('Message:', err.message);
-    console.error('Stack:', err.stack);
-    console.error('Cause:', err.cause);
+    // console.error(err.name);
+    // console.error('Code:', err.code);
+    // console.error('Message:', err.message);
+    // console.error('Stack:', err.stack);
+    // console.error('Cause:', err.cause);
 
     if (
       err instanceof BadRequestError || //

@@ -7,6 +7,8 @@ import {
 import { requireAuth } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
+import { validateRequest } from '@/shared/utils/validate-request';
+import { isoDateSchema } from '@/shared/utils/zod';
 import type { Request, Response } from 'express';
 import type { Router } from 'express-serve-static-core';
 import z from 'zod';
@@ -15,24 +17,33 @@ export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
     '/', //
     requireAuth,
-    async (req: Request, res: Response<z.infer<typeof ResponseSchema>>) => {
+    async (req: Request, res: Response<z.input<typeof ResponseSchema>>) => {
+      const { page, limit } = validateRequest(req.query, RequestQueriesSchema, 'query');
       const result = await listUserAlbums.execute({
         userId: requireDefined(req.user?.id),
-        page: Number(req.query.page),
-        limit: Number(req.query.limit),
+        page,
+        limit,
       });
-      const response = ResponseSchema.decode(result);
+      const response = ResponseSchema.encode(result);
       res.status(200).json(response);
     },
   );
 }
 
 const RequestQueriesSchema = z.object({
-  page: z.string().regex(/^\d+$/, { error: 'Not a positive number' }).optional(),
-  limit: z.string().regex(/^\d+$/, { error: 'Not a positive number' }).optional(),
+  page: z
+    .string()
+    .regex(/^\d+$/, { error: 'Not a positive number' })
+    .transform((v) => Number(v))
+    .optional(),
+  limit: z
+    .string()
+    .regex(/^\d+$/, { error: 'Not a positive number' })
+    .transform((v) => Number(v))
+    .optional(),
 });
 
-const ResponseSchema = z
+export const ResponseSchema = z
   .object({
     data: z.array(
       z.object({
@@ -40,7 +51,7 @@ const ResponseSchema = z
         name: z.string(),
         isPublic: z.boolean(),
         totalItems: z.int().nonnegative(),
-        createdAt: z.date(),
+        createdAt: isoDateSchema,
       }),
     ),
     meta: z.object({
@@ -50,7 +61,7 @@ const ResponseSchema = z
       totalPages: z.int().positive().meta({ example: 3 }),
     }),
   })
-  .brand<'Response'>();
+  .brand<'Response', 'in'>();
 
 openapiRegistry.registerPath({
   method: 'get',
