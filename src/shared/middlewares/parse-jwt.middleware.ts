@@ -15,6 +15,12 @@ export async function parseJwt(req: Request, _res: Response, next: NextFunction)
     return next();
   }
 
+  if (['test', 'development'].includes(ENV.NODE_ENV) && token.startsWith('test-token:')) {
+    const [_, userId] = token.split(':');
+    req.user = { id: userId! };
+    return next();
+  }
+
   try {
     const { payload } = await jwtVerify(token, JWKS, {
       issuer: ENV.JWT_ISSUER + '/',
