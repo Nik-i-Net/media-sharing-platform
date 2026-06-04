@@ -4,8 +4,12 @@ dist/
 .env*
 !.env.example
 
-tests/bruno/assets/**
-!tests/bruno/assets/gen-assets.sh
+tests/assets/**
+!tests/assets/gen-assets.sh
+!tests/assets/upload-to-r2.ts
+!tests/assets/image.png
+!tests/assets/image.jpg
+!tests/assets/audio.ogg
 
 .ignore
 
