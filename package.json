@@ -6,18 +6,19 @@
   "scripts": {
     "dev": "tsx watch --env-file=.env.development src/server.ts",
     "debug": "tsx --inspect --env-file=.env.development src/server.ts",
-    "test": "vitest",
+    "test:unit": "vitest --project unit",
+    "test:int": "vitest --project integration",
+    "test:e2e": "vitest --project e2e",
     "test:gen-assets": "bash tests/assets/gen-assets.sh",
     "test:upload-assets-to-r2": "tsx --env-file=.env.test tests/assets/upload-to-r2.ts",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "typecheck:tsgo": "tsgo --noEmit",
-    "check": "pnpm lint && pnpm typecheck && pnpm test",
     "services:start": "docker compose --env-file .env.development up -d",
     "services:stop": "docker compose --env-file .env.development stop",
     "psql": "node --env-file=.env.development scripts/psql.js",
     "redis-cli": "node --env-file=.env.development scripts/redis-cli.js",
-    "db:push": "drizzle-kit push --config=drizzle-dev.config.ts",
+    "db:push": "drizzle-kit push --config=drizzle.dev.config.ts",
     "db:seed": "tsx --env-file=.env.development src/shared/db/drizzle/seeds/index.ts",
     "cron:start": "tsx --env-file=.env.development cron/scheduler.ts"
   },
@@ -45,20 +46,24 @@
   },
   "devDependencies": {
     "@eslint/js": "9.38.0",
+    "@faker-js/faker": "10.4.0",
     "@types/cookie-parser": "1.4.10",
     "@types/cors": "2.8.19",
     "@types/express": "5.0.3",
     "@types/express-serve-static-core": "5.1.1",
     "@types/node": "24.8.1",
     "@types/pg": "8.20.0",
+    "@types/supertest": "7.2.0",
     "@types/swagger-ui-express": "4.1.8",
     "@typescript/native-preview": "7.0.0-dev.20260501.1",
     "drizzle-kit": "0.31.10",
     "eslint": "9.38.0",
     "globals": "16.4.0",
     "prettier": "3.6.2",
+    "supertest": "7.2.2",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.46.2"
+    "typescript-eslint": "8.46.2",
+    "vitest": "4.1.6"
   }
 }

@@ -1,0 +1,25 @@
+name: test
+
+services:
+  postgres:
+    image: postgres:18.2
+    container_name: postgres-test
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - backend
+
+  redis:
+    image: redis:8.8.0
+    container_name: redis-test
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - backend
+
+networks:
+  backend:

@@ -21,7 +21,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  // "include": ["src/**/*", "tests/**/*"],
-  "include": ["src/**/*", "cron/**/*"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "cron/**/*.ts"],
   "exclude": ["node_modules", "dist", "external", "scripts"]
 }
