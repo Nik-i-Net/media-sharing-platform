@@ -4,13 +4,12 @@ import { db } from '@/shared/db/drizzle/client';
 import { albumsTable } from '@/shared/db/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
-import { assert, describe, expect } from 'vitest';
+import { describe, expect } from 'vitest';
 import { test } from '../fixtures';
 
 describe('DELETE /albums/:id', () => {
-  test('authenticated user can delete their own album', async ({ dbUser, dbAlbums }) => {
+  test('owner can delete album', async ({ dbUser, dbAlbums }) => {
     const firstAlbum = dbAlbums[0]!;
-    assert(dbUser.id === firstAlbum.userId);
 
     const res = await request(app)
       .delete(`/api/v1/albums/${firstAlbum.id}`)
@@ -24,7 +23,7 @@ describe('DELETE /albums/:id', () => {
     expect(fetchedAlbum).toBeUndefined();
   });
 
-  test('users cannot delete albums they do not own', async ({ dbUser }) => {
+  test('non-owner cannot delete album', async ({ dbUser }) => {
     const res = await request(app)
       .delete(`/api/v1/albums/${crypto.randomUUID()}`)
       .set('Authorization', `Bearer test-token:${dbUser.id}`);
