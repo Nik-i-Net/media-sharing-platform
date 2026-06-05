@@ -1,3 +1,5 @@
+import { createAlbum } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -6,11 +8,10 @@ import {
 import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
+import type { Response } from 'express';
 import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
 import type { CreateAlbumCommand } from '../application/create-album.command';
-import type { Response } from 'express';
-import { createAlbum } from '@/app/di';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.post(
@@ -25,7 +26,7 @@ export function registerRoute(uploadsRouter: Router) {
       };
       const albumId = await createAlbum.execute(cmd);
       const response = ResponseSchema.decode({ data: { id: albumId } });
-      res.status(201).json(response);
+      res.status(StatusCodes.CREATED).json(response);
     },
   );
 }
@@ -61,7 +62,7 @@ openapiRegistry.registerPath({
   },
   tags: ['Albums'],
   responses: {
-    201: {
+    [StatusCodes.CREATED]: {
       description: 'Returns `id` of the newly created album',
       content: { 'application/json': { schema: ResponseSchema } },
     },

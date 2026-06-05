@@ -1,4 +1,5 @@
 import { initiateUploads } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -24,7 +25,7 @@ export function registerRoute(uploadsRouter: Router) {
       }));
       const result = await initiateUploads.execute({ userId, albumId, files });
       const response = ResponseSchema.decode({ data: result });
-      res.json(response);
+      res.status(StatusCodes.CREATED).json(response);
     },
   );
 }
@@ -128,7 +129,7 @@ Provide the \`albumId\` parameter to automatically link the files to the album.`
   },
   tags: ['Uploads', 'R2'],
   responses: {
-    200: {
+    [StatusCodes.CREATED]: {
       description: 'Upload information for requested files',
       content: { 'application/json': { schema: ResponseSchema } },
     },
