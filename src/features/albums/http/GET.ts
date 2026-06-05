@@ -53,7 +53,7 @@ const RequestQueriesSchema = z.object({
     .optional(),
 });
 
-export const ResponseSchema = z
+const ResponseSchema = z
   .object({
     data: z.array(
       z.object({

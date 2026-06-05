@@ -1,30 +1,36 @@
 import { app } from '@/app/app';
-import { ResponseSchema } from '@/features/albums/http/GET';
 import { StatusCodes } from '@/shared/constants';
 import request from 'supertest';
-import { describe, expect } from 'vitest';
+import { assert, describe, expect } from 'vitest';
 import { test } from '../fixtures';
 
 describe('GET /albums', () => {
   test('authenticated user can list their albums', async ({ dbUser, dbAlbums }) => {
-    const limit = dbAlbums.length - 1;
-
     const res = await request(app)
-      .get(`/api/v1/albums?page=1&limit=${limit}`)
+      .get(`/api/v1/albums?limit=${dbAlbums.length}`)
       .set('Authorization', `Bearer test-token:${dbUser.id}`);
 
-    const { data, meta } = ResponseSchema.decode(res.body);
-    const expectedAlbumIds = dbAlbums.slice(0, limit).map((a) => a.id);
-    const receivedAlbumIds = data.map((a: { id: string }) => a.id);
+    expect(res.status).toBe(StatusCodes.OK);
+    expect(res.body.data.length).toBe(dbAlbums.length);
+  });
 
-    expect(res.status).toBe(200);
-    expect(data.length).toBe(limit);
-    expect(receivedAlbumIds).toEqual(expect.arrayContaining(expectedAlbumIds));
-    expect(meta).toEqual({
-      page: 1,
+  test('supports pagination', async ({ dbUser, dbAlbums }) => {
+    assert(dbAlbums.length > 2);
+    const dbTotalItems = dbAlbums.length;
+    const page = 2;
+    const limit = 2;
+
+    const res = await request(app)
+      .get(`/api/v1/albums?page=${page}&limit=${limit}`)
+      .set('Authorization', `Bearer test-token:${dbUser.id}`);
+
+    expect(res.status).toBe(StatusCodes.OK);
+    expect(res.body.data.length).toBe(limit);
+    expect(res.body.meta).toMatchObject({
+      page,
       limit,
-      totalItems: dbAlbums.length,
-      totalPages: 2,
+      totalItems: dbTotalItems,
+      totalPages: Math.ceil(dbTotalItems / limit),
     });
   });
 

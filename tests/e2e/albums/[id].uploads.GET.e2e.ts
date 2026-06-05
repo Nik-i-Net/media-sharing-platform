@@ -10,14 +10,13 @@ import { test } from '../fixtures';
 describe('GET /albums/:id/uploads', () => {
   test('owner sees all uploads with additional info', async ({ dbUser, dbUploads, dbAlbums }) => {
     const firstAlbum = dbAlbums[0]!;
-    const limit = Math.ceil(dbUploads.length / 2);
 
     const res = await request(app)
-      .get(`/api/v1/albums/${firstAlbum.id}/uploads?page=1&limit=${limit}`)
+      .get(`/api/v1/albums/${firstAlbum.id}/uploads?limit=${dbUploads.length}`)
       .set('Authorization', `Bearer test-token:${dbUser.id}`);
 
     expect(res.status).toBe(StatusCodes.OK);
-    expect(res.body.data.length).toBe(limit);
+    expect(res.body.data.length).toBe(dbUploads.length);
 
     const hasPrivateUploads = res.body.data.some((u: { isPublic: boolean }) => !u.isPublic);
     expect(hasPrivateUploads).toBe(true);
@@ -25,12 +24,25 @@ describe('GET /albums/:id/uploads', () => {
     expect(res.body.data[0].isPublic).toBeDefined();
     expect(res.body.data[0].expiresAt).toBeDefined();
     expect(res.body.data[0].createdAt).toBeDefined();
+  });
 
+  test('supports pagination', async ({ dbUser, dbUploads, dbAlbums }) => {
+    assert(dbUploads.length > 2);
+    const dbTotalItems = dbUploads.length;
+    const page = 2;
+    const limit = 2;
+
+    const res = await request(app)
+      .get(`/api/v1/albums/${dbAlbums[0]!.id}/uploads?page=${page}&limit=${limit}`)
+      .set('Authorization', `Bearer test-token:${dbUser.id}`);
+
+    expect(res.status).toBe(StatusCodes.OK);
+    expect(res.body.data.length).toBe(limit);
     expect(res.body.meta).toMatchObject({
-      page: 1,
+      page,
       limit,
-      totalItems: dbUploads.length,
-      totalPages: 2,
+      totalItems: dbTotalItems,
+      totalPages: Math.ceil(dbTotalItems / limit),
     });
   });
 
