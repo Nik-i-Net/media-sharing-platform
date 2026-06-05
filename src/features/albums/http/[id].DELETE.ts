@@ -1,7 +1,6 @@
 import { deleteAlbum } from '@/app/di';
 import { StatusCodes } from '@/shared/constants';
 import {
-  ForbiddenErrorResponse,
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
@@ -12,6 +11,7 @@ import { requireDefined } from '@/shared/utils';
 import type { Response } from 'express';
 import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
+import { AlbumAccessDeniedErrorResponse } from '../errors/album-access-denied.error';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.delete(
@@ -23,7 +23,7 @@ export function registerRoute(uploadsRouter: Router) {
         albumId: req.params.id,
         userId: requireDefined(req.user?.id),
       });
-      res.sendStatus(204);
+      res.sendStatus(StatusCodes.NO_CONTENT);
     },
   );
 }
@@ -45,7 +45,7 @@ openapiRegistry.registerPath({
   responses: {
     [StatusCodes.NO_CONTENT]: { description: 'Successfully deleted the album' },
     ...UnauthorizedErrorResponse,
-    ...ForbiddenErrorResponse,
+    ...AlbumAccessDeniedErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },
