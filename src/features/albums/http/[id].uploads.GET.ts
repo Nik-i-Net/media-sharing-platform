@@ -1,27 +1,35 @@
 import { listAlbumUploads } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
 import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { validateRequest } from '@/shared/utils/validate-request';
 import type { Request, Response, Router } from 'express';
 import { z } from 'zod';
-import type { ListAlbumUploadsQuery } from '../application/list-album-uploads.query';
 import { AlbumAccessDeniedErrorResponse } from '../errors/album-access-denied.error';
 
 export function registerRoute(albumsRouter: Router) {
   albumsRouter.get(
     '/:id/uploads', //
-    async (req: Request, res: Response<z.infer<typeof ResponseSchema>>) => {
+    async (req: Request, res: Response<z.input<typeof ResponseSchema>>) => {
       const validatedParams = validateRequest(req.params, RequestParamsSchema, 'params');
       const validatedQuery = validateRequest(req.query, RequestQueriesSchema, 'query');
 
-      const query: ListAlbumUploadsQuery = { albumId: validatedParams.id };
-      if (req.user?.id) query.userId = req.user.id;
-      if (validatedQuery.page) query.page = Number(validatedQuery.page);
-      if (validatedQuery.limit) query.limit = Number(validatedQuery.limit);
+      const userId = req.user?.id;
+      const albumId = validatedParams.id;
+      const page = Number(validatedQuery.page ?? 1);
+      const limit = Number(validatedQuery.limit ?? 20);
 
-      const result = await listAlbumUploads.execute(query);
-      const response = ResponseSchema.decode(result);
-      res.status(200).json(response);
+      const result = await listAlbumUploads.execute({ userId, albumId, page, limit });
+      const response = ResponseSchema.encode({
+        data: result.data,
+        meta: {
+          page,
+          limit,
+          totalItems: result.totalItems,
+          totalPages: Math.ceil(result.totalItems / limit) || 1,
+        },
+      });
+      res.status(StatusCodes.OK).json(response);
     },
   );
 }
@@ -54,7 +62,7 @@ const ResponseSchema = z
       totalPages: z.int().positive().meta({ example: 3 }),
     }),
   })
-  .brand<'Response'>();
+  .brand<'Response', 'in'>();
 
 openapiRegistry.registerPath({
   method: 'get',
@@ -74,7 +82,7 @@ Owners will see all their uploads, while other users will only see public upload
   },
   tags: ['Albums', 'Uploads'],
   responses: {
-    200: {
+    [StatusCodes.OK]: {
       description: 'A paginated list of uploads metadata in an album.',
       content: { 'application/json': { schema: ResponseSchema } },
     },

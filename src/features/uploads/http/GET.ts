@@ -1,3 +1,5 @@
+import { listUserUploads } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -6,28 +8,33 @@ import {
 import { requireAuth } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
-import type { Request, Response, Router } from 'express';
-import z from 'zod';
-import type { ListUserUploadsQuery } from '../application/list-user-uploads.query';
 import { validateRequest } from '@/shared/utils/validate-request';
-import { listUserUploads } from '@/app/di';
+import { isoDateSchema } from '@/shared/utils/zod';
+import type { Request, Response, Router } from 'express';
+import { z } from 'zod';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
     '/', //
     requireAuth,
-    async (req: UnknownRequest, res: Response<z.infer<typeof ResponseSchema>>) => {
+    async (req: UnknownRequest, res: Response<z.input<typeof ResponseSchema>>) => {
       const validated = validateRequest(req.query, RequestQueriesSchema, 'query');
 
-      const query: ListUserUploadsQuery = {
-        userId: requireDefined(req.user?.id),
-        page: Number(validated.page),
-        limit: Number(validated.limit),
-      };
+      const userId = requireDefined(req.user?.id);
+      const page = Number(validated.page ?? 1);
+      const limit = Number(validated.limit ?? 20);
 
-      const result = await listUserUploads.execute(query);
-      const response = ResponseSchema.decode(result);
-      res.status(200).json(response);
+      const result = await listUserUploads.execute({ userId, page, limit });
+      const response = ResponseSchema.encode({
+        data: result.data,
+        meta: {
+          page,
+          limit,
+          totalItems: result.totalItems,
+          totalPages: Math.ceil(result.totalItems / limit) || 1,
+        },
+      });
+      res.status(StatusCodes.OK).json(response);
     },
   );
 }
@@ -49,8 +56,8 @@ const ResponseSchema = z
         sizeBytes: z.number(),
         previewUrl: z.string(),
         isPublic: z.boolean(),
-        expiresAt: z.date().nullable(),
-        createdAt: z.date(),
+        expiresAt: isoDateSchema.nullable(),
+        createdAt: isoDateSchema,
       }),
     ),
     meta: z.object({
@@ -60,7 +67,7 @@ const ResponseSchema = z
       totalPages: z.int().positive().meta({ example: 3 }),
     }),
   })
-  .brand<'Response'>();
+  .brand<'Response', 'in'>();
 
 openapiRegistry.registerPath({
   method: 'get',
@@ -77,7 +84,7 @@ openapiRegistry.registerPath({
   },
   tags: ['Uploads'],
   responses: {
-    200: {
+    [StatusCodes.OK]: {
       description: 'A paginated list of uploads metadata.',
       content: { 'application/json': { schema: ResponseSchema } },
     },

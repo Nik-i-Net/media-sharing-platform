@@ -6,8 +6,8 @@ import { desc, eq } from 'drizzle-orm';
 
 export interface ListUserAlbumsQuery {
   userId: string;
-  page?: number | undefined;
-  limit?: number | undefined;
+  page: number;
+  limit: number;
 }
 
 export class ListUserAlbumsQueryHandler {
@@ -16,7 +16,7 @@ export class ListUserAlbumsQueryHandler {
     private readonly userCountersRepo: UserCountersRepository,
   ) {}
 
-  async execute({ userId, page = 1, limit = 20 }: ListUserAlbumsQuery): Promise<PaginatedResult> {
+  async execute({ userId, page, limit }: ListUserAlbumsQuery): Promise<PaginatedResult> {
     if (limit > 50) throw new Error('Max limit is 50');
 
     const albumsPromise = this.db
@@ -45,12 +45,7 @@ export class ListUserAlbumsQueryHandler {
 
     return {
       data: albums,
-      meta: {
-        page,
-        limit,
-        totalItems: counters.totalAlbums,
-        totalPages: Math.ceil(counters.totalAlbums / limit) || 1,
-      },
+      totalItems: counters.totalAlbums,
     };
   }
 }
@@ -64,10 +59,5 @@ interface PaginatedResult {
     createdAt: Date;
   }[];
 
-  meta: {
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  };
+  totalItems: number;
 }

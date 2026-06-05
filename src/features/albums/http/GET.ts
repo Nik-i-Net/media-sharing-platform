@@ -1,4 +1,5 @@
 import { listUserAlbums } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
 import {
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
@@ -11,21 +12,30 @@ import { validateRequest } from '@/shared/utils/validate-request';
 import { isoDateSchema } from '@/shared/utils/zod';
 import type { Request, Response } from 'express';
 import type { Router } from 'express-serve-static-core';
-import z from 'zod';
+import { z } from 'zod';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
     '/', //
     requireAuth,
     async (req: Request, res: Response<z.input<typeof ResponseSchema>>) => {
-      const { page, limit } = validateRequest(req.query, RequestQueriesSchema, 'query');
-      const result = await listUserAlbums.execute({
-        userId: requireDefined(req.user?.id),
-        page,
-        limit,
+      const validated = validateRequest(req.query, RequestQueriesSchema, 'query');
+
+      const userId = requireDefined(req.user?.id);
+      const page = Number(validated.page ?? 1);
+      const limit = Number(validated.limit ?? 20);
+
+      const result = await listUserAlbums.execute({ userId, page, limit });
+      const response = ResponseSchema.encode({
+        data: result.data,
+        meta: {
+          page,
+          limit,
+          totalItems: result.totalItems,
+          totalPages: Math.ceil(result.totalItems / limit) || 1,
+        },
       });
-      const response = ResponseSchema.encode(result);
-      res.status(200).json(response);
+      res.status(StatusCodes.OK).json(response);
     },
   );
 }
@@ -76,7 +86,7 @@ openapiRegistry.registerPath({
   },
   tags: ['Albums'],
   responses: {
-    200: {
+    [StatusCodes.OK]: {
       description: 'A paginated list of albums.',
       content: { 'application/json': { schema: ResponseSchema } },
     },

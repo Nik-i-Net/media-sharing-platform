@@ -7,8 +7,8 @@ import type { StorageProvider } from './ports/storage.provider';
 
 export interface ListUserUploadsQuery {
   userId: string;
-  page?: number;
-  limit?: number;
+  page: number;
+  limit: number;
 }
 
 export class ListUserUploadsQueryHandler {
@@ -18,7 +18,7 @@ export class ListUserUploadsQueryHandler {
     private readonly storageProvider: StorageProvider,
   ) {}
 
-  async execute({ userId, page = 1, limit = 20 }: ListUserUploadsQuery): Promise<PaginatedResult> {
+  async execute({ userId, page, limit }: ListUserUploadsQuery): Promise<PaginatedResult> {
     const uploadsPromise = this.db
       .select({
         id: uploadsTable.id,
@@ -59,12 +59,7 @@ export class ListUserUploadsQueryHandler {
         expiresAt: upload.expiresAt,
         createdAt: upload.createdAt,
       })),
-      meta: {
-        page,
-        limit,
-        totalItems: counters.totalUploads,
-        totalPages: Math.ceil(counters.totalUploads / limit) || 1,
-      },
+      totalItems: counters.totalUploads,
     };
   }
 }
@@ -81,10 +76,5 @@ interface PaginatedResult {
     createdAt: Date;
   }[];
 
-  meta: {
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  };
+  totalItems: number;
 }

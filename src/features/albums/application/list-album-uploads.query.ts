@@ -10,10 +10,10 @@ import { and, count, desc, eq } from 'drizzle-orm';
 import { AlbumAccessDeniedError } from '../errors/album-access-denied.error';
 
 export interface ListAlbumUploadsQuery {
+  userId?: string | undefined;
   albumId: string;
-  userId?: string;
-  page?: number;
-  limit?: number;
+  page: number;
+  limit: number;
 }
 
 export class ListAlbumUploadsQueryHandler {
@@ -23,7 +23,7 @@ export class ListAlbumUploadsQueryHandler {
   ) {}
 
   async execute(query: ListAlbumUploadsQuery): Promise<PaginatedResult> {
-    const { userId, albumId, page = 1, limit = 20 } = query;
+    const { userId, albumId, page, limit } = query;
 
     const album = await this.db.query.albumsTable.findFirst({
       columns: { userId: true, isPublic: true },
@@ -78,13 +78,6 @@ export class ListAlbumUploadsQueryHandler {
 
     const [uploads, totalItems] = await Promise.all([uploadsPromise, totalItemsPromise]);
 
-    const meta = {
-      page,
-      limit,
-      totalItems,
-      totalPages: Math.ceil(totalItems / limit) || 1,
-    };
-
     if (isOwner) {
       return {
         data: uploads.map((u) => ({
@@ -97,7 +90,7 @@ export class ListAlbumUploadsQueryHandler {
           expiresAt: u.expiresAt!,
           createdAt: u.createdAt!,
         })),
-        meta,
+        totalItems,
       };
     } else {
       return {
@@ -108,7 +101,7 @@ export class ListAlbumUploadsQueryHandler {
           sizeBytes: u.sizeBytes,
           previewUrl: this.storageProvider.getPreviewUrl(u.hash),
         })),
-        meta,
+        totalItems,
       };
     }
   }
@@ -130,10 +123,5 @@ interface PrivateInfo extends PublicInfo {
 
 interface PaginatedResult {
   data: PublicInfo[] | PrivateInfo[];
-  meta: {
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  };
+  totalItems: number;
 }
