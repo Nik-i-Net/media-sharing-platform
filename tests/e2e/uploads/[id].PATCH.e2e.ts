@@ -1,59 +1,59 @@
 import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
 import { db } from '@/shared/db/drizzle/client';
-import { albumsTable } from '@/shared/db/drizzle/schema';
+import { uploadsTable } from '@/shared/db/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { assert, describe, expect } from 'vitest';
 import { test } from '../fixtures';
 
-describe('PATCH /albums/:id', () => {
-  test('owner can update album', async ({ dbUser, dbAlbums }) => {
-    const firstAlbum = dbAlbums[0]!;
-    const newName = 'new-name';
+describe('PATCH /uploads/:id', () => {
+  test('owner can update uploads', async ({ dbUser, dbUploads }) => {
+    const firstUpload = dbUploads[0]!;
+    const newFileName = 'new-file-name';
 
     const res = await request(app)
-      .patch(`/api/v1/albums/${firstAlbum.id}`)
-      .send({ name: newName })
+      .patch(`/api/v1/uploads/${firstUpload.id}`)
+      .send({ fileName: newFileName })
       .set('Authorization', `Bearer test-token:${dbUser.id}`);
 
     expect(res.status).toBe(StatusCodes.NO_CONTENT);
 
-    const fetchedAlbum = await db.query.albumsTable.findFirst({
-      where: eq(albumsTable.id, firstAlbum.id),
+    const fetchedUpload = await db.query.uploadsTable.findFirst({
+      where: eq(uploadsTable.id, firstUpload.id),
     });
-    expect(fetchedAlbum).toMatchObject({
+    expect(fetchedUpload).toMatchObject({
       userId: dbUser.id,
-      name: newName,
-      isPublic: firstAlbum.isPublic,
+      fileName: newFileName,
+      isPublic: firstUpload.isPublic,
     });
   });
 
-  test('non-owner cannot update album', async ({ dbAlbums }) => {
-    const firstAlbum = dbAlbums[0]!;
-    const initialName = firstAlbum.name;
+  test('non-owner cannot update uploads', async ({ dbUploads }) => {
+    const firstUpload = dbUploads[0]!;
+    const initialFileName = firstUpload.fileName;
 
     const nonOwnerId = crypto.randomUUID();
-    assert(nonOwnerId !== firstAlbum.userId);
+    assert(nonOwnerId !== firstUpload.userId);
 
     const res = await request(app)
-      .patch(`/api/v1/albums/${firstAlbum.id}`)
-      .send({ name: 'new-name' })
+      .patch(`/api/v1/uploads/${firstUpload.id}`)
+      .send({ name: 'new-file-name' })
       .set('Authorization', `Bearer test-token:${nonOwnerId}`);
 
     expect(res.status).toBe(StatusCodes.FORBIDDEN);
-    expect(res.body.error.code).toBe('ALBUM_ACCESS_DENIED');
+    expect(res.body.error.code).toBe('FORBIDDEN');
 
-    const fetchedAlbum = await db.query.albumsTable.findFirst({
-      where: eq(albumsTable.id, firstAlbum.id),
+    const fetchedUpload = await db.query.uploadsTable.findFirst({
+      where: eq(uploadsTable.id, firstUpload.id),
     });
-    expect(fetchedAlbum?.name).toBe(initialName);
+    expect(fetchedUpload?.fileName).toBe(initialFileName);
   });
 
   test('returns validation error for invalid request body', async ({ dbUser }) => {
     const res = await request(app)
-      .patch(`/api/v1/albums/${crypto.randomUUID()}`)
-      .send({ name: true, isPublic: 'not' })
+      .patch(`/api/v1/uploads/${crypto.randomUUID()}`)
+      .send({ fileName: true, isPublic: 'not' })
       .set('Authorization', `Bearer test-token:${dbUser.id}`);
 
     expect(res.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
@@ -64,8 +64,8 @@ describe('PATCH /albums/:id', () => {
 
   test('unauthenticated request returns UNAUTHORIZED', async () => {
     const res = await request(app)
-      .patch(`/api/v1/albums/${crypto.randomUUID()}`)
-      .send({ name: 'new-name' });
+      .patch(`/api/v1/uploads/${crypto.randomUUID()}`)
+      .send({ name: 'new-file-name' });
 
     expect(res.status).toBe(StatusCodes.UNAUTHORIZED);
     expect(res.body.error.code).toBe('UNAUTHORIZED');
