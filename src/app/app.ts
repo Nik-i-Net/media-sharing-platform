@@ -38,15 +38,17 @@ app.use(
 );
 app.use(cookieParser());
 app.use(parseJwt);
-app.use(
-  '/api/v1',
-  ratelimit({
-    scope: 'global',
-    windowSec: 60,
-    limit: 10, // NOTE: test value
-    guestLimit: 5, // NOTE: test value
-  }),
-);
+if (ENV.NODE_ENV !== 'test') {
+  app.use(
+    '/api/v1',
+    ratelimit({
+      scope: 'global',
+      windowSec: 60,
+      limit: 10, // NOTE: test value
+      guestLimit: 5, // NOTE: test value
+    }),
+  );
+}
 
 app.use('/api/v1', router);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
