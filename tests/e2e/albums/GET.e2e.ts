@@ -1,15 +1,12 @@
 import { app } from '@/app/app';
 import { ResponseSchema } from '@/features/albums/http/GET';
 import { StatusCodes } from '@/shared/constants';
-import assert from 'node:assert';
 import request from 'supertest';
 import { describe, expect } from 'vitest';
 import { test } from '../fixtures';
 
 describe('GET /albums', () => {
-  test('returns paginated list of albums for authenticated user', async ({ dbUser, dbAlbums }) => {
-    assert(dbAlbums.length > 1);
-
+  test('authenticated user can list their albums', async ({ dbUser, dbAlbums }) => {
     const limit = dbAlbums.length - 1;
 
     const res = await request(app)
@@ -17,12 +14,12 @@ describe('GET /albums', () => {
       .set('Authorization', `Bearer test-token:${dbUser.id}`);
 
     const { data, meta } = ResponseSchema.decode(res.body);
-    const expectedIds = dbAlbums.slice(0, limit).map((a) => a.id);
-    const receivedIds = data.map((a: { id: string }) => a.id);
+    const expectedAlbumIds = dbAlbums.slice(0, limit).map((a) => a.id);
+    const receivedAlbumIds = data.map((a: { id: string }) => a.id);
 
     expect(res.status).toBe(200);
     expect(data.length).toBe(limit);
-    expect(receivedIds).toEqual(expect.arrayContaining(expectedIds));
+    expect(receivedAlbumIds).toEqual(expect.arrayContaining(expectedAlbumIds));
     expect(meta).toEqual({
       page: 1,
       limit,
@@ -31,7 +28,7 @@ describe('GET /albums', () => {
     });
   });
 
-  test('returns Unauthorized when token is missing or invalid', async () => {
+  test('unauthenticated request returns UNAUTHORIZED', async () => {
     const res = await request(app).get(`/api/v1/albums?page=1&limit=10`);
 
     expect(res.status).toBe(StatusCodes.UNAUTHORIZED);

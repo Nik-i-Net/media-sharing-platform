@@ -9,7 +9,6 @@ const envFile = '.env.test';
 
 export async function setup() {
   console.log('Setting up test environment');
-  console.log('Loading environment variables from .env.test');
   loadEnvFile(envFile);
 
   console.log('Starting services');
@@ -31,6 +30,7 @@ export async function setup() {
 
 export async function teardown() {
   console.log('Tearing down test environment');
+  await sleep(1000);
   await execAsync(`docker compose -f docker-compose.test.yml --env-file ${envFile} down`);
 }
 
@@ -40,12 +40,11 @@ export async function waitForService(checkCommand: string, serviceName: string) 
   while (attempts < 10) {
     try {
       await execAsync(checkCommand);
-      await sleep(1000);
       console.log(`${serviceName} started`);
       return;
     } catch {
       attempts += 1;
-      await sleep(500);
+      await sleep(1000);
     }
   }
 

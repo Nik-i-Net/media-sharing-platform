@@ -11,9 +11,8 @@ import {
 } from '@/shared/db/drizzle/schema';
 import { faker } from '@faker-js/faker';
 import { eq, inArray, type InferInsertModel } from 'drizzle-orm';
-import { readFile } from 'node:fs/promises';
 import { test as baseTest } from 'vitest';
-import { type UploadedBlobsMetadata, uploadedBlobsMetadataPath } from '../assets/upload-to-r2';
+import { randomBytes } from 'node:crypto';
 
 export const test = baseTest
   // eslint-disable-next-line no-empty-pattern
@@ -51,14 +50,11 @@ export const test = baseTest
   })
 
   .extend('dbUploads', async ({ dbUser }, { onCleanup }) => {
-    const fileContent = await readFile(uploadedBlobsMetadataPath, 'utf-8');
-    const uploadedBlobs = JSON.parse(fileContent) as UploadedBlobsMetadata;
-
-    const blobs: InferInsertModel<typeof blobsTable>[] = uploadedBlobs.map((blob) => ({
+    const blobs: InferInsertModel<typeof blobsTable>[] = Array.from({ length: 5 }, () => ({
       id: crypto.randomUUID(),
-      hash: HashVO.fromHex(blob.sha256Hex),
-      mimeType: blob.mimeType,
-      sizeBytes: blob.sizeBytes,
+      hash: new HashVO(randomBytes(32)),
+      mimeType: faker.system.mimeType().slice(0, 20),
+      sizeBytes: faker.number.int({ min: 100, max: MEMORY_UNITS.MiB }),
       status: 'ready',
     }));
 
