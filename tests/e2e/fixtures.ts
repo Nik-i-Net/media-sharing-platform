@@ -11,8 +11,8 @@ import {
 } from '@/shared/db/drizzle/schema';
 import { faker } from '@faker-js/faker';
 import { eq, inArray, type InferInsertModel } from 'drizzle-orm';
-import { test as baseTest } from 'vitest';
 import { randomBytes } from 'node:crypto';
+import { test as baseTest } from 'vitest';
 
 export const test = baseTest
   // eslint-disable-next-line no-empty-pattern
@@ -38,7 +38,7 @@ export const test = baseTest
         min: 20 * MEMORY_UNITS.MiB,
         max: 50 * MEMORY_UNITS.MiB,
       }),
-      totalUploads: 3,
+      totalUploads: 5,
       totalAlbums: 5,
     });
 

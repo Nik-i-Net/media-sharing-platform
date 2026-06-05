@@ -14,7 +14,7 @@ describe('GET /albums/:id', () => {
       .get(`/api/v1/albums/${albumId}`)
       .set('Authorization', `Bearer test-token:${ownerId}`);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(StatusCodes.OK);
     expect(res.body.data).toMatchObject({
       id: albumId,
       name: expect.any(String),
@@ -34,7 +34,7 @@ describe('GET /albums/:id', () => {
       .get(`/api/v1/albums/${publicAlbum.id}`)
       .set('Authorization', `Bearer test-token:${userId}`);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(StatusCodes.OK);
     expect(res.body.data).toMatchObject({
       id: publicAlbum.id,
       name: expect.any(String),
@@ -49,7 +49,7 @@ describe('GET /albums/:id', () => {
 
     const res = await request(app).get(`/api/v1/albums/${publicAlbum.id}`);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(StatusCodes.OK);
     expect(res.body.data).toMatchObject({
       id: publicAlbum.id,
       name: expect.any(String),
