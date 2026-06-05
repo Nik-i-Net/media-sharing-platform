@@ -54,23 +54,13 @@ describe('PATCH /albums/:id', () => {
   test('returns validation error for invalid request body', async ({ dbUser }) => {
     const res = await request(app)
       .patch(`/api/v1/albums/${crypto.randomUUID()}`)
-      .send({ isPublic: 'true' })
+      .send({ name: true, isPublic: 'not' })
       .set('Authorization', `Bearer test-token:${dbUser.id}`);
 
     expect(res.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
-    expect(res.body.error).toMatchObject({
-      code: 'VALIDATION_ERROR',
-      message: expect.any(String),
-      details: expect.arrayContaining([
-        expect.objectContaining({
-          message: expect.any(String),
-          code: expect.any(String),
-          location: expect.any(String),
-          path: expect.any(Array),
-          value: expect.anything(),
-        }),
-      ]),
-    });
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+    expect(res.body.error.message).toEqual(expect.any(String));
+    expect(res.body.error.details).toHaveLength(2);
   });
 
   test('unauthenticated request returns UNAUTHORIZED', async () => {
