@@ -27,12 +27,11 @@ describe('GET /albums/:id', () => {
     const publicAlbum = dbAlbums.find((a) => a.isPublic);
     assert(publicAlbum);
 
-    const userId = crypto.randomUUID();
-    assert(userId !== publicAlbum.userId);
+    const nonOwnerId = crypto.randomUUID();
 
     const res = await request(app)
       .get(`/api/v1/albums/${publicAlbum.id}`)
-      .set('Authorization', `Bearer test-token:${userId}`);
+      .set('Authorization', `Bearer test-token:${nonOwnerId}`);
 
     expect(res.status).toBe(StatusCodes.OK);
     expect(res.body.data).toMatchObject({
@@ -62,12 +61,12 @@ describe('GET /albums/:id', () => {
     const privateAlbum = dbAlbums.find((a) => !a.isPublic);
     assert(privateAlbum);
 
-    const userId = crypto.randomUUID();
-    assert(userId !== privateAlbum.userId);
+    const nonOwnerId = crypto.randomUUID();
+    assert(nonOwnerId !== privateAlbum.userId);
 
     const res = await request(app)
       .get(`/api/v1/albums/${privateAlbum.id}`)
-      .set('Authorization', `Bearer test-token:${userId}`);
+      .set('Authorization', `Bearer test-token:${nonOwnerId}`);
 
     expect(res.status).toBe(StatusCodes.NOT_FOUND);
     expect(res.body).not.toHaveProperty('data');

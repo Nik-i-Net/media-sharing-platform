@@ -1,13 +1,11 @@
 import { getUploadById } from '@/app/di';
-import {
-  ValidationErrorResponse,
-  InternalServerErrorResponse,
-  UnauthorizedErrorResponse,
-} from '@/shared/errors';
+import { StatusCodes } from '@/shared/constants';
+import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
 import { validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import type { Response, Router } from 'express';
 import z from 'zod';
+import { UploadNotFoundErrorResponse } from '../errors/upload-not-found.error';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
@@ -19,7 +17,7 @@ export function registerRoute(uploadsRouter: Router) {
         userId: req.user?.id ?? null,
       });
       const response = ResponseSchema.decode({ data: upload });
-      res.status(200).json(response);
+      res.status(StatusCodes.OK).json(response);
     },
   );
 }
@@ -66,11 +64,11 @@ openapiRegistry.registerPath({
   },
   tags: ['Uploads'],
   responses: {
-    200: {
+    [StatusCodes.OK]: {
       description: 'Successful response containing the upload details for the requested ID',
       content: { 'application/json': { schema: ResponseSchema } },
     },
-    ...UnauthorizedErrorResponse,
+    ...UploadNotFoundErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },

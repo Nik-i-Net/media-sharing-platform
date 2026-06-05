@@ -1,14 +1,12 @@
 import { getAlbumById } from '@/app/di';
-import {
-  InternalServerErrorResponse,
-  UnauthorizedErrorResponse,
-  ValidationErrorResponse,
-} from '@/shared/errors';
+import { StatusCodes } from '@/shared/constants';
+import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
 import { validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import type { Response } from 'express';
 import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
+import { AlbumNotFoundErrorResponse } from '../errors/album-not-found.error';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.get(
@@ -20,7 +18,7 @@ export function registerRoute(uploadsRouter: Router) {
         userId: req.user?.id ?? null,
       });
       const response = ResponseSchema.decode({ data: album });
-      res.status(200).json(response);
+      res.status(StatusCodes.OK).json(response);
     },
   );
 }
@@ -60,11 +58,11 @@ openapiRegistry.registerPath({
   },
   tags: ['Albums'],
   responses: {
-    200: {
+    [StatusCodes.OK]: {
       description: 'Album information.',
       content: { 'application/json': { schema: ResponseSchema } },
     },
-    ...UnauthorizedErrorResponse,
+    ...AlbumNotFoundErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },

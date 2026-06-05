@@ -12,7 +12,7 @@ export class NotFoundError extends BaseError {
 
 export const NotFoundErrorResponse = {
   [StatusCodes.NOT_FOUND]: {
-    description: 'Payment profile not found',
+    description: 'Not found',
     content: {
       'application/json': {
         schema: z.object({
