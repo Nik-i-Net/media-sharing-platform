@@ -1,5 +1,5 @@
-import { ForbiddenError } from '@/shared/errors';
 import type { AlbumsRepository } from '../domain/albums.repository';
+import { AlbumAccessDeniedError } from '../errors/album-access-denied.error';
 
 export interface UpdateAlbumCommand {
   userId: string;
@@ -13,7 +13,9 @@ export class UpdateAlbumCommandHandler {
 
   async execute(cmd: UpdateAlbumCommand): Promise<void> {
     const album = await this.albumsRepo.findById(cmd.albumId);
-    if (!album || cmd.userId !== album.userId) throw new ForbiddenError();
+    if (!album || cmd.userId !== album.userId) {
+      throw new AlbumAccessDeniedError(cmd.userId, cmd.albumId);
+    }
 
     if (cmd.name) album.changeName(cmd.name);
     if (cmd.isPublic !== undefined) album.setPublic(cmd.isPublic);

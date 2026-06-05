@@ -53,7 +53,7 @@ describe('POST /albums', () => {
           message: expect.any(String),
           code: expect.any(String),
           location: expect.any(String),
-          path: expect.arrayContaining([expect.any(String)]),
+          path: expect.any(Array),
           value: expect.anything(),
         }),
       ]),

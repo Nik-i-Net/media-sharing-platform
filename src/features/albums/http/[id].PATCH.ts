@@ -1,5 +1,5 @@
+import { updateAlbum } from '@/app/di';
 import {
-  ForbiddenErrorResponse,
   InternalServerErrorResponse,
   UnauthorizedErrorResponse,
   ValidationErrorResponse,
@@ -7,11 +7,11 @@ import {
 import { requireAuth, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireDefined } from '@/shared/utils';
+import type { Response } from 'express';
 import type { Router } from 'express-serve-static-core';
 import { z } from 'zod';
 import type { UpdateAlbumCommand } from '../application/update-album.command';
-import type { Response } from 'express';
-import { updateAlbum } from '@/app/di';
+import { AlbumAccessDeniedErrorResponse } from '../errors/album-access-denied.error';
 
 export function registerRoute(uploadsRouter: Router) {
   uploadsRouter.patch(
@@ -65,7 +65,7 @@ Only provided fields are modified; unspecified fields remain unchanged.`,
   responses: {
     204: { description: 'Successfully updated the album' },
     ...UnauthorizedErrorResponse,
-    ...ForbiddenErrorResponse,
+    ...AlbumAccessDeniedErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },
