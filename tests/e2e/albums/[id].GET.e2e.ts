@@ -1,13 +1,12 @@
 import { app } from '@/app/app';
+import { StatusCodes } from '@/shared/constants';
 import assert from 'node:assert';
 import request from 'supertest';
 import { describe, expect } from 'vitest';
 import { test } from '../fixtures';
-import { StatusCodes } from '@/shared/constants';
 
 describe('GET /albums/:id', () => {
   test('owner can access album with edit permission', async ({ dbUser, dbAlbums }) => {
-    assert(dbAlbums.length > 1);
     const ownerId = dbUser.id;
     const albumId = dbAlbums[0]!.id;
 
@@ -25,7 +24,6 @@ describe('GET /albums/:id', () => {
   });
 
   test('non-owner can access public album without edit permission', async ({ dbAlbums }) => {
-    assert(dbAlbums.length > 1);
     const publicAlbum = dbAlbums.find((a) => a.isPublic);
     assert(publicAlbum);
 
@@ -46,7 +44,6 @@ describe('GET /albums/:id', () => {
   });
 
   test('guest can access public album without edit permission', async ({ dbAlbums }) => {
-    assert(dbAlbums.length > 1);
     const publicAlbum = dbAlbums.find((a) => a.isPublic);
     assert(publicAlbum);
 
@@ -62,7 +59,6 @@ describe('GET /albums/:id', () => {
   });
 
   test('non-owner receives ALBUM_NOT_FOUND for private album', async ({ dbAlbums }) => {
-    assert(dbAlbums.length > 1);
     const privateAlbum = dbAlbums.find((a) => !a.isPublic);
     assert(privateAlbum);
 
