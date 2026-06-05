@@ -1,31 +1,23 @@
-import {
-  InternalServerErrorResponse,
-  UnauthorizedErrorResponse,
-  ValidationErrorResponse,
-} from '@/shared/errors';
-import { requireAuth } from '@/shared/middlewares';
+import { listAlbumUploads } from '@/app/di';
+import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { validateRequest } from '@/shared/utils/validate-request';
 import type { Request, Response, Router } from 'express';
 import { z } from 'zod';
 import type { ListAlbumUploadsQuery } from '../application/list-album-uploads.query';
-import { requireDefined } from '@/shared/utils';
-import { listAlbumUploads } from '@/app/di';
+import { AlbumAccessDeniedErrorResponse } from '../errors/album-access-denied.error';
 
 export function registerRoute(albumsRouter: Router) {
   albumsRouter.get(
     '/:id/uploads', //
-    requireAuth,
     async (req: Request, res: Response<z.infer<typeof ResponseSchema>>) => {
       const validatedParams = validateRequest(req.params, RequestParamsSchema, 'params');
       const validatedQuery = validateRequest(req.query, RequestQueriesSchema, 'query');
 
-      const query: ListAlbumUploadsQuery = {
-        userId: requireDefined(req.user?.id),
-        albumId: validatedParams.id,
-        page: Number(validatedQuery.page),
-        limit: Number(validatedQuery.limit),
-      };
+      const query: ListAlbumUploadsQuery = { albumId: validatedParams.id };
+      if (req.user?.id) query.userId = req.user.id;
+      if (validatedQuery.page) query.page = Number(validatedQuery.page);
+      if (validatedQuery.limit) query.limit = Number(validatedQuery.limit);
 
       const result = await listAlbumUploads.execute(query);
       const response = ResponseSchema.decode(result);
@@ -41,26 +33,20 @@ const RequestQueriesSchema = z.object({
   limit: z.string().regex(/^\d+$/, { error: 'Not a positive number' }).optional(),
 });
 
-const PublicInfoSchema = z.object({
-  id: z.uuid(),
-  fileName: z.string(),
-  mimeType: z.string(),
-  sizeBytes: z.number(),
-  previewUrl: z.string(),
-});
-
 const ResponseSchema = z
   .object({
-    data: z.union([
-      z.array(PublicInfoSchema),
-      z.array(
-        PublicInfoSchema.extend({
-          isPublic: z.boolean(),
-          expiresAt: z.date().nullable(),
-          createdAt: z.date(),
-        }),
-      ),
-    ]),
+    data: z.array(
+      z.object({
+        id: z.uuid(),
+        fileName: z.string(),
+        mimeType: z.string(),
+        sizeBytes: z.number(),
+        previewUrl: z.string(),
+        isPublic: z.boolean().optional(),
+        expiresAt: z.date().nullable().optional(),
+        createdAt: z.date().optional(),
+      }),
+    ),
     meta: z.object({
       page: z.int().positive(),
       limit: z.int().positive().meta({ example: 20 }),
@@ -92,7 +78,7 @@ Owners will see all their uploads, while other users will only see public upload
       description: 'A paginated list of uploads metadata in an album.',
       content: { 'application/json': { schema: ResponseSchema } },
     },
-    ...UnauthorizedErrorResponse,
+    ...AlbumAccessDeniedErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },

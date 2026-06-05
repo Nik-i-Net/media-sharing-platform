@@ -6,12 +6,12 @@ import {
   uploadsTable,
 } from '@/shared/db/drizzle/schema';
 import type { DrizzleDB } from '@/shared/db/drizzle/types';
-import { and, desc, eq } from 'drizzle-orm';
-import { AlbumNotFoundError } from '../errors/album-not-found.error';
+import { and, count, desc, eq } from 'drizzle-orm';
+import { AlbumAccessDeniedError } from '../errors/album-access-denied.error';
 
 export interface ListAlbumUploadsQuery {
-  userId: string;
   albumId: string;
+  userId?: string;
   page?: number;
   limit?: number;
 }
@@ -26,12 +26,14 @@ export class ListAlbumUploadsQueryHandler {
     const { userId, albumId, page = 1, limit = 20 } = query;
 
     const album = await this.db.query.albumsTable.findFirst({
-      columns: { userId: true },
+      columns: { userId: true, isPublic: true },
       where: eq(albumsTable.id, albumId),
     });
-    if (!album) throw new AlbumNotFoundError();
+    if (!album) throw new AlbumAccessDeniedError(userId ?? 'guest', albumId);
 
     const isOwner = album.userId === userId;
+
+    if (!isOwner && !album.isPublic) throw new AlbumAccessDeniedError(userId ?? 'guest', albumId);
 
     const privateFields = {
       isPublic: uploadsTable.isPublic,
@@ -53,7 +55,7 @@ export class ListAlbumUploadsQueryHandler {
       .innerJoin(blobsTable, eq(uploadsTable.blobId, blobsTable.id))
       .where(
         and(
-          eq(albumsUploadsTable.albumId, albumId), //
+          eq(albumsUploadsTable.albumId, albumId),
           eq(blobsTable.status, 'ready'),
           isOwner ? undefined : eq(uploadsTable.isPublic, true),
         ),
@@ -62,10 +64,19 @@ export class ListAlbumUploadsQueryHandler {
       .limit(limit)
       .offset((page - 1) * limit);
 
-    const [uploads, totalItems] = await Promise.all([
-      uploadsPromise,
-      this.db.$count(albumsUploadsTable, eq(albumsUploadsTable.albumId, albumId)),
-    ]);
+    const totalItemsPromise = this.db
+      .select({ count: count() })
+      .from(albumsUploadsTable)
+      .innerJoin(uploadsTable, eq(albumsUploadsTable.uploadId, uploadsTable.id))
+      .where(
+        and(
+          eq(albumsUploadsTable.albumId, albumId),
+          isOwner ? undefined : eq(uploadsTable.isPublic, true),
+        ),
+      )
+      .then(([result]) => result?.count ?? 0);
+
+    const [uploads, totalItems] = await Promise.all([uploadsPromise, totalItemsPromise]);
 
     const meta = {
       page,

@@ -8,7 +8,7 @@ import { assert, describe, expect } from 'vitest';
 import { test } from '../fixtures';
 
 describe('PATCH /albums/:id', () => {
-  test('authenticated user can update their own album', async ({ dbUser, dbAlbums }) => {
+  test('owner can update album', async ({ dbUser, dbAlbums }) => {
     const firstAlbum = dbAlbums[0]!;
     assert(dbUser.id === firstAlbum.userId);
     const newName = 'new-name';
@@ -30,17 +30,17 @@ describe('PATCH /albums/:id', () => {
     });
   });
 
-  test('users cannot update albums they do not own', async ({ dbAlbums }) => {
+  test('non-owner cannot update album', async ({ dbAlbums }) => {
     const firstAlbum = dbAlbums[0]!;
     const initialName = firstAlbum.name;
 
-    const notOwnerId = crypto.randomUUID();
-    assert(notOwnerId !== firstAlbum.userId);
+    const nonOwnerId = crypto.randomUUID();
+    assert(nonOwnerId !== firstAlbum.userId);
 
     const res = await request(app)
       .patch(`/api/v1/albums/${firstAlbum.id}`)
       .send({ name: 'new-name' })
-      .set('Authorization', `Bearer test-token:${notOwnerId}`);
+      .set('Authorization', `Bearer test-token:${nonOwnerId}`);
 
     expect(res.status).toBe(StatusCodes.FORBIDDEN);
     expect(res.body.error.code).toBe('ALBUM_ACCESS_DENIED');
