@@ -1,9 +1,9 @@
 import { confirmUploads } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
 import { ENV } from '@/shared/env.loader';
-import { ValidationErrorResponse, InternalServerErrorResponse } from '@/shared/errors';
+import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
 import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
-import assert from 'assert';
 import type { Router } from 'express';
 import { z } from 'zod';
 
@@ -13,9 +13,8 @@ export function registerRoute(webhooksRouter: Router) {
     checkApiKey(ENV.CLOUDFLARE_API_KEY),
     validateRequest({ body: RequestBodySchema }),
     async (req, res) => {
-      assert(req.body.event === 'r2.upload.confirmed');
       await confirmUploads.execute({ uploads: req.body.objects });
-      res.sendStatus(200);
+      res.sendStatus(StatusCodes.OK);
     },
   );
 }
@@ -55,7 +54,7 @@ Triggered by Cloudflare worker on events:
   },
   tags: ['Uploads', 'R2', 'Webhooks'],
   responses: {
-    204: { description: 'OK' },
+    [StatusCodes.OK]: { description: 'OK' },
     ...InvalidApiKeyResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
