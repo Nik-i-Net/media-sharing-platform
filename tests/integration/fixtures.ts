@@ -49,7 +49,8 @@ export const test = baseTest
     return user;
   })
 
-  .extend('dbUploads', async ({ dbUser }, { onCleanup }) => {
+  // eslint-disable-next-line no-empty-pattern
+  .extend('dbReadyBlobs', async ({}, { onCleanup }) => {
     const blobs: InferInsertModel<typeof blobsTable>[] = Array.from({ length: 5 }, () => ({
       id: crypto.randomUUID(),
       hash: new HashVO(randomBytes(32)),
@@ -58,16 +59,7 @@ export const test = baseTest
       status: 'ready',
     }));
 
-    const uploads: InferInsertModel<typeof uploadsTable>[] = blobs.map((blob, i) => ({
-      id: crypto.randomUUID(),
-      userId: dbUser.id,
-      blobId: blob.id,
-      fileName: faker.string.alphanumeric(10),
-      isPublic: i % 2 === 0,
-    }));
-
     await db.insert(blobsTable).values(blobs);
-    await db.insert(uploadsTable).values(uploads);
 
     onCleanup(async () => {
       await db.delete(blobsTable).where(
@@ -76,9 +68,23 @@ export const test = baseTest
           blobs.map((b) => b.id),
         ),
       );
-
-      // NOTE: uploads are automatically deleted via ON DELETE CASCADE (userId)
     });
+
+    return blobs;
+  })
+
+  .extend('dbUploads', async ({ dbUser, dbReadyBlobs }) => {
+    const uploads: InferInsertModel<typeof uploadsTable>[] = dbReadyBlobs.map((blob, i) => ({
+      id: crypto.randomUUID(),
+      userId: dbUser.id,
+      blobId: blob.id,
+      fileName: faker.string.alphanumeric(10),
+      isPublic: i % 2 === 0,
+    }));
+
+    await db.insert(uploadsTable).values(uploads);
+
+    // NOTE: uploads are automatically deleted via ON DELETE CASCADE (userId)
 
     return uploads;
   })

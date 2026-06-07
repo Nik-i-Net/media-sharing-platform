@@ -8,7 +8,11 @@ import request from 'supertest';
 import { assert, describe, expect } from 'vitest';
 
 describe('GET /albums/:id/uploads', () => {
-  test('owner sees all uploads with additional info', async ({ dbUser, dbUploads, dbAlbums }) => {
+  test('owner can see all confirmed uploads with additional info', async ({
+    dbUser,
+    dbUploads,
+    dbAlbums,
+  }) => {
     const firstAlbum = dbAlbums[0]!;
 
     const res = await request(app)
@@ -46,7 +50,7 @@ describe('GET /albums/:id/uploads', () => {
     });
   });
 
-  test('non-owner sees only public uploads', async ({ dbAlbums }) => {
+  test('non-owner can see only confirmed public uploads', async ({ dbAlbums }) => {
     const firstAlbum = dbAlbums[0]!;
     const nonOwnerId = crypto.randomUUID();
 
