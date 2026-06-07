@@ -1,8 +1,8 @@
 import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
+import { test } from '@tests/integration/fixtures';
 import request from 'supertest';
 import { assert, describe, expect } from 'vitest';
-import { test } from '../fixtures';
 
 describe('GET /albums', () => {
   test('authenticated user can list their albums', async ({ dbUser, dbAlbums }) => {

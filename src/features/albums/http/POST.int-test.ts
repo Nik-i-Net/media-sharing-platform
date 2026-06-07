@@ -2,11 +2,11 @@ import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
 import { db } from '@/shared/db/drizzle/client';
 import { albumsTable, userCountersTable } from '@/shared/db/drizzle/schema';
+import { test } from '@tests/integration/fixtures';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { assert, describe, expect } from 'vitest';
 import z from 'zod';
-import { test } from '../fixtures';
 
 describe('POST /albums', () => {
   test('authenticated user can create album', async ({ dbUser }) => {

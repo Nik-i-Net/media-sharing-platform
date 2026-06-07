@@ -2,10 +2,10 @@ import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
 import { db } from '@/shared/db/drizzle/client';
 import { uploadsTable } from '@/shared/db/drizzle/schema';
+import { test } from '@tests/integration/fixtures';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { describe, expect } from 'vitest';
-import { test } from '../fixtures';
 
 describe('DELETE /uploads/:id', () => {
   test('owner can delete upload', async ({ dbUser, dbUploads }) => {

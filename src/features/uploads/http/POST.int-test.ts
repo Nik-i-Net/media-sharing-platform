@@ -1,17 +1,17 @@
 import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
-import request from 'supertest';
-import { assert, describe, expect } from 'vitest';
-import { test } from '../fixtures';
-import { faker } from '@faker-js/faker';
 import { db } from '@/shared/db/drizzle/client';
-import { eq, desc } from 'drizzle-orm';
 import {
   albumsUploadsTable,
   blobsTable,
   uploadsTable,
   userCountersTable,
 } from '@/shared/db/drizzle/schema';
+import { faker } from '@faker-js/faker';
+import { test } from '@tests/integration/fixtures';
+import { desc, eq } from 'drizzle-orm';
+import request from 'supertest';
+import { assert, describe, expect } from 'vitest';
 
 describe('POST /uploads', () => {
   test('authenticated user can initiate uploads', async ({ dbUser, dbUploads }) => {

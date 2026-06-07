@@ -2,10 +2,10 @@ import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
 import { db } from '@/shared/db/drizzle/client';
 import { uploadsTable } from '@/shared/db/drizzle/schema';
+import { test } from '@tests/integration/fixtures';
 import { inArray } from 'drizzle-orm';
 import request from 'supertest';
 import { assert, describe, expect } from 'vitest';
-import { test } from '../fixtures';
 
 describe('GET /albums/:id/uploads', () => {
   test('owner sees all uploads with additional info', async ({ dbUser, dbUploads, dbAlbums }) => {

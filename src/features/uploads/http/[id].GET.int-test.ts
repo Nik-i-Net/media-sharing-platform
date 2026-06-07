@@ -1,9 +1,9 @@
 import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
+import { test } from '@tests/integration/fixtures';
 import assert from 'node:assert';
 import request from 'supertest';
 import { describe, expect } from 'vitest';
-import { test } from '../fixtures';
 
 describe('GET /uploads/:id', () => {
   test('owner can access upload with edit permission', async ({ dbUser, dbUploads }) => {

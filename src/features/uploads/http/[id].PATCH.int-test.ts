@@ -2,10 +2,10 @@ import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
 import { db } from '@/shared/db/drizzle/client';
 import { uploadsTable } from '@/shared/db/drizzle/schema';
+import { test } from '@tests/integration/fixtures';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { assert, describe, expect } from 'vitest';
-import { test } from '../fixtures';
 
 describe('PATCH /uploads/:id', () => {
   test('owner can update uploads', async ({ dbUser, dbUploads }) => {

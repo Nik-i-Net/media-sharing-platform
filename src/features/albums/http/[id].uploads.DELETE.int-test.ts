@@ -2,10 +2,10 @@ import { app } from '@/app/app';
 import { StatusCodes } from '@/shared/constants';
 import { db } from '@/shared/db/drizzle/client';
 import { albumsUploadsTable } from '@/shared/db/drizzle/schema';
+import { test } from '@tests/integration/fixtures';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { describe, expect } from 'vitest';
-import { test } from '../fixtures';
 
 describe('DELETE /albums/:id/uploads', () => {
   test('owner can unlink uploads from album', async ({ dbUser, dbUploads, dbAlbums }) => {

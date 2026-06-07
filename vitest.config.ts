@@ -13,7 +13,9 @@ export default defineConfig({
       {
         test: {
           name: 'integration',
-          include: ['src/**/*.int.ts'],
+          include: ['src/**/*.int-test.ts'],
+          globalSetup: './tests/integration/global-setup.ts',
+          alias: { '@': './src', '@tests': './tests' },
         },
       },
 
@@ -21,8 +23,6 @@ export default defineConfig({
         test: {
           name: 'e2e',
           include: ['tests/e2e/**/*.e2e.ts'],
-          globalSetup: './tests/e2e/global-setup.ts',
-          alias: { '@': './src' },
         },
       },
     ],
