@@ -111,4 +111,30 @@ export const test = baseTest
     // NOTE: albums automatically deleted via ON DELETE CASCADE (userId)
 
     return albums;
+  })
+
+  .extend('auth0NewUser', async () => {
+    const auth0UserId = faker.string.alphanumeric(15);
+
+    return {
+      userId: `auth0|${auth0UserId}`,
+      email: faker.internet.email(),
+      emailVerified: faker.datatype.boolean(),
+      identities: [
+        { provider: 'auth0', userId: auth0UserId },
+        { provider: 'google-oauth2', userId: faker.string.numeric(15) },
+      ],
+    };
+  })
+
+  .extend('auth0ExistingUser', async ({ dbUser }) => {
+    return {
+      userId: dbUser.auth0UserId,
+      email: dbUser.email,
+      emailVerified: dbUser.emailVerified,
+      identities: dbUser.identities.map((i) => ({
+        provider: i.provider,
+        userId: i.providerUserId,
+      })),
+    };
   });

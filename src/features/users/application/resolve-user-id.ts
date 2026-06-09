@@ -1,7 +1,7 @@
-import { TodoError } from '@/shared/errors';
+import type { UnitOfWork } from '@/shared/ports/unit-of-work';
 import { User, type Identity } from '../domain/user';
 import type { UsersRepository } from '../domain/users.repository';
-import type { UnitOfWork } from '@/shared/ports/unit-of-work';
+import { EmailTakenError } from '../errors/email-taken.error';
 
 type Identities = [Identity, ...Identity[]];
 
@@ -72,7 +72,7 @@ export class ResolveUserIdCommandHandler {
       userByEmail.suspendAccount();
       await this.usersRepo.save(userByEmail);
     } else {
-      throw new TodoError('Email already in use. Login to link accounts');
+      throw new EmailTakenError();
     }
   }
 }

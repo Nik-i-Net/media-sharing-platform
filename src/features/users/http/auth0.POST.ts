@@ -1,12 +1,14 @@
-import { z } from 'zod';
-import type { Response, Router } from 'express';
-import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
+import { resolveUserId } from '@/app/di';
+import { StatusCodes } from '@/shared/constants';
+import { ENV } from '@/shared/env.loader';
 import { InternalServerErrorResponse, ValidationErrorResponse } from '@/shared/errors';
+import { checkApiKey, InvalidApiKeyResponse, validateRequest } from '@/shared/middlewares';
 import { openapiRegistry } from '@/shared/openapi-registry';
 import { requireNotEmpty } from '@/shared/utils';
+import type { Response, Router } from 'express';
+import { z } from 'zod';
 import type { ResolveUserIdCommand } from '../application/resolve-user-id';
-import { ENV } from '@/shared/env.loader';
-import { resolveUserId } from '@/app/di';
+import { EmailTakenErrorResponse } from '../errors/email-taken.error';
 
 export function registerRoute(usersRouter: Router) {
   usersRouter.post(
@@ -72,14 +74,15 @@ An endpoint designed for Auth0 Post-Login Actions.
       content: { 'application/json': { schema: RequestBodySchema } },
     },
   },
-  tags: ['Auth0'],
+  tags: ['Users', 'Auth0'],
   responses: {
-    200: {
+    [StatusCodes.OK]: {
       description: 'Returns `userId`',
       content: { 'application/json': { schema: ResponseSchema } },
     },
     // TODO: list all errors
     ...InvalidApiKeyResponse,
+    ...EmailTakenErrorResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,
   },
