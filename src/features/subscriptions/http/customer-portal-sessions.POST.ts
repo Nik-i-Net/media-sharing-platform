@@ -29,8 +29,8 @@ export function registerRoute(subscriptionsRouter: Router) {
 }
 
 const RequestBodySchema = z.object({
-  // returnUrl: z.httpUrl().optional(),
-  returnUrl: z.union([z.httpUrl(), z.string().startsWith('http://localhost')]).optional(),
+  // returnUrl: z.httpUrl(),
+  returnUrl: z.union([z.httpUrl(), z.string().startsWith('http://localhost')]), // NOTE: test value
 });
 
 const ResponseSchema = z

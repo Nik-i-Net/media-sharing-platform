@@ -6,8 +6,8 @@ import type { PaymentProvider } from './ports/payment.provider';
 
 export type CreateSubscriptionCheckoutUrlCommand = {
   userId: string;
-  successUrl?: string | undefined;
-  cancelUrl?: string | undefined;
+  successUrl: string;
+  cancelUrl: string;
 };
 
 export class CreateSubscriptionCheckoutUrlCommandHandler {

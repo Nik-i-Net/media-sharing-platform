@@ -5,6 +5,8 @@ import {
   albumsTable,
   albumsUploadsTable,
   blobsTable,
+  paymentProfilesTable,
+  subscriptionsTable,
   uploadsTable,
   userCountersTable,
   usersTable,
@@ -137,4 +139,41 @@ export const test = baseTest
         userId: i.providerUserId,
       })),
     };
-  });
+  })
+
+  .extend('dbPaymentProfile', async ({ dbUser }) => {
+    const paymentProfile: InferInsertModel<typeof paymentProfilesTable> = {
+      id: crypto.randomUUID(),
+      userId: dbUser.id,
+      provider: 'stripe',
+      providerCustomerId: `cus_${faker.string.alphanumeric(15)}`,
+      createdAt: faker.date.past(),
+      updatedAt: faker.date.recent(),
+    };
+
+    await db.insert(paymentProfilesTable).values(paymentProfile);
+
+    // NOTE: automatically deleted via ON DELETE CASCADE (userId)
+
+    return paymentProfile;
+  })
+
+  .extend('dbActiveSubscription', async ({ dbUser }) => {
+    const activeSubscription: InferInsertModel<typeof subscriptionsTable> = {
+      id: crypto.randomUUID(),
+      userId: dbUser.id,
+      planId: 'pro',
+      provider: 'stripe',
+      providerSubscriptionId: `sub_${faker.string.alphanumeric(15)}`,
+      status: 'active',
+      expiresAt: faker.date.soon({ days: 30 }),
+      createdAt: faker.date.past(),
+      updatedAt: faker.date.recent(),
+    };
+
+    await db.insert(subscriptionsTable).values(activeSubscription);
+
+    // NOTE: automatically deleted via ON DELETE CASCADE (userId)
+
+    return activeSubscription;
+  })

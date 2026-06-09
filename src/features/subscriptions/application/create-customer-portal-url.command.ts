@@ -4,7 +4,7 @@ import type { PaymentProvider } from './ports/payment.provider';
 
 export type CreateCustomerPortalUrlCommand = {
   userId: string;
-  returnUrl?: string | undefined;
+  returnUrl: string;
 };
 
 export class CreateCustomerPortalUrlCommandHandler {

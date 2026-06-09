@@ -19,10 +19,10 @@ export class StripePaymentProvider implements PaymentProvider {
     const session = await this.stripeClient.checkout.sessions.create({
       mode: 'subscription',
       line_items: [{ price: this.proPlanPriceId, quantity: 1 }],
+      success_url: props.successUrl,
+      cancel_url: props.cancelUrl,
 
       ...(props.userEmail && { customer_email: props.userEmail }),
-      ...(props.successUrl && { success_url: props.successUrl }),
-      ...(props.cancelUrl && { cancel_url: props.cancelUrl }),
 
       subscription_data: {
         metadata: {
@@ -47,8 +47,8 @@ export class StripePaymentProvider implements PaymentProvider {
       line_items: [{ price: this.proPlanPriceId, quantity: 1 }],
 
       customer: props.customerId,
-      ...(props.successUrl && { success_url: props.successUrl }),
-      ...(props.cancelUrl && { cancel_url: props.cancelUrl }),
+      success_url: props.successUrl,
+      cancel_url: props.cancelUrl,
 
       subscription_data: {
         metadata: {
@@ -68,7 +68,7 @@ export class StripePaymentProvider implements PaymentProvider {
   async createStripePortalSession(props: StripePortalSessionProps): Promise<string> {
     const portalSession = await this.stripeClient.billingPortal.sessions.create({
       customer: props.customerId,
-      ...(props.returnUrl && { return_url: props.returnUrl }),
+      return_url: props.returnUrl,
     });
 
     return portalSession.url;

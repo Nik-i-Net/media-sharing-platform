@@ -31,11 +31,12 @@ export function registerRoute(subscriptionsRouter: Router) {
 
 const urlSchema = z.union([z.httpUrl(), z.string().startsWith('http://localhost')]);
 
+// NOTE: test values
 const RequestBodySchema = z.object({
-  successUrl: urlSchema.optional(),
-  cancelUrl: urlSchema.optional(),
-  // successUrl: z.httpUrl().optional(),
-  // cancelUrl: z.httpUrl().optional(),
+  successUrl: urlSchema,
+  cancelUrl: urlSchema,
+  // successUrl: z.httpUrl(),
+  // cancelUrl: z.httpUrl(),
 });
 
 const ResponseSchema = z
