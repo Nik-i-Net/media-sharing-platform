@@ -16,6 +16,7 @@ import {
 import type { HandleSubscriptionCreatedCommand } from '../../application/handle-subscription-created.command';
 import { requireDefined } from '@/shared/utils';
 import type { HandleSubscriptionUpdatedCommand } from '../../application/handle-subscription-updated.command';
+import { StatusCodes } from '@/shared/constants';
 
 // TODO: save events to db and process them in a separate worker
 export function registerRoute(webhooksRouter: Router) {
@@ -43,7 +44,7 @@ export function registerRoute(webhooksRouter: Router) {
 
         case 'customer.subscription.updated': {
           if (req.body.data.object.status === 'past_due') {
-            return res.sendStatus(204);
+            return res.sendStatus(StatusCodes.NO_CONTENT);
           }
 
           const cmd: HandleSubscriptionUpdatedCommand = {
@@ -63,7 +64,7 @@ export function registerRoute(webhooksRouter: Router) {
           throw new Error(`Unexpected Stripe webhook event type: ${event satisfies never}`);
       }
 
-      res.sendStatus(204);
+      res.sendStatus(StatusCodes.NO_CONTENT);
     },
   );
 }
@@ -184,7 +185,7 @@ Triggered by Cloudflare worker on events:
   },
   tags: ['Subscriptions', 'Stripe', 'Webhooks'],
   responses: {
-    204: { description: 'OK' },
+    [StatusCodes.NO_CONTENT]: { description: 'OK' },
     ...InvalidStripeWebhookSignatureResponse,
     ...ValidationErrorResponse,
     ...InternalServerErrorResponse,

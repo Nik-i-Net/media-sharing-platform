@@ -11,6 +11,7 @@ import {
   userCountersTable,
   usersTable,
 } from '@/shared/db/drizzle/schema';
+import { ENV } from '@/shared/env.loader';
 import { faker } from '@faker-js/faker';
 import { eq, inArray, type InferInsertModel } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
@@ -177,3 +178,84 @@ export const test = baseTest
 
     return activeSubscription;
   })
+
+  .extend('customerSubscriptionCreatedStripeEvent', async ({ dbUser }) => {
+    return (customerId?: string) => ({
+      id: `evt_${faker.string.alphanumeric(10)}`,
+      type: 'customer.subscription.created',
+      request: { idempotency_key: faker.string.alphanumeric(10) },
+      data: {
+        object: {
+          id: `sub_${faker.string.alphanumeric(10)}`,
+          object: 'subscription',
+          customer: customerId ?? `cus_${faker.string.alphanumeric(10)}`,
+          status: 'active',
+          metadata: {
+            userId: dbUser.id,
+            planId: 'pro',
+          },
+          items: {
+            object: 'list',
+            data: [
+              {
+                object: 'subscription_item',
+                current_period_end: Math.floor(faker.date.soon({ days: 30 }).getTime() / 1000),
+                current_period_start: Math.floor(faker.date.recent().getTime() / 1000),
+                price: {
+                  id: ENV.STRIPE_PRO_PLAN_PRICE_ID,
+                  active: true,
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+  })
+
+  .extend(
+    'customerSubscriptionUpdatedStripeEvent',
+    async ({ dbPaymentProfile, dbActiveSubscription }) => {
+      return {
+        id: `evt_${faker.string.alphanumeric(10)}`,
+        type: 'customer.subscription.updated',
+        request: { idempotency_key: faker.string.alphanumeric(10) },
+        data: {
+          object: {
+            id: dbActiveSubscription.providerSubscriptionId,
+            object: 'subscription',
+            customer: dbPaymentProfile.providerCustomerId,
+            status: 'active',
+            items: {
+              object: 'list',
+              data: [
+                {
+                  object: 'subscription_item',
+                  current_period_end: Math.floor(faker.date.soon({ days: 30 }).getTime() / 1000),
+                },
+              ],
+            },
+          },
+        },
+      };
+    },
+  )
+
+  .extend(
+    'customerSubscriptionDeletedStripeEvent',
+    async ({ dbPaymentProfile, dbActiveSubscription }) => {
+      return {
+        id: `evt_${faker.string.alphanumeric(10)}`,
+        type: 'customer.subscription.deleted',
+        request: { idempotency_key: faker.string.alphanumeric(10) },
+        data: {
+          object: {
+            id: dbActiveSubscription.providerSubscriptionId,
+            object: 'subscription',
+            customer: dbPaymentProfile.providerCustomerId,
+            status: 'canceled',
+          },
+        },
+      };
+    },
+  );
