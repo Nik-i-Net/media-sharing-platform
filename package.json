@@ -21,6 +21,7 @@
     "db:push": "drizzle-kit push --config=drizzle.dev.config.ts",
     "db:seed": "tsx --env-file=.env.development src/shared/db/drizzle/seeds/index.ts",
     "cron:start": "tsx --env-file=.env.development cron/scheduler.ts"
+    "build": "tsgo --noEmit && node scripts/build.js",
   },
   "keywords": [],
   "author": "nikinet",
@@ -57,6 +58,7 @@
     "@types/swagger-ui-express": "4.1.8",
     "@typescript/native-preview": "7.0.0-dev.20260501.1",
     "drizzle-kit": "0.31.10",
+    "esbuild": "0.28.0",
     "eslint": "9.38.0",
     "globals": "16.4.0",
     "prettier": "3.6.2",

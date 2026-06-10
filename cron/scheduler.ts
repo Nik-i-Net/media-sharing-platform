@@ -33,7 +33,8 @@ const storageProvider = new R2StorageProvider({
   downloadBaseUrl: ENV.MEDIA_BASE_URL,
 });
 
-const cronLogger = pino({}, pino.destination('cron/cron.log'));
+const cronLogger = pino();
+cronLogger.info('Starting cron');
 
 // ┌────────────── second (optional, 0-59)
 // │ ┌──────────── minute (0-59)

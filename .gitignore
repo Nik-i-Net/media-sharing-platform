@@ -12,5 +12,3 @@ tests/assets/**
 !tests/assets/audio.ogg
 
 .ignore
-
-cron/cron.log
