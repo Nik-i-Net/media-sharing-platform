@@ -23,6 +23,7 @@
     "dev:db:seed": "tsx --env-file=.env.development src/shared/db/drizzle/seeds/index.ts",
     "dev:cron:start": "tsx --env-file=.env.development cron/scheduler.ts",
     "build": "tsgo --noEmit && node scripts/build.js",
+    "docker:build": "docker build -t mediahub-backend .",
   },
   "keywords": [],
   "author": "nikinet",
