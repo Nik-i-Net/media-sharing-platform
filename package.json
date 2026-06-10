@@ -24,6 +24,10 @@
     "dev:cron:start": "tsx --env-file=.env.development cron/scheduler.ts",
     "build": "tsgo --noEmit && node scripts/build.js",
     "docker:build": "docker build -t mediahub-backend .",
+    "db:migrate": "docker compose -f docker-compose.prod.yml --env-file .env.production run --rm db-migrate",
+    "db:seed": "docker compose -f docker-compose.prod.yml --env-file .env.production run --rm db-seed",
+    "start": "docker compose -f docker-compose.prod.yml --env-file .env.production up -d",
+    "stop": "docker compose -f docker-compose.prod.yml --env-file .env.production stop"
   },
   "keywords": [],
   "author": "nikinet",

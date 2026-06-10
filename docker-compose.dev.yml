@@ -1,7 +1,9 @@
+name: development
+
 services:
   postgres:
     image: postgres:18.2
-    container_name: postgres
+    container_name: postgres-dev
     ports:
       - "${POSTGRES_PORT}:5432"
     environment:
@@ -10,19 +12,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql
-    networks:
-      - backend
 
   redis:
     image: redis:8.8.0
-    container_name: redis
+    container_name: redis-dev
     ports:
       - "${REDIS_PORT}:6379"
-    networks:
-      - backend
 
 volumes:
   pgdata:
-
-networks:
-  backend:
