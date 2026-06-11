@@ -166,7 +166,7 @@ openapiRegistry.registerPath({
   path: '/api/v1/webhooks/stripe',
   summary: 'Webhook for Stripe',
   description: `
-Triggered by Cloudflare worker on events:
+Triggered by Stripe on events:
 - customer.subscription.created
 - customer.subscription.updated
 - customer.subscription.deleted
