@@ -23,7 +23,7 @@ export async function parseJwt(req: Request, _res: Response, next: NextFunction)
 
   try {
     const { payload } = await jwtVerify(token, JWKS, {
-      issuer: ENV.JWT_ISSUER + '/',
+      issuer: ENV.JWT_ISSUER,
       audience: ENV.JWT_AUDIENCE,
       algorithms: ['RS256'],
     });

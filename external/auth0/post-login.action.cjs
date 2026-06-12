@@ -1,13 +1,15 @@
 // TODO: handle errors
 
-const JWT_AUDIENCE = 'http://your-domain.com';
+const JWT_AUDIENCE = 'http://your-api.com';
 const URL = `${JWT_AUDIENCE}/api/v1/users/auth0`;
 
 /**
  * @param {string} url
- * @param {string} apiToken
+ * @param {string} apiKey
+ * @param {object} userInfo
+ * @returns {Promise<string>}
  */
-async function fetchUserId(url, apiToken, userInfo) {
+async function fetchUserId(url, apiKey, userInfo) {
   const controller = new AbortController();
   setTimeout(() => controller.abort(), 5000);
 
@@ -16,7 +18,7 @@ async function fetchUserId(url, apiToken, userInfo) {
     signal: controller.signal,
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': apiToken,
+      'x-api-key': apiKey,
     },
     body: JSON.stringify({
       userId: userInfo.user_id,
@@ -34,8 +36,8 @@ async function fetchUserId(url, apiToken, userInfo) {
 }
 
 exports.onExecutePostLogin = async (event, api) => {
-  const apiToken = event.secrets.API_TOKEN;
-  const userId = await fetchUserId(URL, apiToken, event.user);
+  const apiKey = event.secrets.API_KEY;
+  const userId = await fetchUserId(URL, apiKey, event.user);
   api.accessToken.setCustomClaim(`${JWT_AUDIENCE}/userId`, userId);
 };
 
