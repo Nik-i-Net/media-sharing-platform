@@ -1,0 +1,28 @@
+meta {
+  name: [R2] upload
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{R2.upload-url}}
+  body: file
+  auth: none
+}
+
+headers {
+  Content-Type: {{R2.headers.Content-Type}}
+  Content-Length: {{R2.headers.Content-Length}}
+  x-amz-checksum-sha256: {{R2.headers.x-amz-checksum-sha256}}
+}
+
+body:file {
+  file: @file(assets/image.png) @contentType(image/png)
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+}

@@ -1,0 +1,32 @@
+meta {
+  name: listUploads
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/uploads?page=2&limit=2
+  body: none
+  auth: inherit
+}
+
+params:query {
+  page: 2
+  limit: 2
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    const first = res.body.data[0]
+    if (first) {
+      bru.setVar('uploads.firstListedId', first.id)
+    }
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+}

@@ -1,0 +1,27 @@
+meta {
+  name: updateUploadInfo
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{BASE_URL}}/uploads/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: {{uploads.firstListedId}}
+}
+
+body:json {
+  {
+    "fileName": "updatedName",
+    "isPublic": false
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

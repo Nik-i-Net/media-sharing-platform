@@ -1,0 +1,111 @@
+import { CreateAlbumCommandHandler } from '@/features/albums/application/create-album.command';
+import { DeleteAlbumCommandHandler } from '@/features/albums/application/delete-album.command';
+import { GetAlbumByIdQueryHandler } from '@/features/albums/application/get-album-by-id.query';
+import { LinkUploadsToAlbumCommandHandler } from '@/features/albums/application/link-uploads-to-album.command';
+import { ListAlbumUploadsQueryHandler } from '@/features/albums/application/list-album-uploads.query';
+import { ListUserAlbumsQueryHandler } from '@/features/albums/application/list-user-albums.query';
+import { UnlinkUploadsFromAlbumCommandHandler } from '@/features/albums/application/unlink-uploads-from-album.command';
+import { UpdateAlbumCommandHandler } from '@/features/albums/application/update-album.command';
+import { DrizzleAlbumsRepository } from '@/features/albums/infrastructure/drizzle-albums.repository';
+import { CreateCustomerPortalUrlCommandHandler } from '@/features/subscriptions/application/create-customer-portal-url.command';
+import { CreateSubscriptionCheckoutUrlCommandHandler } from '@/features/subscriptions/application/create-subscription-checkout-url.command';
+import { HandleSubscriptionCanceledCommandHandler } from '@/features/subscriptions/application/handle-subscription-canceled.command';
+import { HandleSubscriptionCreatedCommandHandler } from '@/features/subscriptions/application/handle-subscription-created.command';
+import { HandleSubscriptionUpdatedCommandHandler } from '@/features/subscriptions/application/handle-subscription-updated.command';
+import { DrizzlePaymentProfilesRepository } from '@/features/subscriptions/infrastructure/drizzle-payment-profiles.repository';
+import { DrizzleSubscriptionsRepository } from '@/features/subscriptions/infrastructure/drizzle-subscriptions.repository';
+import { StripePaymentProvider } from '@/features/subscriptions/infrastructure/stripe-payment.provider';
+import { ConfirmUploadsCommandHandler } from '@/features/uploads/application/confirm-uploads.command';
+import { DeleteUploadCommandHandler } from '@/features/uploads/application/delete-upload.command';
+import { GetUploadByIdQueryHandler } from '@/features/uploads/application/get-upload-by-id.query';
+import { InitiateUploadsCommandHandler } from '@/features/uploads/application/initiate-uploads.command';
+import { ListUserUploadsQueryHandler } from '@/features/uploads/application/list-user-uploads.query';
+import { UpdateUploadInfoCommandHandler } from '@/features/uploads/application/update-upload-info.command';
+import { DrizzleBlobsRepository } from '@/features/uploads/infrastructure/drizzle-blobs.repository';
+import { DrizzleUploadsRepository } from '@/features/uploads/infrastructure/drizzle-uploads.repository';
+import { R2StorageProvider } from '@/features/uploads/infrastructure/R2-storage.provider';
+import { ResolveUserIdCommandHandler } from '@/features/users/application/resolve-user-id';
+import { DrizzlePlanProvider } from '@/features/users/infrastructure/drizzle-plan.provider';
+import { DrizzleUserCountersRepository } from '@/features/users/infrastructure/drizzle-user-counters.repository';
+import { DrizzleUsersRepository } from '@/features/users/infrastructure/drizzle-users.repository';
+import { db } from '@/shared/db/drizzle/client';
+import { DrizzleUnitOfWork } from '@/shared/db/drizzle/drizzle-unit-of-work';
+import { ENV } from '@/shared/env.loader';
+import Stripe from 'stripe';
+
+const unitOfWork = new DrizzleUnitOfWork(db);
+
+export const plansProvider = new DrizzlePlanProvider(db);
+
+const usersRepository = new DrizzleUsersRepository(db, plansProvider);
+const userCountersRepository = new DrizzleUserCountersRepository(db);
+const blobsRepository = new DrizzleBlobsRepository(db);
+const uploadsRepository = new DrizzleUploadsRepository(db);
+const albumsRepository = new DrizzleAlbumsRepository(db);
+const subscriptionsRepository = new DrizzleSubscriptionsRepository(db);
+const paymentProfilesRepository = new DrizzlePaymentProfilesRepository(db);
+
+export const resolveUserId = new ResolveUserIdCommandHandler(usersRepository, unitOfWork);
+
+const storageProvider = new R2StorageProvider({
+  accountId: ENV.CLOUDFLARE_ACCOUNT_ID,
+  accessKeyId: ENV.CLOUDFLARE_ACCESS_KEY_ID,
+  secretAccessKey: ENV.CLOUDFLARE_SECRET_ACCESS_KEY,
+  bucket: ENV.CLOUDFLARE_BUCKET,
+  downloadBaseUrl: ENV.MEDIA_BASE_URL,
+});
+
+export const initiateUploads = new InitiateUploadsCommandHandler(
+  usersRepository,
+  blobsRepository,
+  albumsRepository,
+  unitOfWork,
+  storageProvider,
+);
+
+export const confirmUploads = new ConfirmUploadsCommandHandler(blobsRepository);
+export const getUploadById = new GetUploadByIdQueryHandler(db, storageProvider);
+export const listUserUploads = new ListUserUploadsQueryHandler(
+  db,
+  userCountersRepository,
+  storageProvider,
+);
+export const updateUploadInfo = new UpdateUploadInfoCommandHandler(uploadsRepository);
+export const deleteUpload = new DeleteUploadCommandHandler(unitOfWork);
+
+export const createAlbum = new CreateAlbumCommandHandler(unitOfWork);
+export const listUserAlbums = new ListUserAlbumsQueryHandler(db, userCountersRepository);
+export const getAlbumById = new GetAlbumByIdQueryHandler(db);
+export const listAlbumUploads = new ListAlbumUploadsQueryHandler(db, storageProvider);
+export const updateAlbum = new UpdateAlbumCommandHandler(albumsRepository);
+export const deleteAlbum = new DeleteAlbumCommandHandler(unitOfWork);
+export const linkUploadsToAlbum = new LinkUploadsToAlbumCommandHandler(
+  albumsRepository,
+  uploadsRepository,
+);
+export const unlinkUploadsFromAlbum = new UnlinkUploadsFromAlbumCommandHandler(albumsRepository);
+
+export const stripeClient = new Stripe(ENV.STRIPE_API_KEY);
+const paymentProvider = new StripePaymentProvider(stripeClient, ENV.STRIPE_PRO_PLAN_PRICE_ID);
+
+export const createSubscriptionCheckoutUrl = new CreateSubscriptionCheckoutUrlCommandHandler(
+  subscriptionsRepository,
+  paymentProfilesRepository,
+  usersRepository,
+  paymentProvider,
+);
+export const createCustomerPortalUrl = new CreateCustomerPortalUrlCommandHandler(
+  paymentProfilesRepository,
+  paymentProvider,
+);
+
+export const handleSubscriptionCreated = new HandleSubscriptionCreatedCommandHandler(
+  subscriptionsRepository,
+  paymentProfilesRepository,
+);
+export const handleSubscriptionUpdated = new HandleSubscriptionUpdatedCommandHandler(
+  subscriptionsRepository,
+);
+export const handleSubscriptionCanceled = new HandleSubscriptionCanceledCommandHandler(
+  subscriptionsRepository,
+);

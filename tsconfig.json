@@ -6,8 +6,8 @@
     "noEmit": true,
 
     "paths": {
-      "@core/*": ["./src/@core/*"],
-      "@config/*": ["./src/@config/*"],
+      "@/*": ["./src/*"],
+      "@tests/*": ["./tests/*"]
     },
 
     // Stricter Typechecking Options
@@ -22,7 +22,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  // "include": ["src/**/*", "tests/**/*"],
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "migrations"]
+  "include": ["src/**/*.ts", "tests/**/*.ts", "cron/**/*.ts"],
+  "exclude": ["node_modules", "dist", "external", "scripts"]
 }

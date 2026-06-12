@@ -1,0 +1,93 @@
+name: production
+
+services:
+  postgres:
+    image: postgres:18.4-alpine3.23
+    container_name: postgres-production
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - backend
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 5s
+
+  redis:
+    image: redis:8.8.0-alpine3.23
+    container_name: redis-production
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 5s
+
+  db-migrate:
+    image: mediahub-backend:latest
+    container_name: mediahub-migrate-production
+    command: node dist/migrate.js
+    env_file:
+      - .env.production
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles: ["tools"]
+
+  db-seed:
+    image: mediahub-backend:latest
+    container_name: mediahub-seed-production
+    command: node dist/seed.js
+    env_file:
+      - .env.production
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles: ["tools"]
+
+  server:
+    image: mediahub-backend:latest
+    container_name: mediahub-server-production
+    ports:
+      - "${PORT}:5000"
+    env_file:
+      - .env.production
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  cron:
+    image: mediahub-backend:latest
+    container_name: mediahub-cron-production
+    command: node dist/cron.js
+    env_file:
+      - .env.production
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+
+networks:
+  backend:

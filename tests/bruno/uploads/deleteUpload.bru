@@ -1,0 +1,20 @@
+meta {
+  name: deleteUpload
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{BASE_URL}}/uploads/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: {{uploads.firstListedId}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

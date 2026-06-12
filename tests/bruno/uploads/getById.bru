@@ -1,0 +1,22 @@
+meta {
+  name: getById
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/uploads/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: {{uploads.firstListedId}}
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+}

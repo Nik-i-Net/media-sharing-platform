@@ -1,0 +1,27 @@
+meta {
+  name: getById
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/albums/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: {{albums.firstListedId}}
+}
+
+body:json {
+  {
+    "name": "album_1",
+    "isPublic": true
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

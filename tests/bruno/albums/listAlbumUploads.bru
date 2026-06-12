@@ -1,0 +1,32 @@
+meta {
+  name: listAlbumUploads
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{BASE_URL}}/albums/:id/uploads?page=2&limit=2
+  body: none
+  auth: inherit
+}
+
+params:query {
+  page: 2
+  limit: 2
+}
+
+params:path {
+  id: {{albums.firstListedId}}
+}
+
+body:json {
+  {
+    "name": "album_1",
+    "isPublic": true
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

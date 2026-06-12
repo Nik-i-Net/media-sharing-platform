@@ -1,0 +1,28 @@
+meta {
+  name: unlinkUploads
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{BASE_URL}}/albums/:id/uploads
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: {{albums.firstListedId}}
+}
+
+body:json {
+  {
+    "uploadIds": [
+      "{{uploads.firstListedId}}"
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

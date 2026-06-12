@@ -1,0 +1,23 @@
+meta {
+  name: checkoutSession
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/subscriptions/checkout-sessions
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "successUrl": "https://example.com/success",
+    "cancelUrl": "https://example.com/cancel"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,23 @@
+meta {
+  name: createAlbum
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/albums
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "album_1",
+    "isPublic": true
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,19 @@
+export function assertDefined<T>(value: T, errorMessage?: string): asserts value is NonNullable<T> {
+  if (value === undefined || value === null) {
+    throw new Error(errorMessage ?? 'Value is not defined');
+  }
+}
+
+export function requireDefined<T>(value: T, errorMessage?: string): NonNullable<T> {
+  if (value === undefined || value === null) {
+    throw new Error(errorMessage ?? 'Value is not defined');
+  }
+  return value as NonNullable<T>;
+}
+
+export function requireNotEmpty<T>(arr: T[], errorMessage?: string): [T, ...T[]] {
+  if (arr.length === 0) {
+    throw new Error(errorMessage ?? 'Array is empty');
+  }
+  return arr as [T, ...T[]];
+}

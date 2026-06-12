@@ -1,0 +1,20 @@
+meta {
+  name: deleteAlbum
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{BASE_URL}}/albums/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: {{albums.firstListedId}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

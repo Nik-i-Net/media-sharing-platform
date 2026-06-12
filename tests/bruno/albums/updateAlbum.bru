@@ -1,0 +1,27 @@
+meta {
+  name: updateAlbum
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{BASE_URL}}/albums/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: {{albums.firstListedId}}
+}
+
+body:json {
+  {
+    "name": "updated_album_1",
+    "isPublic": false
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

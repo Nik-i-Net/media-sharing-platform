@@ -1,0 +1,98 @@
+import { DeleteObjectsCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import type { StorageProvider, UploadInfo } from '../application/ports/storage.provider';
+import type { BlobEntity } from '../domain/blob';
+import type { HashVO } from '../domain/hash.value-object';
+
+type R2Params = {
+  accountId: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucket: string;
+  downloadBaseUrl: string;
+};
+
+export class R2StorageProvider implements StorageProvider {
+  private readonly S3: S3Client;
+  private readonly bucket: string;
+  private readonly downloadBaseUrl: string;
+
+  constructor({ accountId, accessKeyId, secretAccessKey, bucket, downloadBaseUrl }: R2Params) {
+    this.S3 = new S3Client({
+      region: 'auto',
+      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+      credentials: { accessKeyId, secretAccessKey },
+    });
+    this.bucket = bucket;
+    this.downloadBaseUrl = downloadBaseUrl;
+  }
+
+  async getDirectUploadInfo(blob: BlobEntity): Promise<UploadInfo> {
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: blob.hash.hex,
+      ContentType: blob.mimeType,
+      ContentLength: blob.sizeBytes,
+      ChecksumSHA256: blob.hash.base64,
+    });
+
+    const url = await getSignedUrl(this.S3, command, {
+      expiresIn: 300,
+      signableHeaders: new Set(['content-type', 'content-length']),
+      unhoistableHeaders: new Set(['x-amz-checksum-sha256']),
+    });
+
+    return {
+      url,
+      method: 'PUT',
+      headers: {
+        'Content-Type': blob.mimeType,
+        'Content-Length': blob.sizeBytes,
+        'x-amz-checksum-sha256': blob.hash.base64,
+      },
+    };
+  }
+
+  getDownloadUrl(hash: HashVO) {
+    return `${this.downloadBaseUrl}/${hash.hex}`;
+  }
+
+  getPreviewUrl(hash: HashVO): string {
+    return `${this.downloadBaseUrl}/${hash.hex}`;
+  }
+
+  async batchDelete(
+    blobs: { id: string; hash: HashVO }[],
+  ): Promise<{ deletedIds: string[]; errors?: unknown[] }> {
+    if (blobs.length > 1000) throw new Error('Too many blobs to delete at once');
+
+    const blobIdByKey = new Map<string, string>();
+    const objects: { Key: string }[] = Array(blobs.length);
+
+    for (let i = 0; i < blobs.length; i++) {
+      const blob = blobs[i]!;
+      const key = blob.hash.hex;
+      blobIdByKey.set(key, blob.id);
+      objects[i] = { Key: key };
+    }
+
+    const command = new DeleteObjectsCommand({
+      Bucket: this.bucket,
+      Delete: {
+        Objects: objects,
+      },
+    });
+    const commandOutput = await this.S3.send(command);
+
+    const deletedIds: string[] = [];
+    for (const obj of commandOutput.Deleted ?? []) {
+      const id = blobIdByKey.get(obj.Key!);
+      if (id) deletedIds.push(id);
+    }
+
+    return {
+      deletedIds,
+      ...(commandOutput.Errors && { errors: commandOutput.Errors }),
+    };
+  }
+}
