@@ -47,6 +47,7 @@ Duplicates (uploads already linked to the album) will be ignored.`,
     headers: z.object({
       Authorization: z.templateLiteral(['Bearer ', z.jwt()]).meta({ description: 'Bearer `JWT`' }),
     }),
+    params: RequestParamsSchema,
     body: {
       description: 'List of upload IDs to link to the album',
       content: { 'application/json': { schema: RequestBodySchema } },

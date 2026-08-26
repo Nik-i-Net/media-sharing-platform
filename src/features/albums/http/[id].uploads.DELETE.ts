@@ -46,6 +46,7 @@ Non existent pairs (albumId - uploadId) will be ignored.`,
     headers: z.object({
       Authorization: z.templateLiteral(['Bearer ', z.jwt()]).meta({ description: 'Bearer `JWT`' }),
     }),
+    params: RequestParamsSchema,
     body: {
       description: 'List of upload IDs to unlink from the album',
       content: { 'application/json': { schema: RequestBodySchema } },

@@ -78,6 +78,7 @@ Owners will see all their uploads, while other users will only see public upload
         .optional()
         .meta({ description: 'Bearer `JWT`' }),
     }),
+    params: RequestParamsSchema,
     query: RequestQueriesSchema,
   },
   tags: ['Albums', 'Uploads'],
