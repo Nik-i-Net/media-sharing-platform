@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 
 const { POSTGRES_USER, POSTGRES_DB } = process.env;
-const CONTAINER_NAME = 'postgres';
+const CONTAINER_NAME = 'postgres-dev';
 
 if (!POSTGRES_USER || !POSTGRES_DB) {
   console.error('Error: env variables POSTGRES_USER and POSTGRES_DB are required');
